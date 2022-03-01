@@ -1296,7 +1296,7 @@ int GSDeserializeObject(GS_Decoder_Context_Internal &context,
  *  Comments:
  *      None.
  */
-int GSDeserializeObject(GS_Decoder_Context_Internal& context,
+int GSDeserializeObject(GS_Decoder_Context_Internal&,
     const gs::Object1& encoded,
     GS_Object& object)
 {
