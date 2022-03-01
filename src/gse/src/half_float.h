@@ -26,7 +26,8 @@ namespace gs
 {
 
 // Function to convert from 32-bit floating point values to 16-bit values
-constexpr std::uint16_t FloatToHalfFloat(const float f);
+//constexpr
+std::uint16_t FloatToHalfFloat(const float f);
 
 // Function to convert from 16-bit half floating point values to 32-bit values
 constexpr float HalfFloatToFloat(const std::uint16_t h);

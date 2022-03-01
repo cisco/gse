@@ -56,7 +56,8 @@ namespace gs
  *  Comments:
  *      None.
  */
-constexpr std::uint16_t FloatToHalfFloat(const float f)
+//constexpr
+std::uint16_t FloatToHalfFloat(const float f)
 {
     constexpr std::uint32_t nan_value = 0b0111111000000000; // qNaN
     constexpr std::uint32_t inf_value = 0b0111110000000000;
@@ -71,7 +72,9 @@ constexpr std::uint16_t FloatToHalfFloat(const float f)
     static_assert(sizeof(bits) == 4);
     static_assert(sizeof(h) == 2);
 
-    // Assign the float in a bit array 32-bits long - Union used as float and int may not have same alignment
+    // Assign the float in a bit array 32-bits long
+    /*
+    Union used as float and int may not have same alignment
     union Float_to_int {
       std::uint32_t i;
       float f;
@@ -80,7 +83,14 @@ constexpr std::uint16_t FloatToHalfFloat(const float f)
     assert( sizeof(float) == sizeof(  std::uint32_t ));
     u.f = f;
     bits = u.i;
+    */
 
+    //bits = *reinterpret_cast<float *>(const_cast<float*>(&f)); // fails on mac  (CLANG 13)
+
+    // bits = std::bit_cast( f ); // bit_cast not on mac yet (CLANG 13)
+
+    bits = *static_cast<const std::uint32_t *>(static_cast<const void *>(&f)); // fails mac CLANG 13 
+    
     // Extract the sign bit, shifting into position
     sign_bit = (bits & 0x8000'0000) >> 16;
 
