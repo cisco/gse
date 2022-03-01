@@ -1,0 +1,8 @@
+find_package(GTest REQUIRED)
+add_subdirectory(test_float)
+add_subdirectory(test_gs_api)
+add_subdirectory(test_gs_decoder)
+add_subdirectory(test_gs_deserializer)
+add_subdirectory(test_gs_encoder)
+add_subdirectory(test_gs_serializer)
+add_subdirectory(test_half_float)
