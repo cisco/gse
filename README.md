@@ -15,6 +15,14 @@ and all objects found in the buffer are deserialized into a vector of
 GSObjects.  The gs::Decoder will utilize the gs::Serializer, which in turn
 calls functions in the DataBuffer object to extract primitive types.
 
+Building
+-------
+
+```
+( mkdir build ; cd build ; cmake .. ; make ) 
+```
+
+
 C Interface
 -----------
 
