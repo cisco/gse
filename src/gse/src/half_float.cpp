@@ -71,8 +71,15 @@ constexpr std::uint16_t FloatToHalfFloat(const float f)
     static_assert(sizeof(bits) == 4);
     static_assert(sizeof(h) == 2);
 
-    // Assign the float in a bit array 32-bits long
-    bits = *static_cast<const std::uint32_t *>( const_cast<void*>( static_cast<const void *>( &f ) ) );
+    // Assign the float in a bit array 32-bits long - Union used as float and int may not have same alignment
+    union Float_to_int {
+      std::uint32_t i;
+      float f;
+    };
+    union  Float_to_int u{};
+    assert( sizeof(float) == sizeof(  std::uint32_t ));
+    u.f = f;
+    bits = u.i;
 
     // Extract the sign bit, shifting into position
     sign_bit = (bits & 0x8000'0000) >> 16;
