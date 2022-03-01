@@ -3,7 +3,8 @@ add_library(gse gs_api.cpp
                 gs_decoder.cpp
                 gs_encoder.cpp
                 gs_deserializer.cpp
-                gs_serializer.cpp)
+                gs_serializer.cpp
+                half_float.cpp)
 
 set_target_properties(common PROPERTIES POSITION_INDEPENDENT_CODE ${BUILD_SHARED_LIBS})
 target_link_libraries(gse common)
