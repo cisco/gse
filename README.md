@@ -10,13 +10,18 @@ by calling the gs::Serializer object.  The gs::Serializer object, in turn,
 invokes functions in the DataBuffer object to serialize the primitive
 data types.
 
-Everything is serialized in network byte order (big endian), though the current
-draft specifies use of little endian.
-
 Deserialization of data is via the gs::Decoder object.  It accepts a DataBuffer
 and all objects found in the buffer are deserialized into a vector of
 GSObjects.  The gs::Decoder will utilize the gs::Serializer, which in turn
 calls functions in the DataBuffer object to extract primitive types.
+
+Building
+-------
+
+```
+( mkdir build ; cd build ; cmake .. ; make ) 
+```
+
 
 C Interface
 -----------
