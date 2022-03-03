@@ -967,7 +967,7 @@ int GSDeserializeObject(GS_Decoder_Context_Internal &context, GS_Object &object)
  *      structure.
  *
  *  Parameters:
- *      context [in] (unused)
+ *      context [in]
  *          The internal decoder context.
  *
  *      head1 [in]
@@ -982,7 +982,7 @@ int GSDeserializeObject(GS_Decoder_Context_Internal &context, GS_Object &object)
  *  Comments:
  *      None.
  */
-int GSDeserializeObject(GS_Decoder_Context_Internal &,
+int GSDeserializeObject([[maybe_unused]] GS_Decoder_Context_Internal &context,
                         const gs::Head1 &head1,
                         GS_Object &object)
 {
@@ -1009,7 +1009,7 @@ int GSDeserializeObject(GS_Decoder_Context_Internal &,
  *      structure.
  *
  *  Parameters:
- *      context [in] (unused)
+ *      context [in]
  *          The internal decoder context.
  *
  *      hand1 [in]
@@ -1024,7 +1024,7 @@ int GSDeserializeObject(GS_Decoder_Context_Internal &,
  *  Comments:
  *      None.
  */
-int GSDeserializeObject(GS_Decoder_Context_Internal &,
+int GSDeserializeObject([[maybe_unused]] GS_Decoder_Context_Internal &context,
                         const gs::Hand1 &hand1,
                         GS_Object &object)
 {
@@ -1159,7 +1159,7 @@ int GSDeserializeObject(GS_Decoder_Context_Internal &context,
  *      structure.
  *
  *  Parameters:
- *      context [in] (unused)
+ *      context [in]
  *          The internal decoder context.
  *
  *      hand2 [in]
@@ -1174,7 +1174,7 @@ int GSDeserializeObject(GS_Decoder_Context_Internal &context,
  *  Comments:
  *      None.
  */
-int GSDeserializeObject(GS_Decoder_Context_Internal &,
+int GSDeserializeObject([[maybe_unused]] GS_Decoder_Context_Internal &context,
                         const gs::Hand2 &hand2,
                         GS_Object &object)
 {
@@ -1203,7 +1203,7 @@ int GSDeserializeObject(GS_Decoder_Context_Internal &,
  *      GS_Object structure.
  *
  *  Parameters:
- *      context [in] (unused)
+ *      context [in]
  *          The internal decoder context.
  *
  *      head_ipd1 [in]
@@ -1218,7 +1218,7 @@ int GSDeserializeObject(GS_Decoder_Context_Internal &,
  *  Comments:
  *      None.
  */
-int GSDeserializeObject(GS_Decoder_Context_Internal &,
+int GSDeserializeObject([[maybe_unused]] GS_Decoder_Context_Internal &context,
                         const gs::HeadIPD1 &head_ipd,
                         GS_Object &object)
 {
@@ -1296,9 +1296,9 @@ int GSDeserializeObject(GS_Decoder_Context_Internal &context,
  *  Comments:
  *      None.
  */
-int GSDeserializeObject(GS_Decoder_Context_Internal&,
-    const gs::Object1& encoded,
-    GS_Object& object)
+int GSDeserializeObject([[maybe_unused]] GS_Decoder_Context_Internal &context,
+                        const gs::Object1 &encoded,
+                        GS_Object &object)
 {
     // Copy the data from the C++ structure to C structure
     object.type = GS_Tag_Object1;
