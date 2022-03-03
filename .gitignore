@@ -27,6 +27,9 @@
 *.out
 *.app
 
-#
+# Build directory
 build
+
+# Editors
 .vscode
+.vs
