@@ -56,7 +56,7 @@ namespace gs
  *  Comments:
  *      None.
  */
-std::uint16_t FloatToHalfFloat(const float f)
+constexpr std::uint16_t FloatToHalfFloat(const float f)
 {
     constexpr std::uint32_t nan_value = 0b0111111000000000; // qNaN
     constexpr std::uint32_t inf_value = 0b0111110000000000;
@@ -71,8 +71,15 @@ std::uint16_t FloatToHalfFloat(const float f)
     static_assert(sizeof(bits) == 4);
     static_assert(sizeof(h) == 2);
 
-    bits = *static_cast<const std::uint32_t *>(static_cast<const void *>(&f));
-    
+    // Assign the float in a bit array 32-bits long
+    union
+    {
+        std::uint32_t i;
+        float f;
+    } u{};
+    u.f = f;
+    bits = u.i;
+
     // Extract the sign bit, shifting into position
     sign_bit = (bits & 0x8000'0000) >> 16;
 
@@ -160,7 +167,7 @@ std::uint16_t FloatToHalfFloat(const float f)
  *  Comments:
  *      None.
  */
-float HalfFloatToFloat(const std::uint16_t h)
+constexpr float HalfFloatToFloat(const std::uint16_t h)
 {
     constexpr std::uint32_t nan_value = 0x7FC0'0000; // qNaN
     constexpr std::uint32_t inf_value = 0x7F80'0000;
@@ -168,10 +175,9 @@ float HalfFloatToFloat(const std::uint16_t h)
     std::uint32_t sign_bit{};
     std::uint32_t exponent{};
     std::uint32_t mantissa{};
-    float f{};
 
     // Ensure values are the right number of octets
-    static_assert(sizeof(f) == 4);
+    static_assert(sizeof(float) == 4);
     static_assert(sizeof(bits) == 4);
     static_assert(sizeof(h) == 2);
 
@@ -252,10 +258,15 @@ float HalfFloatToFloat(const std::uint16_t h)
         }
     }
 
-    // Assign the bit array comprising the floating point number to f
-    f = *static_cast<const float *>(static_cast<const void *>(&bits));
+    // Convert the bits to a floating point representation
+    union
+    {
+        std::uint32_t i;
+        float f;
+    } u{};
+    u.i = bits;
 
-    return f;
+    return u.f;
 }
 
 } // namespace gs

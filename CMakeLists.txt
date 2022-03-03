@@ -1,11 +1,11 @@
-project(libgse LANGUAGES CXX)
-
 cmake_minimum_required(VERSION 3.17)
 
-include(CTest)
+project(libgse
+        VERSION 1.0.0.0
+        DESCRIPTION "Game State Encoder Library"
+        LANGUAGES CXX)
 
-set(PACKAGE_VERSION 1.0.0.0)
-set(PACKAGE_STRING "${CMAKE_PROJECT_NAME} ${PACKAGE_VERSION}")
+include(CTest)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
