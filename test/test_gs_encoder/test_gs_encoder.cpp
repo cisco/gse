@@ -17,6 +17,7 @@
 #include <cstdint>
 #include <memory>
 #include <variant>
+#include <vector>
 #include "gtest/gtest.h"
 #include "gs_types.h"
 #include "gs_encoder.h"

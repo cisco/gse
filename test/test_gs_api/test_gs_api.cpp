@@ -13,6 +13,8 @@
  */
 
 #include <cstring>
+#include <cstdint>
+#include <vector>
 #include "gtest/gtest.h"
 #include "gs_api.h"
 

@@ -12,28 +12,18 @@
  *      and
  *      https://en.wikipedia.org/wiki/Single-precision_floating-point_format.
  *
- *      Note that these are constexpr functions and this file is included in
- *      the header file.  This file is not a separate compilation unit.
- *
- *      Additionally, there are two lines of code that cast floats to/from
- *      unsigned integers.  This is quite a hack, but it allowed these functions
- *      to compile as constexpr functions on both g++ and MSVC.  It would be
- *      best to replace those lines with std::bit_cast, but that was not
- *      supported by the g++ compiler used in development.  g++ 11 and later
- *      does support std::bit_cast.
+ *      There are two lines of code that copy floats to/from unsigned integers.
+ *      This is unfortunate, but it was the most portable solution available.
+ *      C++20 introduces std::bit_cast, but that was not supported by all
+ *      compilers and platforms used in development.
  *
  *  Portability Issues:
  *      The C++ float and double types are assumed to be implemented following
  *      IEEE-754 specification.
  */
 
-#ifndef HALF_FLOAT_CPP
-#define HALF_FLOAT_CPP
-
 #include <cstring>
 #include <cstdint>
-#include <cmath>
-#include <bit>
 
 namespace gs
 {
@@ -56,7 +46,7 @@ namespace gs
  *  Comments:
  *      None.
  */
-constexpr std::uint16_t FloatToHalfFloat(const float f)
+std::uint16_t FloatToHalfFloat(const float f)
 {
     constexpr std::uint32_t nan_value = 0b0111111000000000; // qNaN
     constexpr std::uint32_t inf_value = 0b0111110000000000;
@@ -72,13 +62,7 @@ constexpr std::uint16_t FloatToHalfFloat(const float f)
     static_assert(sizeof(h) == 2);
 
     // Assign the float in a bit array 32-bits long
-    union
-    {
-        std::uint32_t i;
-        float f;
-    } u{};
-    u.f = f;
-    bits = u.i;
+    std::memcpy(&bits, &f, sizeof(bits));
 
     // Extract the sign bit, shifting into position
     sign_bit = (bits & 0x8000'0000) >> 16;
@@ -167,7 +151,7 @@ constexpr std::uint16_t FloatToHalfFloat(const float f)
  *  Comments:
  *      None.
  */
-constexpr float HalfFloatToFloat(const std::uint16_t h)
+float HalfFloatToFloat(const std::uint16_t h)
 {
     constexpr std::uint32_t nan_value = 0x7FC0'0000; // qNaN
     constexpr std::uint32_t inf_value = 0x7F80'0000;
@@ -175,9 +159,10 @@ constexpr float HalfFloatToFloat(const std::uint16_t h)
     std::uint32_t sign_bit{};
     std::uint32_t exponent{};
     std::uint32_t mantissa{};
+    float f{};
 
     // Ensure values are the right number of octets
-    static_assert(sizeof(float) == 4);
+    static_assert(sizeof(f) == 4);
     static_assert(sizeof(bits) == 4);
     static_assert(sizeof(h) == 2);
 
@@ -258,17 +243,10 @@ constexpr float HalfFloatToFloat(const std::uint16_t h)
         }
     }
 
-    // Convert the bits to a floating point representation
-    union
-    {
-        std::uint32_t i;
-        float f;
-    } u{};
-    u.i = bits;
+    // Assign the bit array comprising the floating point number to f
+    std::memcpy(&f, &bits, sizeof(f));
 
-    return u.f;
+    return f;
 }
 
 } // namespace gs
-
-#endif // HALF_FLOAT_CPP

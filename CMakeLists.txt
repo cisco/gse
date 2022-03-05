@@ -5,8 +5,6 @@ project(libgse
         DESCRIPTION "Game State Encoder Library"
         LANGUAGES CXX)
 
-include(CTest)
-
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -17,6 +15,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}")
 option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
 
 add_subdirectory(src)
+
+include(CTest)
 
 if(BUILD_TESTING AND NOT BUILD_SHARED_LIBS)
     add_subdirectory(test)

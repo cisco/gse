@@ -14,6 +14,7 @@
  */
 
 #include <cstring>
+#include <cstdint>
 #include <cmath>
 #include "gtest/gtest.h"
 #include "half_float.h"
