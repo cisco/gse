@@ -77,15 +77,17 @@ namespace gs.sharp
         public ObjectId ID => id;
 
         private readonly ObjectId id;
+        public readonly Time1 Time;
         public readonly Loc1 Location;
         public readonly Rot1 Rotation;
         public readonly Loc1 Scale;
         public readonly Bool HasParent;
         public readonly ObjectId Parent;
 
-        public Object1(ObjectId id, Loc1 location, Rot1 rotation, Loc1 scale, ObjectId? parent = null) : this()
+        public Object1(ObjectId id, Time1 time, Loc1 location, Rot1 rotation, Loc1 scale, ObjectId? parent = null) : this()
         {
             this.id = id;
+            Time = time;
             Location = location;
             Rotation = rotation;
             Scale = scale;

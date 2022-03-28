@@ -569,6 +569,7 @@ std::size_t Decoder::Decode(std::unique_ptr<DataBuffer<>>& data_buffer,
 
     // Read all of the required fields (evaluation order matters)
     read_length += Deserialize(data_buffer, value.id);
+    read_length += Deserialize(data_buffer, value.time);
     read_length += Deserialize(data_buffer, value.position);
     read_length += Deserialize(data_buffer, value.rotation);
     read_length += Deserialize(data_buffer, value.scale);

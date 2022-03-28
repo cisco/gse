@@ -11,7 +11,7 @@
  *
  *  Portability Issues:
  *      None.
-*
+ *
  *  License:
  *      BSD 2-Clause License
  *
@@ -629,10 +629,13 @@ namespace {
             0x03,
 
             // Length
-            0x1f,
+            0x21,
 
             // id
             0x0c,
+
+            // time
+            0x05, 0x00,
 
             // location
             0x3f, 0x80, 0x00, 0x00, 0x40, 0x00,
@@ -649,6 +652,7 @@ namespace {
         gs::Object1 object1{};
 
         object1.id.value = 12;
+        object1.time = 0x0500;
         object1.position.x = 1.0f;
         object1.position.y = 2.0f;
         object1.position.z = 3.0f;

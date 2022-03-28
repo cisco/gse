@@ -156,6 +156,7 @@ namespace gs
     struct Object1
     {
         ObjectID id;
+        Time1 time;
         Loc1 position;
         Rot1 rotation;
         Loc1 scale;
