@@ -158,6 +158,7 @@ EncodeResult Encoder::Encode(std::unique_ptr<DataBuffer<>>& data_buffer,
 
     // Determine space required for this object
     data_length.value = Serialize(null_buffer, value.id) +
+        Serialize(null_buffer, value.time) +
         Serialize(null_buffer, value.position) +
         Serialize(null_buffer, value.rotation) +
         Serialize(null_buffer, value.scale);
@@ -179,6 +180,7 @@ EncodeResult Encoder::Encode(std::unique_ptr<DataBuffer<>>& data_buffer,
     total_length = Serialize(data_buffer, Tag::Object1);
     total_length += Serialize(data_buffer, data_length);
     total_length += Serialize(data_buffer, value.id);
+    total_length += Serialize(data_buffer, value.time);
     total_length += Serialize(data_buffer, value.position);
     total_length += Serialize(data_buffer, value.rotation);
     total_length += Serialize(data_buffer, value.scale);

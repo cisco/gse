@@ -404,6 +404,7 @@ int GSSerializeObject(GS_Encoder_Context_Internal &context,
 
     // Copy the data from the C structure to C++ structure
     object1.id.value = object.id;
+    object1.time = object.time;
     SerializeCopy(object.position, object1.position);
     SerializeCopy(object.rotation, object1.rotation);
     SerializeCopy(object.scale, object1.scale);
@@ -1332,6 +1333,7 @@ int GSDeserializeObject([[maybe_unused]] GS_Decoder_Context_Internal &context,
     // Copy the data from the C++ structure to C structure
     object.type = GS_Tag_Object1;
     object.u.object1.id = encoded.id.value;
+    object.u.object1.time = encoded.time;
     DeserializeCopy(encoded.position, object.u.object1.position);
     DeserializeCopy(encoded.rotation, object.u.object1.rotation);
     DeserializeCopy(encoded.scale, object.u.object1.scale);

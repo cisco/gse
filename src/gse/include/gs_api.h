@@ -154,6 +154,7 @@ typedef struct
 
 typedef struct {
     GS_ObjectID id;
+    GS_Time1 time;
     GS_Loc1 position;
     GS_Rot1 rotation;
     GS_Loc1 scale;
