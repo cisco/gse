@@ -4,7 +4,7 @@ target_include_directories(test_gs_deserializer PRIVATE ${CMAKE_SOURCE_DIR}/src/
 
 include(GoogleTest)
 
-target_link_libraries(test_gs_deserializer PRIVATE gse common GTest::GTest GTest::Main)
+target_link_libraries(test_gs_deserializer PRIVATE gse gse_common GTest::GTest GTest::Main)
 
 add_test(NAME test_gs_deserializer
          COMMAND test_gs_deserializer)
