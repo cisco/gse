@@ -6,8 +6,8 @@ add_library(gse gs_api.cpp
                 gs_serializer.cpp
                 half_float.cpp)
 
-set_target_properties(common PROPERTIES POSITION_INDEPENDENT_CODE ${BUILD_SHARED_LIBS})
-target_link_libraries(gse PRIVATE common)
+set_target_properties(gse_common PROPERTIES POSITION_INDEPENDENT_CODE ${BUILD_SHARED_LIBS})
+target_link_libraries(gse PRIVATE gse_common)
 
 target_compile_options(gse PRIVATE
      $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>: -Wpedantic -Wextra -Werror -Wall>
