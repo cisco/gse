@@ -27,10 +27,10 @@ jobs:
         path: vcpkg
     
     - name: Bootstrap vcpkg
-      run: ./${{github.workspace}}/vcpkg/bootstrap-vcpkg.sh
+      run: sh ${{github.workspace}}/vcpkg/bootstrap-vcpkg.sh
     
     - name: Install GTest
-      run: ./${{github.workspace}}/vcpkg/vcpkg install gtest
+      run: ${{github.workspace}}/vcpkg/vcpkg install gtest
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
