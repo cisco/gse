@@ -1,5 +1,5 @@
 add_subdirectory(src)
-target_include_directories(gse PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
 # Specify the internal and public include directories
 target_include_directories(gse
     PRIVATE
