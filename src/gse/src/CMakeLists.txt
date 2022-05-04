@@ -12,3 +12,11 @@ add_library(gse
 target_compile_options(gse PRIVATE
      $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>: -Wpedantic -Wextra -Werror -Wall>
      $<$<CXX_COMPILER_ID:MSVC>: /WX>)
+
+# Specify the internal and public include directories
+target_include_directories(gse
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+    PUBLIC
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/gse/include>
+)
