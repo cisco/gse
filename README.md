@@ -1,3 +1,5 @@
+![build](https://github.com/cisco/gse/actions/workflows/cmake.yml/badge.svg?branch=main)
+
 Game State Encoder Library
 --------------------------
 
