@@ -13,6 +13,10 @@ target_compile_options(gse PRIVATE
      $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>: -Wpedantic -Wextra -Werror -Wall>
      $<$<CXX_COMPILER_ID:MSVC>: /WX>)
 
+if (WIN32)
+    target_link_libraries(gse PRIVATE ws2_32)
+endif()
+
 # Specify the internal and public include directories
 target_include_directories(gse
     PRIVATE
