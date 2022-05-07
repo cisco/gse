@@ -23,4 +23,13 @@ target_include_directories(gse
         ${CMAKE_CURRENT_SOURCE_DIR}/src
     PUBLIC
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/gse/include>
+        $<INSTALL_INTERFACE:include>
 )
+
+# Install target and associated include files
+install(TARGETS gse EXPORT gseTargets ARCHIVE)
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/src/gse/include/ TYPE INCLUDE)
+install(EXPORT gseTargets
+        FILE gseTargets.cmake
+        NAMESPACE gse::
+        DESTINATION lib/cmake/gse/)
