@@ -330,8 +330,8 @@ int GSSerializeObject(GS_Encoder_Context_Internal &context,
     int result = -1;
 
     // Just return 0 if there is no space left in the buffer
-    if (context.data_buffer->GetDataLength() ==
-        context.data_buffer->GetBufferSize())
+    if (context.data_buffer.GetDataLength() ==
+        context.data_buffer.GetBufferSize())
     {
         return 0;
     }
@@ -343,7 +343,7 @@ int GSSerializeObject(GS_Encoder_Context_Internal &context,
             context.error = std::string("Unable to serialize an Invalid object "
                                         "type");
             break;
-        
+
         case GS_Tag_Object1:
             result = GSSerializeObject(context, object.u.object1);
             break;
@@ -962,8 +962,8 @@ int GSDeserializeObject(GS_Decoder_Context_Internal &context, GS_Object &object)
     gs::GSObject decoded_object{};
 
     // If there are no more objects to decode, return 0
-    if (context.data_buffer->GetReadLength() >=
-        context.data_buffer->GetDataLength())
+    if (context.data_buffer.GetReadLength() >=
+        context.data_buffer.GetDataLength())
     {
         return 0;
     }

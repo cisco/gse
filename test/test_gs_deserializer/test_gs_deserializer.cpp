@@ -43,9 +43,7 @@
  *      OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <cstring>
-#include <cstdint>
-#include <memory>
+#include <cstddef>
 #include "gtest/gtest.h"
 #include "gs_deserializer.h"
 #include "gs_serializer.h"
@@ -57,8 +55,7 @@ namespace {
     class GSDeserializerTest : public ::testing::Test
     {
         public:
-            GSDeserializerTest() :
-                data_buffer(std::make_unique<DataBuffer<>>(1500))
+            GSDeserializerTest() : data_buffer(1500)
             {
             }
 
@@ -69,7 +66,7 @@ namespace {
         protected:
             gs::Deserializer deserializer;
             gs::Serializer serializer;
-            std::unique_ptr<DataBuffer<>> data_buffer;
+            DataBuffer<> data_buffer;
     };
 
     /////////////////////////////////
@@ -83,12 +80,12 @@ namespace {
         gs::Uint8 v = 0x00;
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 1);
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
         // Read the data
         gs::Uint8 value = 0xff;
         ASSERT_EQ(deserializer.Read(data_buffer, value), 1);
-        ASSERT_EQ(data_buffer->GetReadLength(), 1);
+        ASSERT_EQ(data_buffer.GetReadLength(), 1);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -101,12 +98,12 @@ namespace {
         gs::Uint8 v = 127;
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 1);
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
         // Read the data
         gs::Uint8 value = 0xff;
         ASSERT_EQ(deserializer.Read(data_buffer, value), 1);
-        ASSERT_EQ(data_buffer->GetReadLength(), 1);
+        ASSERT_EQ(data_buffer.GetReadLength(), 1);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -119,12 +116,12 @@ namespace {
         gs::Uint8 v = 255;
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 1);
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
         // Read the data
         gs::Uint8 value = 0x00;
         ASSERT_EQ(deserializer.Read(data_buffer, value), 1);
-        ASSERT_EQ(data_buffer->GetReadLength(), 1);
+        ASSERT_EQ(data_buffer.GetReadLength(), 1);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -137,12 +134,12 @@ namespace {
         gs::Uint16 v = 0;
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 2);
-        ASSERT_EQ(data_buffer->GetDataLength(), 2);
+        ASSERT_EQ(data_buffer.GetDataLength(), 2);
 
         // Read the data
         gs::Uint16 value = 0xffff;
         ASSERT_EQ(deserializer.Read(data_buffer, value), 2);
-        ASSERT_EQ(data_buffer->GetReadLength(), 2);
+        ASSERT_EQ(data_buffer.GetReadLength(), 2);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -155,12 +152,12 @@ namespace {
         gs::Uint16 v = 32767;
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 2);
-        ASSERT_EQ(data_buffer->GetDataLength(), 2);
+        ASSERT_EQ(data_buffer.GetDataLength(), 2);
 
         // Read the data
         gs::Uint16 value = 0xffff;
         ASSERT_EQ(deserializer.Read(data_buffer, value), 2);
-        ASSERT_EQ(data_buffer->GetReadLength(), 2);
+        ASSERT_EQ(data_buffer.GetReadLength(), 2);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -173,12 +170,12 @@ namespace {
         gs::Uint16 v = 65535;
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 2);
-        ASSERT_EQ(data_buffer->GetDataLength(), 2);
+        ASSERT_EQ(data_buffer.GetDataLength(), 2);
 
         // Read the data
         gs::Uint16 value = 0x0000;
         ASSERT_EQ(deserializer.Read(data_buffer, value), 2);
-        ASSERT_EQ(data_buffer->GetReadLength(), 2);
+        ASSERT_EQ(data_buffer.GetReadLength(), 2);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -191,12 +188,12 @@ namespace {
         gs::Uint32 v = 0;
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 4);
-        ASSERT_EQ(data_buffer->GetDataLength(), 4);
+        ASSERT_EQ(data_buffer.GetDataLength(), 4);
 
         // Read the data
         gs::Uint32 value = 0xdeadbeef;
         ASSERT_EQ(deserializer.Read(data_buffer, value), 4);
-        ASSERT_EQ(data_buffer->GetReadLength(), 4);
+        ASSERT_EQ(data_buffer.GetReadLength(), 4);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -209,12 +206,12 @@ namespace {
         gs::Uint32 v = 2147483649;
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 4);
-        ASSERT_EQ(data_buffer->GetDataLength(), 4);
+        ASSERT_EQ(data_buffer.GetDataLength(), 4);
 
         // Read the data
         gs::Uint32 value = 0xdeadbeef;
         ASSERT_EQ(deserializer.Read(data_buffer, value), 4);
-        ASSERT_EQ(data_buffer->GetReadLength(), 4);
+        ASSERT_EQ(data_buffer.GetReadLength(), 4);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -227,12 +224,12 @@ namespace {
         gs::Uint32 v = 0xdeadbeef;
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 4);
-        ASSERT_EQ(data_buffer->GetDataLength(), 4);
+        ASSERT_EQ(data_buffer.GetDataLength(), 4);
 
         // Read the data
         gs::Uint32 value = 0xcafebabe;
         ASSERT_EQ(deserializer.Read(data_buffer, value), 4);
-        ASSERT_EQ(data_buffer->GetReadLength(), 4);
+        ASSERT_EQ(data_buffer.GetReadLength(), 4);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -245,12 +242,12 @@ namespace {
         gs::Uint64 v = 0;
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 8);
-        ASSERT_EQ(data_buffer->GetDataLength(), 8);
+        ASSERT_EQ(data_buffer.GetDataLength(), 8);
 
         // Read the data
         gs::Uint64 value = 0xdeadbeefcafebabe;
         ASSERT_EQ(deserializer.Read(data_buffer, value), 8);
-        ASSERT_EQ(data_buffer->GetReadLength(), 8);
+        ASSERT_EQ(data_buffer.GetReadLength(), 8);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -263,12 +260,12 @@ namespace {
         gs::Uint64 v = 0xdeadbeefcafebabe;
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 8);
-        ASSERT_EQ(data_buffer->GetDataLength(), 8);
+        ASSERT_EQ(data_buffer.GetDataLength(), 8);
 
         // Read the data
         gs::Uint64 value = 0;
         ASSERT_EQ(deserializer.Read(data_buffer, value), 8);
-        ASSERT_EQ(data_buffer->GetReadLength(), 8);
+        ASSERT_EQ(data_buffer.GetReadLength(), 8);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -285,12 +282,12 @@ namespace {
         gs::Int8 v = 0x00;
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 1);
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
         // Read the data
         gs::Int8 value = 10;
         ASSERT_EQ(deserializer.Read(data_buffer, value), 1);
-        ASSERT_EQ(data_buffer->GetReadLength(), 1);
+        ASSERT_EQ(data_buffer.GetReadLength(), 1);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -303,12 +300,12 @@ namespace {
         gs::Int8 v = 1;
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 1);
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
         // Read the data
         gs::Int8 value = 0;
         ASSERT_EQ(deserializer.Read(data_buffer, value), 1);
-        ASSERT_EQ(data_buffer->GetReadLength(), 1);
+        ASSERT_EQ(data_buffer.GetReadLength(), 1);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -321,12 +318,12 @@ namespace {
         gs::Int8 v = -1;
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 1);
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
         // Read the data
         gs::Int8 value = 0;
         ASSERT_EQ(deserializer.Read(data_buffer, value), 1);
-        ASSERT_EQ(data_buffer->GetReadLength(), 1);
+        ASSERT_EQ(data_buffer.GetReadLength(), 1);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -339,12 +336,12 @@ namespace {
         gs::Int8 v = 127;
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 1);
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
         // Read the data
         gs::Int8 value = 0;
         ASSERT_EQ(deserializer.Read(data_buffer, value), 1);
-        ASSERT_EQ(data_buffer->GetReadLength(), 1);
+        ASSERT_EQ(data_buffer.GetReadLength(), 1);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -357,12 +354,12 @@ namespace {
         gs::Int8 v = -128;
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 1);
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
         // Read the data
         gs::Int8 value = 0;
         ASSERT_EQ(deserializer.Read(data_buffer, value), 1);
-        ASSERT_EQ(data_buffer->GetReadLength(), 1);
+        ASSERT_EQ(data_buffer.GetReadLength(), 1);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -375,12 +372,12 @@ namespace {
         gs::Int16 v = 0x00;
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 2);
-        ASSERT_EQ(data_buffer->GetDataLength(), 2);
+        ASSERT_EQ(data_buffer.GetDataLength(), 2);
 
         // Read the data
         gs::Int16 value = 10;
         ASSERT_EQ(deserializer.Read(data_buffer, value), 2);
-        ASSERT_EQ(data_buffer->GetReadLength(), 2);
+        ASSERT_EQ(data_buffer.GetReadLength(), 2);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -393,12 +390,12 @@ namespace {
         gs::Int16 v = 1;
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 2);
-        ASSERT_EQ(data_buffer->GetDataLength(), 2);
+        ASSERT_EQ(data_buffer.GetDataLength(), 2);
 
         // Read the data
         gs::Int16 value = 10;
         ASSERT_EQ(deserializer.Read(data_buffer, value), 2);
-        ASSERT_EQ(data_buffer->GetReadLength(), 2);
+        ASSERT_EQ(data_buffer.GetReadLength(), 2);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -411,12 +408,12 @@ namespace {
         gs::Int16 v = -1;
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 2);
-        ASSERT_EQ(data_buffer->GetDataLength(), 2);
+        ASSERT_EQ(data_buffer.GetDataLength(), 2);
 
         // Read the data
         gs::Int16 value = 10;
         ASSERT_EQ(deserializer.Read(data_buffer, value), 2);
-        ASSERT_EQ(data_buffer->GetReadLength(), 2);
+        ASSERT_EQ(data_buffer.GetReadLength(), 2);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -429,12 +426,12 @@ namespace {
         gs::Int16 v = 32767;
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 2);
-        ASSERT_EQ(data_buffer->GetDataLength(), 2);
+        ASSERT_EQ(data_buffer.GetDataLength(), 2);
 
         // Read the data
         gs::Int16 value = 10;
         ASSERT_EQ(deserializer.Read(data_buffer, value), 2);
-        ASSERT_EQ(data_buffer->GetReadLength(), 2);
+        ASSERT_EQ(data_buffer.GetReadLength(), 2);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -447,12 +444,12 @@ namespace {
         gs::Int16 v = -32768;
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 2);
-        ASSERT_EQ(data_buffer->GetDataLength(), 2);
+        ASSERT_EQ(data_buffer.GetDataLength(), 2);
 
         // Read the data
         gs::Int16 value = 10;
         ASSERT_EQ(deserializer.Read(data_buffer, value), 2);
-        ASSERT_EQ(data_buffer->GetReadLength(), 2);
+        ASSERT_EQ(data_buffer.GetReadLength(), 2);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -465,12 +462,12 @@ namespace {
         gs::Int32 v = 0;
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 4);
-        ASSERT_EQ(data_buffer->GetDataLength(), 4);
+        ASSERT_EQ(data_buffer.GetDataLength(), 4);
 
         // Read the data
         gs::Int32 value = 10;
         ASSERT_EQ(deserializer.Read(data_buffer, value), 4);
-        ASSERT_EQ(data_buffer->GetReadLength(), 4);
+        ASSERT_EQ(data_buffer.GetReadLength(), 4);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -483,12 +480,12 @@ namespace {
         gs::Int32 v = 1;
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 4);
-        ASSERT_EQ(data_buffer->GetDataLength(), 4);
+        ASSERT_EQ(data_buffer.GetDataLength(), 4);
 
         // Read the data
         gs::Int32 value = 10;
         ASSERT_EQ(deserializer.Read(data_buffer, value), 4);
-        ASSERT_EQ(data_buffer->GetReadLength(), 4);
+        ASSERT_EQ(data_buffer.GetReadLength(), 4);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -501,12 +498,12 @@ namespace {
         gs::Int32 v = -1;
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 4);
-        ASSERT_EQ(data_buffer->GetDataLength(), 4);
+        ASSERT_EQ(data_buffer.GetDataLength(), 4);
 
         // Read the data
         gs::Int32 value = 10;
         ASSERT_EQ(deserializer.Read(data_buffer, value), 4);
-        ASSERT_EQ(data_buffer->GetReadLength(), 4);
+        ASSERT_EQ(data_buffer.GetReadLength(), 4);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -519,12 +516,12 @@ namespace {
         gs::Int32 v = INT32_MAX;
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 4);
-        ASSERT_EQ(data_buffer->GetDataLength(), 4);
+        ASSERT_EQ(data_buffer.GetDataLength(), 4);
 
         // Read the data
         gs::Int32 value = 10;
         ASSERT_EQ(deserializer.Read(data_buffer, value), 4);
-        ASSERT_EQ(data_buffer->GetReadLength(), 4);
+        ASSERT_EQ(data_buffer.GetReadLength(), 4);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -537,12 +534,12 @@ namespace {
         gs::Int32 v = INT32_MIN;
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 4);
-        ASSERT_EQ(data_buffer->GetDataLength(), 4);
+        ASSERT_EQ(data_buffer.GetDataLength(), 4);
 
         // Read the data
         gs::Int32 value = 10;
         ASSERT_EQ(deserializer.Read(data_buffer, value), 4);
-        ASSERT_EQ(data_buffer->GetReadLength(), 4);
+        ASSERT_EQ(data_buffer.GetReadLength(), 4);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -555,12 +552,12 @@ namespace {
         gs::Int64 v = 0;
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 8);
-        ASSERT_EQ(data_buffer->GetDataLength(), 8);
+        ASSERT_EQ(data_buffer.GetDataLength(), 8);
 
         // Read the data
         gs::Int64 value = 10;
         ASSERT_EQ(deserializer.Read(data_buffer, value), 8);
-        ASSERT_EQ(data_buffer->GetReadLength(), 8);
+        ASSERT_EQ(data_buffer.GetReadLength(), 8);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -573,12 +570,12 @@ namespace {
         gs::Int64 v = 1;
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 8);
-        ASSERT_EQ(data_buffer->GetDataLength(), 8);
+        ASSERT_EQ(data_buffer.GetDataLength(), 8);
 
         // Read the data
         gs::Int64 value = 10;
         ASSERT_EQ(deserializer.Read(data_buffer, value), 8);
-        ASSERT_EQ(data_buffer->GetReadLength(), 8);
+        ASSERT_EQ(data_buffer.GetReadLength(), 8);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -591,12 +588,12 @@ namespace {
         gs::Int64 v = -1;
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 8);
-        ASSERT_EQ(data_buffer->GetDataLength(), 8);
+        ASSERT_EQ(data_buffer.GetDataLength(), 8);
 
         // Read the data
         gs::Int64 value = 10;
         ASSERT_EQ(deserializer.Read(data_buffer, value), 8);
-        ASSERT_EQ(data_buffer->GetReadLength(), 8);
+        ASSERT_EQ(data_buffer.GetReadLength(), 8);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -609,12 +606,12 @@ namespace {
         gs::Int64 v = INT64_MAX; // 9223372036854775807
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 8);
-        ASSERT_EQ(data_buffer->GetDataLength(), 8);
+        ASSERT_EQ(data_buffer.GetDataLength(), 8);
 
         // Read the data
         gs::Int64 value = 10;
         ASSERT_EQ(deserializer.Read(data_buffer, value), 8);
-        ASSERT_EQ(data_buffer->GetReadLength(), 8);
+        ASSERT_EQ(data_buffer.GetReadLength(), 8);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -627,12 +624,12 @@ namespace {
         gs::Int64 v = INT64_MIN; // -9223372036854775808;
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 8);
-        ASSERT_EQ(data_buffer->GetDataLength(), 8);
+        ASSERT_EQ(data_buffer.GetDataLength(), 8);
 
         // Read the data
         gs::Int64 value = 10;
         ASSERT_EQ(deserializer.Read(data_buffer, value), 8);
-        ASSERT_EQ(data_buffer->GetReadLength(), 8);
+        ASSERT_EQ(data_buffer.GetReadLength(), 8);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -649,12 +646,12 @@ namespace {
         gs::VarUint v{0};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 1);
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
         // Read the data
         gs::VarUint value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 1);
-        ASSERT_EQ(data_buffer->GetReadLength(), 1);
+        ASSERT_EQ(data_buffer.GetReadLength(), 1);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -667,12 +664,12 @@ namespace {
         gs::VarUint v{1};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 1);
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
         // Read the data
         gs::VarUint value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 1);
-        ASSERT_EQ(data_buffer->GetReadLength(), 1);
+        ASSERT_EQ(data_buffer.GetReadLength(), 1);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -685,12 +682,12 @@ namespace {
         gs::VarUint v{63};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 1);
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
         // Read the data
         gs::VarUint value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 1);
-        ASSERT_EQ(data_buffer->GetReadLength(), 1);
+        ASSERT_EQ(data_buffer.GetReadLength(), 1);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -703,12 +700,12 @@ namespace {
         gs::VarUint v{64};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 1);
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
         // Read the data
         gs::VarUint value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 1);
-        ASSERT_EQ(data_buffer->GetReadLength(), 1);
+        ASSERT_EQ(data_buffer.GetReadLength(), 1);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -721,12 +718,12 @@ namespace {
         gs::VarUint v{127};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 1);
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
         // Read the data
         gs::VarUint value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 1);
-        ASSERT_EQ(data_buffer->GetReadLength(), 1);
+        ASSERT_EQ(data_buffer.GetReadLength(), 1);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -739,12 +736,12 @@ namespace {
         gs::VarUint v{128};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 2);
-        ASSERT_EQ(data_buffer->GetDataLength(), 2);
+        ASSERT_EQ(data_buffer.GetDataLength(), 2);
 
         // Read the data
         gs::VarUint value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 2);
-        ASSERT_EQ(data_buffer->GetReadLength(), 2);
+        ASSERT_EQ(data_buffer.GetReadLength(), 2);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -757,12 +754,12 @@ namespace {
         gs::VarUint v{8191};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 2);
-        ASSERT_EQ(data_buffer->GetDataLength(), 2);
+        ASSERT_EQ(data_buffer.GetDataLength(), 2);
 
         // Read the data
         gs::VarUint value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 2);
-        ASSERT_EQ(data_buffer->GetReadLength(), 2);
+        ASSERT_EQ(data_buffer.GetReadLength(), 2);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -775,12 +772,12 @@ namespace {
         gs::VarUint v{8192};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 2);
-        ASSERT_EQ(data_buffer->GetDataLength(), 2);
+        ASSERT_EQ(data_buffer.GetDataLength(), 2);
 
         // Read the data
         gs::VarUint value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 2);
-        ASSERT_EQ(data_buffer->GetReadLength(), 2);
+        ASSERT_EQ(data_buffer.GetReadLength(), 2);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -793,12 +790,12 @@ namespace {
         gs::VarUint v{16383};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 2);
-        ASSERT_EQ(data_buffer->GetDataLength(), 2);
+        ASSERT_EQ(data_buffer.GetDataLength(), 2);
 
         // Read the data
         gs::VarUint value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 2);
-        ASSERT_EQ(data_buffer->GetReadLength(), 2);
+        ASSERT_EQ(data_buffer.GetReadLength(), 2);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -811,12 +808,12 @@ namespace {
         gs::VarUint v{16384};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 3);
-        ASSERT_EQ(data_buffer->GetDataLength(), 3);
+        ASSERT_EQ(data_buffer.GetDataLength(), 3);
 
         // Read the data
         gs::VarUint value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 3);
-        ASSERT_EQ(data_buffer->GetReadLength(), 3);
+        ASSERT_EQ(data_buffer.GetReadLength(), 3);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -829,12 +826,12 @@ namespace {
         gs::VarUint v{1048575};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 3);
-        ASSERT_EQ(data_buffer->GetDataLength(), 3);
+        ASSERT_EQ(data_buffer.GetDataLength(), 3);
 
         // Read the data
         gs::VarUint value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 3);
-        ASSERT_EQ(data_buffer->GetReadLength(), 3);
+        ASSERT_EQ(data_buffer.GetReadLength(), 3);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -847,12 +844,12 @@ namespace {
         gs::VarUint v{1048576};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 3);
-        ASSERT_EQ(data_buffer->GetDataLength(), 3);
+        ASSERT_EQ(data_buffer.GetDataLength(), 3);
 
         // Read the data
         gs::VarUint value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 3);
-        ASSERT_EQ(data_buffer->GetReadLength(), 3);
+        ASSERT_EQ(data_buffer.GetReadLength(), 3);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -865,12 +862,12 @@ namespace {
         gs::VarUint v{2097151};                 // Max 21-bit unsigned integer
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 3);
-        ASSERT_EQ(data_buffer->GetDataLength(), 3);
+        ASSERT_EQ(data_buffer.GetDataLength(), 3);
 
         // Read the data
         gs::VarUint value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 3);
-        ASSERT_EQ(data_buffer->GetReadLength(), 3);
+        ASSERT_EQ(data_buffer.GetReadLength(), 3);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -883,12 +880,12 @@ namespace {
         gs::VarUint v{2147483647UL};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 5);
-        ASSERT_EQ(data_buffer->GetDataLength(), 5);
+        ASSERT_EQ(data_buffer.GetDataLength(), 5);
 
         // Read the data
         gs::VarUint value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 5);
-        ASSERT_EQ(data_buffer->GetReadLength(), 5);
+        ASSERT_EQ(data_buffer.GetReadLength(), 5);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -901,12 +898,12 @@ namespace {
         gs::VarUint v{2147483648};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 5);
-        ASSERT_EQ(data_buffer->GetDataLength(), 5);
+        ASSERT_EQ(data_buffer.GetDataLength(), 5);
 
         // Read the data
         gs::VarUint value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 5);
-        ASSERT_EQ(data_buffer->GetReadLength(), 5);
+        ASSERT_EQ(data_buffer.GetReadLength(), 5);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -919,12 +916,12 @@ namespace {
         gs::VarUint v{UINT32_MAX};              // 4294967295
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 5);
-        ASSERT_EQ(data_buffer->GetDataLength(), 5);
+        ASSERT_EQ(data_buffer.GetDataLength(), 5);
 
         // Read the data
         gs::VarUint value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 5);
-        ASSERT_EQ(data_buffer->GetReadLength(), 5);
+        ASSERT_EQ(data_buffer.GetReadLength(), 5);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -937,12 +934,12 @@ namespace {
         gs::VarUint v{4294967296};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 9);
-        ASSERT_EQ(data_buffer->GetDataLength(), 9);
+        ASSERT_EQ(data_buffer.GetDataLength(), 9);
 
         // Read the data
         gs::VarUint value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 9);
-        ASSERT_EQ(data_buffer->GetReadLength(), 9);
+        ASSERT_EQ(data_buffer.GetReadLength(), 9);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -955,12 +952,12 @@ namespace {
         gs::VarUint v{UINT64_MAX};              // 18446744073709551615
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 9);
-        ASSERT_EQ(data_buffer->GetDataLength(), 9);
+        ASSERT_EQ(data_buffer.GetDataLength(), 9);
 
         // Read the data
         gs::VarUint value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 9);
-        ASSERT_EQ(data_buffer->GetReadLength(), 9);
+        ASSERT_EQ(data_buffer.GetReadLength(), 9);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -977,12 +974,12 @@ namespace {
         gs::VarInt v{0};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 1);
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
         // Read the data
         gs::VarInt value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 1);
-        ASSERT_EQ(data_buffer->GetReadLength(), 1);
+        ASSERT_EQ(data_buffer.GetReadLength(), 1);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -995,12 +992,12 @@ namespace {
         gs::VarInt v{1};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 1);
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
         // Read the data
         gs::VarInt value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 1);
-        ASSERT_EQ(data_buffer->GetReadLength(), 1);
+        ASSERT_EQ(data_buffer.GetReadLength(), 1);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -1013,12 +1010,12 @@ namespace {
         gs::VarInt v{-1};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 1);
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
         // Read the data
         gs::VarInt value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 1);
-        ASSERT_EQ(data_buffer->GetReadLength(), 1);
+        ASSERT_EQ(data_buffer.GetReadLength(), 1);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -1031,12 +1028,12 @@ namespace {
         gs::VarInt v{-64};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 1);
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
         // Read the data
         gs::VarInt value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 1);
-        ASSERT_EQ(data_buffer->GetReadLength(), 1);
+        ASSERT_EQ(data_buffer.GetReadLength(), 1);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -1049,12 +1046,12 @@ namespace {
         gs::VarInt v{63};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 1);
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
         // Read the data
         gs::VarInt value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 1);
-        ASSERT_EQ(data_buffer->GetReadLength(), 1);
+        ASSERT_EQ(data_buffer.GetReadLength(), 1);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -1067,12 +1064,12 @@ namespace {
         gs::VarInt v{64};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 2);
-        ASSERT_EQ(data_buffer->GetDataLength(), 2);
+        ASSERT_EQ(data_buffer.GetDataLength(), 2);
 
         // Read the data
         gs::VarInt value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 2);
-        ASSERT_EQ(data_buffer->GetReadLength(), 2);
+        ASSERT_EQ(data_buffer.GetReadLength(), 2);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -1085,12 +1082,12 @@ namespace {
         gs::VarInt v{-65};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 2);
-        ASSERT_EQ(data_buffer->GetDataLength(), 2);
+        ASSERT_EQ(data_buffer.GetDataLength(), 2);
 
         // Read the data
         gs::VarInt value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 2);
-        ASSERT_EQ(data_buffer->GetReadLength(), 2);
+        ASSERT_EQ(data_buffer.GetReadLength(), 2);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -1103,12 +1100,12 @@ namespace {
         gs::VarInt v{-8192};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 2);
-        ASSERT_EQ(data_buffer->GetDataLength(), 2);
+        ASSERT_EQ(data_buffer.GetDataLength(), 2);
 
         // Read the data
         gs::VarInt value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 2);
-        ASSERT_EQ(data_buffer->GetReadLength(), 2);
+        ASSERT_EQ(data_buffer.GetReadLength(), 2);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -1121,12 +1118,12 @@ namespace {
         gs::VarInt v{8191};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 2);
-        ASSERT_EQ(data_buffer->GetDataLength(), 2);
+        ASSERT_EQ(data_buffer.GetDataLength(), 2);
 
         // Read the data
         gs::VarInt value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 2);
-        ASSERT_EQ(data_buffer->GetReadLength(), 2);
+        ASSERT_EQ(data_buffer.GetReadLength(), 2);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -1139,12 +1136,12 @@ namespace {
         gs::VarInt v{-8193};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 3);
-        ASSERT_EQ(data_buffer->GetDataLength(), 3);
+        ASSERT_EQ(data_buffer.GetDataLength(), 3);
 
         // Read the data
         gs::VarInt value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 3);
-        ASSERT_EQ(data_buffer->GetReadLength(), 3);
+        ASSERT_EQ(data_buffer.GetReadLength(), 3);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -1157,12 +1154,12 @@ namespace {
         gs::VarInt v{8192};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 3);
-        ASSERT_EQ(data_buffer->GetDataLength(), 3);
+        ASSERT_EQ(data_buffer.GetDataLength(), 3);
 
         // Read the data
         gs::VarInt value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 3);
-        ASSERT_EQ(data_buffer->GetReadLength(), 3);
+        ASSERT_EQ(data_buffer.GetReadLength(), 3);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -1175,12 +1172,12 @@ namespace {
         gs::VarInt v{-1048576};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 3);
-        ASSERT_EQ(data_buffer->GetDataLength(), 3);
+        ASSERT_EQ(data_buffer.GetDataLength(), 3);
 
         // Read the data
         gs::VarInt value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 3);
-        ASSERT_EQ(data_buffer->GetReadLength(), 3);
+        ASSERT_EQ(data_buffer.GetReadLength(), 3);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -1193,12 +1190,12 @@ namespace {
         gs::VarInt v{1048575};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 3);
-        ASSERT_EQ(data_buffer->GetDataLength(), 3);
+        ASSERT_EQ(data_buffer.GetDataLength(), 3);
 
         // Read the data
         gs::VarInt value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 3);
-        ASSERT_EQ(data_buffer->GetReadLength(), 3);
+        ASSERT_EQ(data_buffer.GetReadLength(), 3);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -1211,12 +1208,12 @@ namespace {
         gs::VarInt v{-1048577};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 5);
-        ASSERT_EQ(data_buffer->GetDataLength(), 5);
+        ASSERT_EQ(data_buffer.GetDataLength(), 5);
 
         // Read the data
         gs::VarInt value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 5);
-        ASSERT_EQ(data_buffer->GetReadLength(), 5);
+        ASSERT_EQ(data_buffer.GetReadLength(), 5);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -1229,12 +1226,12 @@ namespace {
         gs::VarInt v{1048576};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 5);
-        ASSERT_EQ(data_buffer->GetDataLength(), 5);
+        ASSERT_EQ(data_buffer.GetDataLength(), 5);
 
         // Read the data
         gs::VarInt value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 5);
-        ASSERT_EQ(data_buffer->GetReadLength(), 5);
+        ASSERT_EQ(data_buffer.GetReadLength(), 5);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -1247,12 +1244,12 @@ namespace {
         gs::VarInt v{-2147483648ll};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 5);
-        ASSERT_EQ(data_buffer->GetDataLength(), 5);
+        ASSERT_EQ(data_buffer.GetDataLength(), 5);
 
         // Read the data
         gs::VarInt value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 5);
-        ASSERT_EQ(data_buffer->GetReadLength(), 5);
+        ASSERT_EQ(data_buffer.GetReadLength(), 5);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -1265,12 +1262,12 @@ namespace {
         gs::VarInt v{2147483647ll};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 5);
-        ASSERT_EQ(data_buffer->GetDataLength(), 5);
+        ASSERT_EQ(data_buffer.GetDataLength(), 5);
 
         // Read the data
         gs::VarInt value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 5);
-        ASSERT_EQ(data_buffer->GetReadLength(), 5);
+        ASSERT_EQ(data_buffer.GetReadLength(), 5);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -1283,12 +1280,12 @@ namespace {
         gs::VarInt v{-2147483649ll};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 9);
-        ASSERT_EQ(data_buffer->GetDataLength(), 9);
+        ASSERT_EQ(data_buffer.GetDataLength(), 9);
 
         // Read the data
         gs::VarInt value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 9);
-        ASSERT_EQ(data_buffer->GetReadLength(), 9);
+        ASSERT_EQ(data_buffer.GetReadLength(), 9);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -1301,12 +1298,12 @@ namespace {
         gs::VarInt v{2147483648ll};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 9);
-        ASSERT_EQ(data_buffer->GetDataLength(), 9);
+        ASSERT_EQ(data_buffer.GetDataLength(), 9);
 
         // Read the data
         gs::VarInt value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 9);
-        ASSERT_EQ(data_buffer->GetReadLength(), 9);
+        ASSERT_EQ(data_buffer.GetReadLength(), 9);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -1319,12 +1316,12 @@ namespace {
         gs::VarInt v{INT64_MIN};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 9);
-        ASSERT_EQ(data_buffer->GetDataLength(), 9);
+        ASSERT_EQ(data_buffer.GetDataLength(), 9);
 
         // Read the data
         gs::VarInt value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 9);
-        ASSERT_EQ(data_buffer->GetReadLength(), 9);
+        ASSERT_EQ(data_buffer.GetReadLength(), 9);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -1337,12 +1334,12 @@ namespace {
         gs::VarInt v{INT64_MAX};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 9);
-        ASSERT_EQ(data_buffer->GetDataLength(), 9);
+        ASSERT_EQ(data_buffer.GetDataLength(), 9);
 
         // Read the data
         gs::VarInt value{10};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 9);
-        ASSERT_EQ(data_buffer->GetReadLength(), 9);
+        ASSERT_EQ(data_buffer.GetReadLength(), 9);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -1359,12 +1356,12 @@ namespace {
         gs::Float16 v{3.140625f};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 2);
-        ASSERT_EQ(data_buffer->GetDataLength(), 2);
+        ASSERT_EQ(data_buffer.GetDataLength(), 2);
 
         // Read the data
         gs::Float16 value{10.0f};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 2);
-        ASSERT_EQ(data_buffer->GetReadLength(), 2);
+        ASSERT_EQ(data_buffer.GetReadLength(), 2);
 
         // Compare the results
         ASSERT_EQ(v.value, value.value);
@@ -1381,12 +1378,12 @@ namespace {
         gs::Float32 v = 3.14159265f;
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 4);
-        ASSERT_EQ(data_buffer->GetDataLength(), 4);
+        ASSERT_EQ(data_buffer.GetDataLength(), 4);
 
         // Read the data
         gs::Float32 value = 10.0f;
         ASSERT_EQ(deserializer.Read(data_buffer, value), 4);
-        ASSERT_EQ(data_buffer->GetReadLength(), 4);
+        ASSERT_EQ(data_buffer.GetReadLength(), 4);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -1403,12 +1400,12 @@ namespace {
         gs::Float64 v = 3.141592653589793;
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 8);
-        ASSERT_EQ(data_buffer->GetDataLength(), 8);
+        ASSERT_EQ(data_buffer.GetDataLength(), 8);
 
         // Read the data
         gs::Float64 value = 10.0;
         ASSERT_EQ(deserializer.Read(data_buffer, value), 8);
-        ASSERT_EQ(data_buffer->GetReadLength(), 8);
+        ASSERT_EQ(data_buffer.GetReadLength(), 8);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -1425,12 +1422,12 @@ namespace {
         gs::Boolean v = true;
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 1);
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
         // Read the data
         gs::Boolean value = false;
         ASSERT_EQ(deserializer.Read(data_buffer, value), 1);
-        ASSERT_EQ(data_buffer->GetReadLength(), 1);
+        ASSERT_EQ(data_buffer.GetReadLength(), 1);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -1443,12 +1440,12 @@ namespace {
         gs::Boolean v = false;
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 1);
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
         // Read the data
         gs::Boolean value = true;
         ASSERT_EQ(deserializer.Read(data_buffer, value), 1);
-        ASSERT_EQ(data_buffer->GetReadLength(), 1);
+        ASSERT_EQ(data_buffer.GetReadLength(), 1);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -1465,12 +1462,12 @@ namespace {
         gs::Byte v = 0;
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 1);
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
         // Read the data
         gs::Byte value = 10;
         ASSERT_EQ(deserializer.Read(data_buffer, value), 1);
-        ASSERT_EQ(data_buffer->GetReadLength(), 1);
+        ASSERT_EQ(data_buffer.GetReadLength(), 1);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -1483,12 +1480,12 @@ namespace {
         gs::Byte v = 128;
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 1);
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
         // Read the data
         gs::Byte value = 10;
         ASSERT_EQ(deserializer.Read(data_buffer, value), 1);
-        ASSERT_EQ(data_buffer->GetReadLength(), 1);
+        ASSERT_EQ(data_buffer.GetReadLength(), 1);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -1501,12 +1498,12 @@ namespace {
         gs::Byte v = 255;
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 1);
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
         // Read the data
         gs::Byte value = 10;
         ASSERT_EQ(deserializer.Read(data_buffer, value), 1);
-        ASSERT_EQ(data_buffer->GetReadLength(), 1);
+        ASSERT_EQ(data_buffer.GetReadLength(), 1);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -1522,12 +1519,12 @@ namespace {
         gs::String v{};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 1);
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
         // Read the data
         gs::String value{};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 1);
-        ASSERT_EQ(data_buffer->GetReadLength(), 1);
+        ASSERT_EQ(data_buffer.GetReadLength(), 1);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -1539,12 +1536,12 @@ namespace {
         gs::String v{"Hello"};
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 6);
-        ASSERT_EQ(data_buffer->GetDataLength(), 6);
+        ASSERT_EQ(data_buffer.GetDataLength(), 6);
 
         // Read the data
         gs::String value{};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 6);
-        ASSERT_EQ(data_buffer->GetReadLength(), 6);
+        ASSERT_EQ(data_buffer.GetReadLength(), 6);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -1558,12 +1555,12 @@ namespace {
                        "The quick brown fox jumps over the lazy dog.";
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 136);
-        ASSERT_EQ(data_buffer->GetDataLength(), 136);
+        ASSERT_EQ(data_buffer.GetDataLength(), 136);
 
         // Read the data
         gs::String value{};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 136);
-        ASSERT_EQ(data_buffer->GetReadLength(), 136);
+        ASSERT_EQ(data_buffer.GetReadLength(), 136);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -1584,12 +1581,12 @@ namespace {
 
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 6);
-        ASSERT_EQ(data_buffer->GetDataLength(), 6);
+        ASSERT_EQ(data_buffer.GetDataLength(), 6);
 
         // Read the data
         gs::Blob value{};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 6);
-        ASSERT_EQ(data_buffer->GetReadLength(), 6);
+        ASSERT_EQ(data_buffer.GetReadLength(), 6);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -1608,12 +1605,12 @@ namespace {
 
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 136);
-        ASSERT_EQ(data_buffer->GetDataLength(), 136);
+        ASSERT_EQ(data_buffer.GetDataLength(), 136);
 
         // Read the data
         gs::Blob value{};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 136);
-        ASSERT_EQ(data_buffer->GetReadLength(), 136);
+        ASSERT_EQ(data_buffer.GetReadLength(), 136);
 
         // Compare the results
         ASSERT_EQ(v, value);
@@ -1628,12 +1625,12 @@ namespace {
 
         std::size_t l = serializer.Write(data_buffer, v);
         ASSERT_EQ(l, 1002);
-        ASSERT_EQ(data_buffer->GetDataLength(), 1002);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1002);
 
         // Read the data
         gs::Blob value{};
         ASSERT_EQ(deserializer.Read(data_buffer, value), 1002);
-        ASSERT_EQ(data_buffer->GetReadLength(), 1002);
+        ASSERT_EQ(data_buffer.GetReadLength(), 1002);
 
         // Compare the results
         ASSERT_EQ(v, value);

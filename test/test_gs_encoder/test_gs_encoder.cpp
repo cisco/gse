@@ -44,7 +44,7 @@
 
 #include <cstring>
 #include <cstdint>
-#include <memory>
+#include <cstddef>
 #include <variant>
 #include <vector>
 #include "gtest/gtest.h"
@@ -58,7 +58,7 @@ namespace {
     class GSEncoderTest : public ::testing::Test
     {
         public:
-            GSEncoderTest() : data_buffer(std::make_unique<DataBuffer<>>(1500))
+            GSEncoderTest() : data_buffer(1500)
             {
             }
 
@@ -68,7 +68,7 @@ namespace {
 
         protected:
             gs::Encoder encoder;
-            std::unique_ptr<DataBuffer<>> data_buffer;
+            DataBuffer<> data_buffer;
     };
 
     // Test vector B.1
@@ -107,7 +107,7 @@ namespace {
         // Verify the buffer contents
         for (std::size_t i = 0; i < expected.size(); i++)
         {
-            ASSERT_EQ((*data_buffer)[i], expected[i]);
+            ASSERT_EQ(data_buffer[i], expected[i]);
         }
     };
 
@@ -150,7 +150,7 @@ namespace {
         // Verify the buffer contents
         for (std::size_t i = 0; i < expected.size(); i++)
         {
-            ASSERT_EQ((*data_buffer)[i], expected[i]);
+            ASSERT_EQ(data_buffer[i], expected[i]);
         }
     };
 
@@ -185,7 +185,7 @@ namespace {
         // Verify the buffer contents
         for (std::size_t i = 0; i < expected.size(); i++)
         {
-            ASSERT_EQ((*data_buffer)[i], expected[i]);
+            ASSERT_EQ(data_buffer[i], expected[i]);
         }
     };
 
@@ -228,7 +228,7 @@ namespace {
         // Verify the buffer contents
         for (std::size_t i = 0; i < expected.size(); i++)
         {
-            ASSERT_EQ((*data_buffer)[i], expected[i]);
+            ASSERT_EQ(data_buffer[i], expected[i]);
         }
     };
 
@@ -308,7 +308,7 @@ namespace {
         // Verify the buffer contents
         for (std::size_t i = 0; i < expected.size(); i++)
         {
-            ASSERT_EQ((*data_buffer)[i], expected[i]);
+            ASSERT_EQ(data_buffer[i], expected[i]);
         }
     }
 
@@ -385,7 +385,7 @@ namespace {
         // Verify the buffer contents
         for (std::size_t i = 0; i < expected.size(); i++)
         {
-            ASSERT_EQ((*data_buffer)[i], expected[i]);
+            ASSERT_EQ(data_buffer[i], expected[i]);
         }
     };
 
@@ -456,17 +456,17 @@ namespace {
         objects.push_back(head);
 
         // Define a short data buffer
-        auto db = std::make_unique<DataBuffer<>>(100);
+        DataBuffer<> db(100);
 
         // Check the expected encoded length, which should only be the
         // first too objects, aa the buffer is too short for all 3
         ASSERT_EQ(encoder.Encode(db, objects),
-                  std::make_pair(std::size_t(2), ::size_t(89)));
+                  std::make_pair(std::size_t(2), std::size_t(89)));
 
         // Verify the buffer contents
         for (std::size_t i = 0; i < 35; i++)
         {
-            ASSERT_EQ((*db)[i], expected[i]);
+            ASSERT_EQ(db[i], expected[i]);
         }
     };
 
@@ -507,7 +507,7 @@ namespace {
         // Verify the buffer contents
         for (std::size_t i = 0; i < expected.size(); i++)
         {
-            ASSERT_EQ((*data_buffer)[i], expected[i]);
+            ASSERT_EQ(data_buffer[i], expected[i]);
         }
     }
 
@@ -616,7 +616,7 @@ namespace {
         // Verify the buffer contents
         for (std::size_t i = 0; i < expected.size(); i++)
         {
-            ASSERT_EQ((*data_buffer)[i], expected[i]);
+            ASSERT_EQ(data_buffer[i], expected[i]);
         }
     }
 
@@ -670,7 +670,7 @@ namespace {
         // Verify the buffer contents
         for (std::size_t i = 0; i < expected.size(); i++)
         {
-            ASSERT_EQ((*data_buffer)[i], expected[i]);
+            ASSERT_EQ(data_buffer[i], expected[i]);
         }
     }
 

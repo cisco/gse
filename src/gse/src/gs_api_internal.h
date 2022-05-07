@@ -45,7 +45,6 @@
 #ifndef GS_API_INTERNAL_H
 #define GS_API_INTERNAL_H
 
-#include <memory>
 #include <string>
 #include <vector>
 #include "gs_api.h"
@@ -60,7 +59,7 @@ namespace gs_api
 typedef struct
 {
     gs::Encoder encoder;                        // gs::Encoder object
-    std::unique_ptr<DataBuffer<>> data_buffer;  // DataBuffer object
+    DataBuffer<> data_buffer;                   // DataBuffer object
     std::string error;                          // Text for last error
 } GS_Encoder_Context_Internal;
 
@@ -68,7 +67,7 @@ typedef struct
 typedef struct
 {
     gs::Decoder decoder;                        // gs::Decoder object
-    std::unique_ptr<DataBuffer<>> data_buffer;  // DataBuffer object
+    DataBuffer<> data_buffer;                   // DataBuffer object
     std::string error;                          // Text for last error
     std::vector<std::uint8_t *> allocations;    // Memory allocations
 } GS_Decoder_Context_Internal;
@@ -76,8 +75,8 @@ typedef struct
 // Functions to perform object conversion and serialization
 int GSSerializeObject(GS_Encoder_Context_Internal &context,
                       const GS_Object &object);
-int GSSerializeObject(GS_Encoder_Context_Internal& context,
-                      const GS_Object1& object);
+int GSSerializeObject(GS_Encoder_Context_Internal &context,
+                      const GS_Object1 &object);
 int GSSerializeObject(GS_Encoder_Context_Internal &context,
                       const GS_Head1 &object);
 int GSSerializeObject(GS_Encoder_Context_Internal &context,
@@ -112,9 +111,9 @@ int GSDeserializeObject(GS_Decoder_Context_Internal &context,
 int GSDeserializeObject(GS_Decoder_Context_Internal &context,
                         const gs::UnknownObject &decoded_object,
                         GS_Object &object);
-int GSDeserializeObject(GS_Decoder_Context_Internal& context,
-                        const gs::Object1& decoded_object,
-                        GS_Object& object);
+int GSDeserializeObject(GS_Decoder_Context_Internal &context,
+                        const gs::Object1 &decoded_object,
+                        GS_Object &object);
 
 #endif // GS_API_INTERNAL_H
 

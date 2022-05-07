@@ -94,10 +94,12 @@ int CALL GSEncoderInit(GS_Encoder_Context **gs_encoder_context,
     try
     {
         // Create the internal encoder context
-        context = new gs_api::GS_Encoder_Context_Internal{
-            gs::Encoder(),
-            std::make_unique<DataBuffer<>>(buffer, buffer_length, 0),
-            std::string()};
+        context = new gs_api::GS_Encoder_Context_Internal
+            {
+                gs::Encoder(),
+                DataBuffer<>(buffer, buffer_length, 0),
+                std::string()
+            };
 
         // Create the external encoder context
         *gs_encoder_context = new GS_Encoder_Context();
@@ -170,7 +172,7 @@ int CALL GSEncodeObject(GS_Encoder_Context *gs_encoder_context, GS_Object *objec
         context->error.clear();
 
         // Take note of the data length so that it can be restored on error
-        data_length = context->data_buffer->GetDataLength();
+        data_length = context->data_buffer.GetDataLength();
 
         // Serialize the object onto the buffer
         result = gs_api::GSSerializeObject(*context, *object);
@@ -186,7 +188,7 @@ int CALL GSEncodeObject(GS_Encoder_Context *gs_encoder_context, GS_Object *objec
             // Restore the data length on failure, if we have a value
             if (data_length != SIZE_MAX)
             {
-                context->data_buffer->SetDataLength(data_length);
+                context->data_buffer.SetDataLength(data_length);
             }
         }
     }
@@ -201,7 +203,7 @@ int CALL GSEncodeObject(GS_Encoder_Context *gs_encoder_context, GS_Object *objec
             // Restore the data length on failure, if we have a value
             if (data_length != SIZE_MAX)
             {
-                context->data_buffer->SetDataLength(data_length);
+                context->data_buffer.SetDataLength(data_length);
             }
         }
     }
@@ -238,7 +240,7 @@ size_t CALL GSEncoderDataLength(GS_Encoder_Context *gs_encoder_context)
         context = reinterpret_cast<gs_api::GS_Encoder_Context_Internal *>(
             gs_encoder_context->opaque);
 
-        return context->data_buffer->GetDataLength();
+        return context->data_buffer.GetDataLength();
     }
     catch (const std::exception &e)
     {
@@ -397,11 +399,13 @@ int CALL GSDecoderInit(GS_Decoder_Context **gs_decoder_context,
     try
     {
         // Create the internal encoder context
-        context = new gs_api::GS_Decoder_Context_Internal{
-            gs::Decoder(),
-            std::make_unique<DataBuffer<>>(buffer, data_length, data_length),
-            std::string(),
-            std::vector<unsigned char *>()};
+        context = new gs_api::GS_Decoder_Context_Internal
+            {
+                gs::Decoder(),
+                DataBuffer<>(buffer, data_length, data_length),
+                std::string(),
+                std::vector<unsigned char *>()
+            };
 
         // Create the external encoder context
         *gs_decoder_context = new GS_Decoder_Context();

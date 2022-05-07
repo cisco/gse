@@ -53,8 +53,7 @@
 #include <utility>
 #include <stdexcept>
 #include <string>
-#include <memory>
-#include <cstdint>
+#include <cstddef>
 #include "data_buffer.h"
 #include "gs_types.h"
 #include "gs_serializer.h"
@@ -66,8 +65,13 @@ namespace gs
 class EncoderException : public std::runtime_error
 {
     public:
-        EncoderException(const std::string &what_arg) :
+        explicit EncoderException(const std::string &what_arg) :
             std::runtime_error(what_arg)
+        {
+        }
+
+        explicit EncoderException(const char *what_arg) :
+        std::runtime_error(what_arg)
         {
         }
 };
@@ -84,74 +88,56 @@ class Encoder
         ~Encoder() = default;
 
         // Function to encode a vector of objects
-        EncodeResult Encode(std::unique_ptr<DataBuffer<>> &data_buffer,
-                            const GSObjects &value);
+        EncodeResult Encode(DataBuffer<> &data_buffer, const GSObjects &value);
 
         // Function to encode a single object
-        EncodeResult Encode(std::unique_ptr<DataBuffer<>> &data_buffer,
-                            const GSObject &value);
+        EncodeResult Encode(DataBuffer<> &data_buffer, const GSObject &value);
 
         // Function to encode high-level objects
-        EncodeResult Encode(std::unique_ptr<DataBuffer<>> &data_buffer,
-                           const Object1 &value);
-        EncodeResult Encode(std::unique_ptr<DataBuffer<>> &data_buffer,
-                           const Head1 &value);
-        EncodeResult Encode(std::unique_ptr<DataBuffer<>> &data_buffer,
-                           const Hand1 &value);
-        EncodeResult Encode(std::unique_ptr<DataBuffer<>> &data_buffer,
-                           const Hand2 &value);
-        EncodeResult Encode(std::unique_ptr<DataBuffer<>> &data_buffer,
-                           const Mesh1 &value);
-        EncodeResult Encode(std::unique_ptr<DataBuffer<>> &data_buffer,
-                           const UnknownObject &value);
+        EncodeResult Encode(DataBuffer<> &data_buffer, const Object1 &value);
+        EncodeResult Encode(DataBuffer<> &data_buffer, const Head1 &value);
+        EncodeResult Encode(DataBuffer<> &data_buffer, const Hand1 &value);
+        EncodeResult Encode(DataBuffer<> &data_buffer, const Hand2 &value);
+        EncodeResult Encode(DataBuffer<> &data_buffer, const Mesh1 &value);
+        EncodeResult Encode(DataBuffer<> &data_buffer,
+                            const UnknownObject &value);
 
     protected:
         // Serialization functions for more complex types
-        std::size_t Serialize(std::unique_ptr<DataBuffer<>> &data_buffer,
-                              Tag value);
-        std::size_t Serialize(std::unique_ptr<DataBuffer<>> &data_buffer,
-                              const HeadIPD1 &value);
-        std::size_t Serialize(std::unique_ptr<DataBuffer<>> &data_buffer,
-                              const Loc1 &value);
-        std::size_t Serialize(std::unique_ptr<DataBuffer<>> &data_buffer,
-                              const Loc2 &value);
-        std::size_t Serialize(std::unique_ptr<DataBuffer<>> &data_buffer,
-                              const Norm1 &value);
-        std::size_t Serialize(std::unique_ptr<DataBuffer<>> &data_buffer,
+        std::size_t Serialize(DataBuffer<> &data_buffer, Tag value);
+        std::size_t Serialize(DataBuffer<> &data_buffer, const HeadIPD1 &value);
+        std::size_t Serialize(DataBuffer<> &data_buffer, const Loc1 &value);
+        std::size_t Serialize(DataBuffer<> &data_buffer, const Loc2 &value);
+        std::size_t Serialize(DataBuffer<> &data_buffer, const Norm1 &value);
+        std::size_t Serialize(DataBuffer<> &data_buffer,
                               const TextureUV1 &value);
-        std::size_t Serialize(std::unique_ptr<DataBuffer<>> &data_buffer,
-                              const Rot1 &value);
-        std::size_t Serialize(std::unique_ptr<DataBuffer<>> &data_buffer,
-                              const Rot2 &value);
-        std::size_t Serialize(std::unique_ptr<DataBuffer<>> &data_buffer,
+        std::size_t Serialize(DataBuffer<> &data_buffer, const Rot1 &value);
+        std::size_t Serialize(DataBuffer<> &data_buffer, const Rot2 &value);
+        std::size_t Serialize(DataBuffer<> &data_buffer,
                               const Transform1 &value);
-        std::size_t Serialize(std::unique_ptr<DataBuffer<>> &data_buffer,
-                              const Thumb &value);
-        std::size_t Serialize(std::unique_ptr<DataBuffer<>> &data_buffer,
-                              const Finger &value);
+        std::size_t Serialize(DataBuffer<> &data_buffer, const Thumb &value);
+        std::size_t Serialize(DataBuffer<> &data_buffer, const Finger &value);
 
         // Serialization function for a Blob type
-        std::size_t Serialize(std::unique_ptr<DataBuffer<>> &data_buffer,
-                              const Blob &value)
+        std::size_t Serialize(DataBuffer<> &data_buffer, const Blob &value)
         {
             return serializer.Write(data_buffer, value);
         }
 
         // Serialization function for vectors of any type
         template <typename T>
-        std::size_t Serialize(std::unique_ptr<DataBuffer<>> &data_buffer,
+        std::size_t Serialize(DataBuffer<> &data_buffer,
                               const std::vector<T> &values);
 
         // Serialization function for all other types
         template <typename T>
-        std::size_t Serialize(std::unique_ptr<DataBuffer<>> &data_buffer,
-                              const T &value)
+        std::size_t Serialize(DataBuffer<> &data_buffer, const T &value)
         {
             return serializer.Write(data_buffer, value);
         }
 
-        Serializer serializer;
-        std::unique_ptr<DataBuffer<>> null_buffer;
+        Serializer serializer;                  // Serializer object
+        DataBuffer<> null_buffer;               // Used to compute encoding size
 };
 
 } // namespace gs
