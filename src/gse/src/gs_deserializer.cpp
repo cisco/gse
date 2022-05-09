@@ -70,10 +70,9 @@ namespace gs
  *  Comments:
  *      None.
  */
-std::size_t Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
-                               Uint8 &value) const
+std::size_t Deserializer::Read(DataBuffer<> &data_buffer, Uint8 &value) const
 {
-    data_buffer->ReadValue(value);
+    data_buffer.ReadValue(value);
 
     return sizeof(Uint8);
 }
@@ -98,10 +97,9 @@ std::size_t Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
  *  Comments:
  *      None.
  */
-std::size_t Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
-                               Uint16 &value) const
+std::size_t Deserializer::Read(DataBuffer<> &data_buffer, Uint16 &value) const
 {
-    data_buffer->ReadValue(value);
+    data_buffer.ReadValue(value);
 
     return sizeof(Uint16);
 }
@@ -126,10 +124,9 @@ std::size_t Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
  *  Comments:
  *      None.
  */
-std::size_t Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
-                               Uint32 &value) const
+std::size_t Deserializer::Read(DataBuffer<> &data_buffer, Uint32 &value) const
 {
-    data_buffer->ReadValue(value);
+    data_buffer.ReadValue(value);
 
     return sizeof(Uint32);
 }
@@ -154,10 +151,9 @@ std::size_t Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
  *  Comments:
  *      None.
  */
-std::size_t Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
-                               Uint64 &value) const
+std::size_t Deserializer::Read(DataBuffer<> &data_buffer, Uint64 &value) const
 {
-    data_buffer->ReadValue(value);
+    data_buffer.ReadValue(value);
 
     return sizeof(Uint64);
 }
@@ -182,10 +178,9 @@ std::size_t Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
  *  Comments:
  *      None.
  */
-std::size_t Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
-                               Int8 &value) const
+std::size_t Deserializer::Read(DataBuffer<> &data_buffer, Int8 &value) const
 {
-    data_buffer->ReadValue(reinterpret_cast<Uint8&>(value));
+    data_buffer.ReadValue(reinterpret_cast<Uint8&>(value));
 
     return sizeof(Int8);
 }
@@ -210,10 +205,9 @@ std::size_t Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
  *  Comments:
  *      None.
  */
-std::size_t  Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
-                                Int16 &value) const
+std::size_t Deserializer::Read(DataBuffer<> &data_buffer, Int16 &value) const
 {
-    data_buffer->ReadValue(reinterpret_cast<Uint16&>(value));
+    data_buffer.ReadValue(reinterpret_cast<Uint16&>(value));
 
     return sizeof(Int16);
 }
@@ -238,10 +232,9 @@ std::size_t  Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
  *  Comments:
  *      None.
  */
-std::size_t  Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
-                                Int32 &value) const
+std::size_t Deserializer::Read(DataBuffer<> &data_buffer, Int32 &value) const
 {
-    data_buffer->ReadValue(reinterpret_cast<Uint32&>(value));
+    data_buffer.ReadValue(reinterpret_cast<Uint32&>(value));
 
     return sizeof(Int32);
 }
@@ -266,10 +259,9 @@ std::size_t  Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
  *  Comments:
  *      None.
  */
-std::size_t  Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
-                                Int64 &value) const
+std::size_t Deserializer::Read(DataBuffer<> &data_buffer, Int64 &value) const
 {
-    data_buffer->ReadValue(reinterpret_cast<Uint64&>(value));
+    data_buffer.ReadValue(reinterpret_cast<Uint64&>(value));
 
     return sizeof(Int64);
 }
@@ -293,13 +285,12 @@ std::size_t  Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
  *  Comments:
  *      None.
  */
-std::size_t  Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
-                                VarUint &value) const
+std::size_t Deserializer::Read(DataBuffer<> &data_buffer, VarUint &value) const
 {
     std::uint8_t octet;
 
     // Read the first octet
-    data_buffer->ReadValue(octet);
+    data_buffer.ReadValue(octet);
 
     // Is this a single octet value?
     if ((octet & 0b1000'0000) == 0)
@@ -316,7 +307,7 @@ std::size_t  Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
         value.value = octet & 0b0011'1111;
 
         // Read the next octet
-        data_buffer->ReadValue(octet);
+        data_buffer.ReadValue(octet);
         value.value = (value.value << 8) | octet;
 
         return sizeof(std::uint16_t);
@@ -331,7 +322,7 @@ std::size_t  Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
         value.value = octet & 0b0001'1111;
 
         // Read the next 16 bits
-        data_buffer->ReadValue(lower_bits);
+        data_buffer.ReadValue(lower_bits);
 
         // Update the value
         value.value = (value.value << 16) | lower_bits;
@@ -345,7 +336,7 @@ std::size_t  Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
         std::uint32_t lower_bits;
 
         // Read the 32-bit value
-        data_buffer->ReadValue(lower_bits);
+        data_buffer.ReadValue(lower_bits);
 
         // Assign the return value
         value.value = lower_bits;
@@ -357,7 +348,7 @@ std::size_t  Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
     if (octet == 0b1110'0010)
     {
         // Read the 64-bit value
-        data_buffer->ReadValue(value.value);
+        data_buffer.ReadValue(value.value);
 
         return sizeof(std::uint8_t) + sizeof(std::uint64_t);
     }
@@ -385,13 +376,12 @@ std::size_t  Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
  *  Comments:
  *      None.
  */
-std::size_t Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
-                               VarInt &value) const
+std::size_t Deserializer::Read(DataBuffer<> &data_buffer, VarInt &value) const
 {
     std::uint8_t octet;
 
     // Read the first octet
-    data_buffer->ReadValue(octet);
+    data_buffer.ReadValue(octet);
 
     // Is this a single octet value?
     if ((octet & 0b1000'0000) == 0)
@@ -414,7 +404,7 @@ std::size_t Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
         if (octet & 0b0010'0000) value.value |= 0xffff'ffff'ffff'ffc0;
 
         // Read the next octet
-        data_buffer->ReadValue(octet);
+        data_buffer.ReadValue(octet);
         value.value = (value.value << 8) | octet;
 
         return sizeof(std::uint16_t);
@@ -432,7 +422,7 @@ std::size_t Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
         if (octet & 0b0001'0000) value.value |= 0xffff'ffff'ffff'ffe0;
 
         // Read the next two octets
-        data_buffer->ReadValue(lower_bits);
+        data_buffer.ReadValue(lower_bits);
         value.value = (value.value << 16) | lower_bits;
 
         return sizeof(std::uint8_t) + sizeof(std::uint16_t);
@@ -444,7 +434,7 @@ std::size_t Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
         std::uint32_t lower_bits;
 
         // Read the 32-bit value
-        data_buffer->ReadValue(lower_bits);
+        data_buffer.ReadValue(lower_bits);
 
         // Assign the return value
         value.value = lower_bits;
@@ -459,7 +449,7 @@ std::size_t Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
     if (octet == 0b1110'0010)
     {
         // Read the 64-bit value
-        data_buffer->ReadValue(reinterpret_cast<Uint64&>(value.value));
+        data_buffer.ReadValue(reinterpret_cast<Uint64&>(value.value));
 
         return sizeof(std::uint8_t) + sizeof(std::uint64_t);
     }
@@ -487,13 +477,12 @@ std::size_t Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
  *  Comments:
  *      None.
  */
-std::size_t Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
-                               Float16 &value) const
+std::size_t Deserializer::Read(DataBuffer<> &data_buffer, Float16 &value) const
 {
     std::uint16_t half_float;
 
     // Read the 16-bit value
-    data_buffer->ReadValue(half_float);
+    data_buffer.ReadValue(half_float);
 
     // Convert the value to a float
     value.value = HalfFloatToFloat(half_float);
@@ -522,11 +511,10 @@ std::size_t Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
  *  Comments:
  *      None.
  */
-std::size_t Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
-                               Float32 &value) const
+std::size_t Deserializer::Read(DataBuffer<> &data_buffer, Float32 &value) const
 {
     // Read the 32-bit value
-    data_buffer->ReadValue(value);
+    data_buffer.ReadValue(value);
 
     return sizeof(std::uint32_t);
 }
@@ -552,11 +540,10 @@ std::size_t Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
  *  Comments:
  *      None.
  */
-std::size_t Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
-                               Float64 &value) const
+std::size_t Deserializer::Read(DataBuffer<> &data_buffer, Float64 &value) const
 {
     // Read the 64-bit value
-    data_buffer->ReadValue(value);
+    data_buffer.ReadValue(value);
 
     return sizeof(std::uint64_t);
 }
@@ -580,11 +567,10 @@ std::size_t Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
  *  Comments:
  *      None.
  */
-std::size_t Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
-                               Boolean &value) const
+std::size_t Deserializer::Read(DataBuffer<> &data_buffer, Boolean &value) const
 {
     // Read the 64-bit value
-    data_buffer->ReadValue(reinterpret_cast<std::uint8_t&>(value));
+    data_buffer.ReadValue(reinterpret_cast<std::uint8_t&>(value));
 
     return sizeof(std::uint8_t);
 }
@@ -608,8 +594,7 @@ std::size_t Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
  *  Comments:
  *      None.
  */
-std::size_t Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
-                               String &value) const
+std::size_t Deserializer::Read(DataBuffer<> &data_buffer, String &value) const
 {
     std::size_t read_length;
     VarUint length;
@@ -618,7 +603,7 @@ std::size_t Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
     read_length = Read(data_buffer, length);
 
     // Read the actual String
-    data_buffer->ReadValue(value, length.value);
+    data_buffer.ReadValue(value, length.value);
 
     // Update the read length
     read_length += value.length();
@@ -645,8 +630,7 @@ std::size_t Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
  *  Comments:
  *      None.
  */
-std::size_t Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
-                               Blob &value) const
+std::size_t Deserializer::Read(DataBuffer<> &data_buffer, Blob &value) const
 {
     std::size_t read_length;
     VarUint length;
@@ -655,7 +639,7 @@ std::size_t Deserializer::Read(std::unique_ptr<DataBuffer<>> &data_buffer,
     read_length = Read(data_buffer, length);
 
     // Read the actual Blob
-    data_buffer->ReadValue(value, length.value);
+    data_buffer.ReadValue(value, length.value);
 
     // Update the read length
     read_length += value.size();

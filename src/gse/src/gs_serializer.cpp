@@ -66,15 +66,14 @@ namespace gs
  *
  *  Returns:
  *      The number of octets appended to the data buffer or would have been
- *      appended if the data_buffer is a nullptr value.
+ *      appended if the data_buffer contains a zero-sized buffer.
  *
  *  Comments:
  *      None.
  */
-std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
-                              Uint8 value) const
+std::size_t Serializer::Write(DataBuffer<> &data_buffer, Uint8 value) const
 {
-    if (data_buffer) data_buffer->AppendValue(value);
+    if (data_buffer.GetBufferSize()) data_buffer.AppendValue(value);
 
     return sizeof(Uint8);
 }
@@ -95,15 +94,14 @@ std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
  *
  *  Returns:
  *      The number of octets appended to the data buffer or would have been
- *      appended if the data_buffer is a nullptr value.
+ *      appended if the data_buffer contains a zero-sized buffer.
  *
  *  Comments:
  *      None.
  */
-std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
-                              Uint16 value) const
+std::size_t Serializer::Write(DataBuffer<> &data_buffer, Uint16 value) const
 {
-    if (data_buffer) data_buffer->AppendValue(value);
+    if (data_buffer.GetBufferSize()) data_buffer.AppendValue(value);
 
     return sizeof(Uint16);
 }
@@ -124,15 +122,14 @@ std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
  *
  *  Returns:
  *      The number of octets appended to the data buffer or would have been
- *      appended if the data_buffer is a nullptr value.
+ *      appended if the data_buffer contains a zero-sized buffer.
  *
  *  Comments:
  *      None.
  */
-std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
-                              Uint32 value) const
+std::size_t Serializer::Write(DataBuffer<> &data_buffer, Uint32 value) const
 {
-    if (data_buffer) data_buffer->AppendValue(value);
+    if (data_buffer.GetBufferSize()) data_buffer.AppendValue(value);
 
     return sizeof(Uint32);
 }
@@ -153,15 +150,14 @@ std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
  *
  *  Returns:
  *      The number of octets appended to the data buffer or would have been
- *      appended if the data_buffer is a nullptr value.
+ *      appended if the data_buffer contains a zero-sized buffer.
  *
  *  Comments:
  *      None.
  */
-std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
-                              Uint64 value) const
+std::size_t Serializer::Write(DataBuffer<> &data_buffer, Uint64 value) const
 {
-    if (data_buffer) data_buffer->AppendValue(value);
+    if (data_buffer.GetBufferSize()) data_buffer.AppendValue(value);
 
     return sizeof(Uint64);
 }
@@ -182,15 +178,17 @@ std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
  *
  *  Returns:
  *      The number of octets appended to the data buffer or would have been
- *      appended if the data_buffer is a nullptr value.
+ *      appended if the data_buffer contains a zero-sized buffer.
  *
  *  Comments:
  *      None.
  */
-std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
-                              Int8 value) const
+std::size_t Serializer::Write(DataBuffer<> &data_buffer, Int8 value) const
 {
-    if (data_buffer) data_buffer->AppendValue(static_cast<Uint8>(value));
+    if (data_buffer.GetBufferSize())
+    {
+        data_buffer.AppendValue(static_cast<Uint8>(value));
+    }
 
     return sizeof(Int8);
 }
@@ -211,17 +209,16 @@ std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
  *
  *  Returns:
  *      The number of octets appended to the data buffer or would have been
- *      appended if the data_buffer is a nullptr value.
+ *      appended if the data_buffer contains a zero-sized buffer.
  *
  *  Comments:
  *      None.
  */
-std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
-                              Int16 value) const
+std::size_t Serializer::Write(DataBuffer<> &data_buffer, Int16 value) const
 {
-    if (data_buffer)
+    if (data_buffer.GetBufferSize())
     {
-        data_buffer->AppendValue(static_cast<Uint16>(value));
+        data_buffer.AppendValue(static_cast<Uint16>(value));
     }
 
     return sizeof(Int16);
@@ -243,17 +240,16 @@ std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
  *
  *  Returns:
  *      The number of octets appended to the data buffer or would have been
- *      appended if the data_buffer is a nullptr value.
+ *      appended if the data_buffer contains a zero-sized buffer.
  *
  *  Comments:
  *      None.
  */
-std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
-                              Int32 value) const
+std::size_t Serializer::Write(DataBuffer<> &data_buffer, Int32 value) const
 {
-    if (data_buffer)
+    if (data_buffer.GetBufferSize())
     {
-        data_buffer->AppendValue(static_cast<Uint32>(value));
+        data_buffer.AppendValue(static_cast<Uint32>(value));
     }
 
     return sizeof(Int32);
@@ -275,17 +271,16 @@ std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
  *
  *  Returns:
  *      The number of octets appended to the data buffer or would have been
- *      appended if the data_buffer is a nullptr value.
+ *      appended if the data_buffer contains a zero-sized buffer.
  *
  *  Comments:
  *      None.
  */
-std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
-                              Int64 value) const
+std::size_t Serializer::Write(DataBuffer<> &data_buffer, Int64 value) const
 {
-    if (data_buffer)
+    if (data_buffer.GetBufferSize())
     {
-        data_buffer->AppendValue(static_cast<Uint64>(value));
+        data_buffer.AppendValue(static_cast<Uint64>(value));
     }
 
     return sizeof(Int64);
@@ -307,7 +302,7 @@ std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
  *
  *  Returns:
  *      The number of octets appended to the data buffer or would have been
- *      appended if the data_buffer is a nullptr value.
+ *      appended if the data_buffer contains a zero-sized buffer.
  *
  *  Comments:
  *      VarUint is encoded as follows:
@@ -317,15 +312,15 @@ std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
  *          [d] 11100001b + 4 octets for a 32-bit unsigned integer
  *          [e] 11100010b + 8 octets for a 64-bit unsigned integer
  */
-std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
+std::size_t Serializer::Write(DataBuffer<> &data_buffer,
                               const VarUint &value) const
 {
     // [a] Produce a 7-bit unsigned integer
     if (value.value <= 0x7f)
     {
-        if (data_buffer)
+        if (data_buffer.GetBufferSize())
         {
-            data_buffer->AppendValue(static_cast<std::uint8_t>(value.value));
+            data_buffer.AppendValue(static_cast<std::uint8_t>(value.value));
         }
 
         return sizeof(std::uint8_t);
@@ -334,9 +329,9 @@ std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
     // [b] Produce a 14-bit unsigned integer
     if (value.value <= 0x3fff)
     {
-        if (data_buffer)
+        if (data_buffer.GetBufferSize())
         {
-            data_buffer->AppendValue(
+            data_buffer.AppendValue(
                 static_cast<std::uint16_t>(value.value | 0x8000));
         }
 
@@ -347,10 +342,10 @@ std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
     if (value.value <= 0x001f'ffff)
     {
         std::uint32_t i = static_cast<std::uint32_t>(value.value) | 0x00c0'0000;
-        if (data_buffer)
+        if (data_buffer.GetBufferSize())
         {
-            data_buffer->AppendValue(static_cast<std::uint8_t>(i >> 16));
-            data_buffer->AppendValue(static_cast<std::uint16_t>(i & 0xffff));
+            data_buffer.AppendValue(static_cast<std::uint8_t>(i >> 16));
+            data_buffer.AppendValue(static_cast<std::uint16_t>(i & 0xffff));
         }
 
         return sizeof(std::uint8_t) + sizeof(std::uint16_t);
@@ -359,20 +354,20 @@ std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
     // [d] Prduce a 32-bit unsigned integer
     if (value.value <= 0xffff'ffff)
     {
-        if (data_buffer)
+        if (data_buffer.GetBufferSize())
         {
-            data_buffer->AppendValue(static_cast<std::uint8_t>(0b1110'0001));
-            data_buffer->AppendValue(static_cast<std::uint32_t>(value.value));
+            data_buffer.AppendValue(static_cast<std::uint8_t>(0b1110'0001));
+            data_buffer.AppendValue(static_cast<std::uint32_t>(value.value));
         }
 
         return sizeof(std::uint8_t) + sizeof(std::uint32_t);
     }
 
     // [e] Produce a 64-bit unsigned integer
-    if (data_buffer)
+    if (data_buffer.GetBufferSize())
     {
-        data_buffer->AppendValue(static_cast<std::uint8_t>(0b1110'0010));
-        data_buffer->AppendValue(static_cast<std::uint64_t>(value.value));
+        data_buffer.AppendValue(static_cast<std::uint8_t>(0b1110'0010));
+        data_buffer.AppendValue(static_cast<std::uint64_t>(value.value));
     }
 
     return sizeof(std::uint8_t) + sizeof(std::uint64_t);
@@ -394,7 +389,7 @@ std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
  *
  *  Returns:
  *      The number of octets appended to the data buffer or would have been
- *      appended if the data_buffer is a nullptr value.
+ *      appended if the data_buffer contains a zero-sized buffer.
  *
  *  Comments:
  *      VarInt is encoded as follows:
@@ -404,16 +399,16 @@ std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
  *          [d] 11100001b + 4 octets for a 32-bit signed integer
  *          [e] 11100010b + 8 octets for a 64-bit signed integer
  */
-std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
-                             const VarInt &value) const
+std::size_t Serializer::Write(DataBuffer<> &data_buffer,
+                              const VarInt &value) const
 {
     // [a] Produce a 7-bit signed integer
     if (((value.value & 0xffff'ffff'ffff'ffc0) == 0xffff'ffff'ffff'ffc0) ||
         ((value.value & 0xffff'ffff'ffff'ffc0) == 0x0000'0000'0000'0000))
     {
-        if (data_buffer)
+        if (data_buffer.GetBufferSize())
         {
-            data_buffer->AppendValue(
+            data_buffer.AppendValue(
                 static_cast<std::uint8_t>(value.value & 0x7f));
         }
 
@@ -424,9 +419,9 @@ std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
     if (((value.value & 0xffff'ffff'ffff'e000) == 0xffff'ffff'ffff'e000) ||
         ((value.value & 0xffff'ffff'ffff'e000) == 0x0000'0000'0000'0000))
     {
-        if (data_buffer)
+        if (data_buffer.GetBufferSize())
         {
-            data_buffer->AppendValue(
+            data_buffer.AppendValue(
                 static_cast<std::uint16_t>((value.value & 0x3fff) | 0x8000));
         }
 
@@ -437,11 +432,11 @@ std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
     if (((value.value & 0xffff'ffff'fff0'0000) == 0xffff'ffff'fff0'0000) ||
         ((value.value & 0xffff'ffff'fff0'0000) == 0x0000'0000'0000'0000))
     {
-        if (data_buffer)
+        if (data_buffer.GetBufferSize())
         {
             std::uint32_t i = (value.value & 0x001f'ffff) | 0x00c0'0000;
-            data_buffer->AppendValue(static_cast<std::uint8_t>(i >> 16));
-            data_buffer->AppendValue(static_cast<std::uint16_t>(i & 0xffff));
+            data_buffer.AppendValue(static_cast<std::uint8_t>(i >> 16));
+            data_buffer.AppendValue(static_cast<std::uint16_t>(i & 0xffff));
         }
 
         return sizeof(std::uint8_t) + sizeof(std::uint16_t);
@@ -451,10 +446,10 @@ std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
     if (((value.value & 0xffff'ffff'8000'0000) == 0xffff'ffff'8000'0000) ||
         ((value.value & 0xffff'ffff'8000'0000) == 0x0000'0000'0000'0000))
     {
-        if (data_buffer)
+        if (data_buffer.GetBufferSize())
         {
-            data_buffer->AppendValue(static_cast<std::uint8_t>(0b1110'0001));
-            data_buffer->AppendValue(
+            data_buffer.AppendValue(static_cast<std::uint8_t>(0b1110'0001));
+            data_buffer.AppendValue(
                 static_cast<std::uint32_t>(value.value & 0xffff'ffff));
         }
 
@@ -462,10 +457,10 @@ std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
     }
 
     // [e] Produce a 64-bit signed integer
-    if (data_buffer)
+    if (data_buffer.GetBufferSize())
     {
-        data_buffer->AppendValue(static_cast<std::uint8_t>(0b1110'0010));
-        data_buffer->AppendValue(static_cast<std::uint64_t>(value.value));
+        data_buffer.AppendValue(static_cast<std::uint8_t>(0b1110'0010));
+        data_buffer.AppendValue(static_cast<std::uint64_t>(value.value));
     }
 
     return sizeof(std::uint8_t) + sizeof(std::uint64_t);
@@ -489,17 +484,17 @@ std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
  *
  *  Returns:
  *      The number of octets appended to the data buffer or would have been
- *      appended if the data_buffer is a nullptr value.
+ *      appended if the data_buffer contains a zero-sized buffer.
  *
  *  Comments:
  *      None.
  */
-std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
+std::size_t Serializer::Write(DataBuffer<> &data_buffer,
                               const Float16 &value) const
 {
-    if (data_buffer)
+    if (data_buffer.GetBufferSize())
     {
-        data_buffer->AppendValue(FloatToHalfFloat(value.value));
+        data_buffer.AppendValue(FloatToHalfFloat(value.value));
     }
 
     return sizeof(std::uint16_t);
@@ -523,19 +518,18 @@ std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
  *
  *  Returns:
  *      The number of octets appended to the data buffer or would have been
- *      appended if the data_buffer is a nullptr value.
+ *      appended if the data_buffer contains a zero-sized buffer.
  *
  *  Comments:
  *      None.
  */
-std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
-                              Float32 value) const
+std::size_t Serializer::Write(DataBuffer<> &data_buffer, Float32 value) const
 {
     static_assert(sizeof(value) == 4, "expected Float32 to be 32 bits");
 
-    if (data_buffer)
+    if (data_buffer.GetBufferSize())
     {
-        data_buffer->AppendValue(value);
+        data_buffer.AppendValue(value);
     }
 
     return sizeof(std::uint32_t);
@@ -559,19 +553,18 @@ std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
  *
  *  Returns:
  *      The number of octets appended to the data buffer or would have been
- *      appended if the data_buffer is a nullptr value.
+ *      appended if the data_buffer contains a zero-sized buffer.
  *
  *  Comments:
  *      None.
  */
-std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
-                              Float64 value) const
+std::size_t Serializer::Write(DataBuffer<> &data_buffer, Float64 value) const
 {
     static_assert(sizeof(value) == 8, "expected Float64 to be 64 bits");
 
-    if (data_buffer)
+    if (data_buffer.GetBufferSize())
     {
-        data_buffer->AppendValue(value);
+        data_buffer.AppendValue(value);
     }
 
     return sizeof(std::uint64_t);
@@ -593,22 +586,24 @@ std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
  *
  *  Returns:
  *      The number of octets appended to the data buffer or would have been
- *      appended if the data_buffer is a nullptr value.
+ *      appended if the data_buffer contains a zero-sized buffer.
  *
  *  Comments:
  *      None.
  */
-std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
-                              Boolean value) const
+std::size_t Serializer::Write(DataBuffer<> &data_buffer, Boolean value) const
 {
-    if (value)
+    if (data_buffer.GetBufferSize())
     {
-        if (data_buffer) data_buffer->AppendValue(static_cast<std::uint8_t>(1));
-
-        return sizeof(std::uint8_t);
+        if (value)
+        {
+            data_buffer.AppendValue(static_cast<std::uint8_t>(1));
+        }
+        else
+        {
+            data_buffer.AppendValue(static_cast<std::uint8_t>(0));
+        }
     }
-
-    if (data_buffer) data_buffer->AppendValue(static_cast<std::uint8_t>(0));
 
     return sizeof(std::uint8_t);
 }
@@ -629,12 +624,12 @@ std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
  *
  *  Returns:
  *      The number of octets appended to the data buffer or would have been
- *      appended if the data_buffer is a nullptr value.
+ *      appended if the data_buffer contains a zero-sized buffer.
  *
  *  Comments:
  *      None.
  */
-std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
+std::size_t Serializer::Write(DataBuffer<> &data_buffer,
                               const String &value) const
 {
     std::size_t total_length{};
@@ -646,7 +641,7 @@ std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
     if (value.empty()) return total_length;
 
     // Write out the actual string content if there is a string
-    if (data_buffer) data_buffer->AppendValue(value);
+    if (data_buffer.GetBufferSize()) data_buffer.AppendValue(value);
 
     // Update the octet count
     total_length += value.length();
@@ -670,12 +665,12 @@ std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
  *
  *  Returns:
  *      The number of octets appended to the data buffer or would have been
- *      appended if the data_buffer is a nullptr value.
+ *      appended if the data_buffer contains a zero-sized buffer.
  *
  *  Comments:
  *      None.
  */
-std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
+std::size_t Serializer::Write(DataBuffer<> &data_buffer,
                               const Blob &value) const
 {
     std::size_t total_length{};
@@ -687,7 +682,7 @@ std::size_t Serializer::Write(std::unique_ptr<DataBuffer<>> &data_buffer,
     if (value.empty()) return total_length;
 
     // Write out the actual string content if there is a string
-    if (data_buffer) data_buffer->AppendValue(value);
+    if (data_buffer.GetBufferSize()) data_buffer.AppendValue(value);
 
     // Update the octet count
     total_length += value.size();

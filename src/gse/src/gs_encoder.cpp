@@ -76,8 +76,7 @@ namespace gs
  *  Comments:
  *      None.
  */
-EncodeResult Encoder::Encode(std::unique_ptr<DataBuffer<>> &data_buffer,
-                             const GSObjects &value)
+EncodeResult Encoder::Encode(DataBuffer<> &data_buffer, const GSObjects &value)
 {
     std::size_t total_octets = 0;
     std::size_t object_count = 0;
@@ -117,8 +116,7 @@ EncodeResult Encoder::Encode(std::unique_ptr<DataBuffer<>> &data_buffer,
  *  Comments:
  *      None.
  */
-EncodeResult Encoder::Encode(std::unique_ptr<DataBuffer<>> &data_buffer,
-                             const GSObject &value)
+EncodeResult Encoder::Encode(DataBuffer<> &data_buffer, const GSObject &value)
 {
     return std::visit([&](const auto &value) -> EncodeResult
                       {
@@ -150,18 +148,17 @@ EncodeResult Encoder::Encode(std::unique_ptr<DataBuffer<>> &data_buffer,
  *  Comments:
  *      None.
  */
-EncodeResult Encoder::Encode(std::unique_ptr<DataBuffer<>>& data_buffer,
-                             const Object1& value)
+EncodeResult Encoder::Encode(DataBuffer<> &data_buffer, const Object1 &value)
 {
     std::size_t total_length{};
     Length data_length{};
 
     // Determine space required for this object
     data_length.value = Serialize(null_buffer, value.id) +
-        Serialize(null_buffer, value.time) +
-        Serialize(null_buffer, value.position) +
-        Serialize(null_buffer, value.rotation) +
-        Serialize(null_buffer, value.scale);
+                        Serialize(null_buffer, value.time) +
+                        Serialize(null_buffer, value.position) +
+                        Serialize(null_buffer, value.rotation) +
+                        Serialize(null_buffer, value.scale);
 
     if (value.parent.has_value())
     {
@@ -169,9 +166,9 @@ EncodeResult Encoder::Encode(std::unique_ptr<DataBuffer<>>& data_buffer,
     }
 
     // Ensure the data buffer has sufficient space
-    if ((data_buffer->GetDataLength() + Serialize(null_buffer, Tag::Object1) +
+    if ((data_buffer.GetDataLength() + Serialize(null_buffer, Tag::Object1) +
         Serialize(null_buffer, data_length) + data_length.value) >
-        data_buffer->GetBufferSize())
+        data_buffer.GetBufferSize())
     {
         return { 0, 0 };
     }
@@ -216,8 +213,7 @@ EncodeResult Encoder::Encode(std::unique_ptr<DataBuffer<>>& data_buffer,
  *  Comments:
  *      None.
  */
-EncodeResult Encoder::Encode(std::unique_ptr<DataBuffer<>> &data_buffer,
-                             const Head1 &value)
+EncodeResult Encoder::Encode(DataBuffer<> &data_buffer, const Head1 &value)
 {
     std::size_t total_length{};
     Length data_length{};
@@ -234,9 +230,9 @@ EncodeResult Encoder::Encode(std::unique_ptr<DataBuffer<>> &data_buffer,
     }
 
     // Ensure the data buffer has sufficient space
-    if ((data_buffer->GetDataLength() + Serialize(null_buffer, Tag::Head1) +
+    if ((data_buffer.GetDataLength() + Serialize(null_buffer, Tag::Head1) +
          Serialize(null_buffer, data_length) + data_length.value) >
-        data_buffer->GetBufferSize())
+        data_buffer.GetBufferSize())
     {
         return {0, 0};
     }
@@ -280,8 +276,7 @@ EncodeResult Encoder::Encode(std::unique_ptr<DataBuffer<>> &data_buffer,
  *  Comments:
  *      None.
  */
-EncodeResult Encoder::Encode(std::unique_ptr<DataBuffer<>> &data_buffer,
-                             const Hand1 &value)
+EncodeResult Encoder::Encode(DataBuffer<> &data_buffer, const Hand1 &value)
 {
     std::size_t total_length{};
     Length data_length{};
@@ -294,9 +289,9 @@ EncodeResult Encoder::Encode(std::unique_ptr<DataBuffer<>> &data_buffer,
                         Serialize(null_buffer, value.rotation);
 
     // Ensure the data buffer has sufficient space
-    if ((data_buffer->GetDataLength() + Serialize(null_buffer, Tag::Hand1) +
+    if ((data_buffer.GetDataLength() + Serialize(null_buffer, Tag::Hand1) +
          Serialize(null_buffer, data_length) + data_length.value) >
-        data_buffer->GetBufferSize())
+        data_buffer.GetBufferSize())
     {
         return {0, 0};
     }
@@ -336,8 +331,7 @@ EncodeResult Encoder::Encode(std::unique_ptr<DataBuffer<>> &data_buffer,
  *  Comments:
  *      None.
  */
-EncodeResult Encoder::Encode(std::unique_ptr<DataBuffer<>> &data_buffer,
-                             const Hand2 &value)
+EncodeResult Encoder::Encode(DataBuffer<> &data_buffer, const Hand2 &value)
 {
     std::size_t total_length{};
     Length data_length{};
@@ -356,9 +350,9 @@ EncodeResult Encoder::Encode(std::unique_ptr<DataBuffer<>> &data_buffer,
                         Serialize(null_buffer, value.pinky);
 
     // Ensure the data buffer has sufficient space
-    if ((data_buffer->GetDataLength() + Serialize(null_buffer, Tag::Hand2) +
+    if ((data_buffer.GetDataLength() + Serialize(null_buffer, Tag::Hand2) +
          Serialize(null_buffer, data_length) + data_length.value) >
-        data_buffer->GetBufferSize())
+        data_buffer.GetBufferSize())
     {
         return {0, 0};
     }
@@ -404,8 +398,7 @@ EncodeResult Encoder::Encode(std::unique_ptr<DataBuffer<>> &data_buffer,
  *  Comments:
  *      None.
  */
-EncodeResult Encoder::Encode(std::unique_ptr<DataBuffer<>> &data_buffer,
-                             const Mesh1 &value)
+EncodeResult Encoder::Encode(DataBuffer<> &data_buffer, const Mesh1 &value)
 {
     std::size_t total_length{};
     Length data_length{};
@@ -418,9 +411,9 @@ EncodeResult Encoder::Encode(std::unique_ptr<DataBuffer<>> &data_buffer,
                         Serialize(null_buffer, value.triangles);
 
     // Ensure the data buffer has sufficient space
-    if ((data_buffer->GetDataLength() + Serialize(null_buffer, Tag::Mesh1) +
+    if ((data_buffer.GetDataLength() + Serialize(null_buffer, Tag::Mesh1) +
          Serialize(null_buffer, data_length) + data_length.value) >
-        data_buffer->GetBufferSize())
+        data_buffer.GetBufferSize())
     {
         return {0, 0};
     }
@@ -460,14 +453,14 @@ EncodeResult Encoder::Encode(std::unique_ptr<DataBuffer<>> &data_buffer,
  *  Comments:
  *      None.
  */
-EncodeResult Encoder::Encode(std::unique_ptr<DataBuffer<>> &data_buffer,
+EncodeResult Encoder::Encode(DataBuffer<> &data_buffer,
                              const UnknownObject &value)
 {
     std::size_t total_length{};
 
     // Ensure the data buffer has sufficient space
-    if ((data_buffer->GetDataLength() + Serialize(null_buffer, value.tag) +
-         Serialize(null_buffer, value.data)) > data_buffer->GetBufferSize())
+    if ((data_buffer.GetDataLength() + Serialize(null_buffer, value.tag) +
+         Serialize(null_buffer, value.data)) > data_buffer.GetBufferSize())
     {
         return {0, 0};
     }
@@ -493,14 +486,12 @@ EncodeResult Encoder::Encode(std::unique_ptr<DataBuffer<>> &data_buffer,
  *
  *  Returns:
  *      The number of octets appended to the data buffer or would have been
- *      appended if the data_buffer pointed to a valid DataBuffer.
+ *      appended if the data_buffer contains a zero-sized buffer.
  *
  *  Comments:
  *      None.
  */
-inline std::size_t Encoder::Serialize(
-                                std::unique_ptr<DataBuffer<>> &data_buffer,
-                                Tag value)
+inline std::size_t Encoder::Serialize(DataBuffer<> &data_buffer, Tag value)
 {
     VarUint tag{};
 
@@ -561,14 +552,13 @@ inline std::size_t Encoder::Serialize(
  *
  *  Returns:
  *      The number of octets appended to the data buffer or would have been
- *      appended if the data_buffer pointed to a valid DataBuffer.
+ *      appended if the data_buffer contains a zero-sized buffer.
  *
  *  Comments:
  *      None.
  */
-inline std::size_t Encoder::Serialize(
-                                std::unique_ptr<DataBuffer<>> &data_buffer,
-                                const HeadIPD1 &value)
+inline std::size_t Encoder::Serialize(DataBuffer<> &data_buffer,
+                                      const HeadIPD1 &value)
 {
     std::size_t total_length{};
 
@@ -600,14 +590,13 @@ inline std::size_t Encoder::Serialize(
  *
  *  Returns:
  *      The number of octets appended to the data buffer or would have been
- *      appended if the data_buffer pointed to a valid DataBuffer.
+ *      appended if the data_buffer contains a zero-sized buffer.
  *
  *  Comments:
  *      None.
  */
-inline std::size_t Encoder::Serialize(
-                                std::unique_ptr<DataBuffer<>> &data_buffer,
-                                const Loc1 &value)
+inline std::size_t Encoder::Serialize(DataBuffer<> &data_buffer,
+                                      const Loc1 &value)
 {
     std::size_t total_length{};
 
@@ -633,14 +622,13 @@ inline std::size_t Encoder::Serialize(
  *
  *  Returns:
  *      The number of octets appended to the data buffer or would have been
- *      appended if the data_buffer pointed to a valid DataBuffer.
+ *      appended if the data_buffer contains a zero-sized buffer.
  *
  *  Comments:
  *      None.
  */
-inline std::size_t Encoder::Serialize(
-                                std::unique_ptr<DataBuffer<>> &data_buffer,
-                                const Loc2 &value)
+inline std::size_t Encoder::Serialize(DataBuffer<> &data_buffer,
+                                      const Loc2 &value)
 {
     std::size_t total_length{};
 
@@ -669,14 +657,13 @@ inline std::size_t Encoder::Serialize(
  *
  *  Returns:
  *      The number of octets appended to the data buffer or would have been
- *      appended if the data_buffer pointed to a valid DataBuffer.
+ *      appended if the data_buffer contains a zero-sized buffer.
  *
  *  Comments:
  *      None.
  */
-inline std::size_t Encoder::Serialize(
-                                std::unique_ptr<DataBuffer<>> &data_buffer,
-                                const Norm1 &value)
+inline std::size_t Encoder::Serialize(DataBuffer<> &data_buffer,
+                                      const Norm1 &value)
 {
     std::size_t total_length{};
 
@@ -702,14 +689,13 @@ inline std::size_t Encoder::Serialize(
  *
  *  Returns:
  *      The number of octets appended to the data buffer or would have been
- *      appended if the data_buffer pointed to a valid DataBuffer.
+ *      appended if the data_buffer contains a zero-sized buffer.
  *
  *  Comments:
  *      None.
  */
-inline std::size_t Encoder::Serialize(
-                                std::unique_ptr<DataBuffer<>> &data_buffer,
-                                const TextureUV1 &value)
+inline std::size_t Encoder::Serialize(DataBuffer<> &data_buffer,
+                                      const TextureUV1 &value)
 {
     std::size_t total_length{};
 
@@ -734,14 +720,13 @@ inline std::size_t Encoder::Serialize(
  *
  *  Returns:
  *      The number of octets appended to the data buffer or would have been
- *      appended if the data_buffer pointed to a valid DataBuffer.
+ *      appended if the data_buffer contains a zero-sized buffer.
  *
  *  Comments:
  *      None.
  */
-inline std::size_t Encoder::Serialize(
-                                std::unique_ptr<DataBuffer<>> &data_buffer,
-                                const Rot1 &value)
+inline std::size_t Encoder::Serialize(DataBuffer<> &data_buffer,
+                                      const Rot1 &value)
 {
     std::size_t total_length{};
 
@@ -767,14 +752,13 @@ inline std::size_t Encoder::Serialize(
  *
  *  Returns:
  *      The number of octets appended to the data buffer or would have been
- *      appended if the data_buffer pointed to a valid DataBuffer.
+ *      appended if the data_buffer contains a zero-sized buffer.
  *
  *  Comments:
  *      None.
  */
-inline std::size_t Encoder::Serialize(
-                                std::unique_ptr<DataBuffer<>> &data_buffer,
-                                const Rot2 &value)
+inline std::size_t Encoder::Serialize(DataBuffer<> &data_buffer,
+                                      const Rot2 &value)
 {
     std::size_t total_length{};
 
@@ -803,14 +787,13 @@ inline std::size_t Encoder::Serialize(
  *
  *  Returns:
  *      The number of octets appended to the data buffer or would have been
- *      appended if the data_buffer pointed to a valid DataBuffer.
+ *      appended if the data_buffer contains a zero-sized buffer.
  *
  *  Comments:
  *      None.
  */
-inline std::size_t Encoder::Serialize
-                                (std::unique_ptr<DataBuffer<>> &data_buffer,
-                                const Transform1 &value)
+inline std::size_t Encoder::Serialize(DataBuffer<> &data_buffer,
+                                      const Transform1 &value)
 {
     std::size_t total_length{};
 
@@ -836,14 +819,13 @@ inline std::size_t Encoder::Serialize
  *
  *  Returns:
  *      The number of octets appended to the data buffer or would have been
- *      appended if the data_buffer pointed to a valid DataBuffer.
+ *      appended if the data_buffer contains a zero-sized buffer.
  *
  *  Comments:
  *      None.
  */
-inline std::size_t Encoder::Serialize(
-                                std::unique_ptr<DataBuffer<>> &data_buffer,
-                                const Thumb &value)
+inline std::size_t Encoder::Serialize(DataBuffer<> &data_buffer,
+                                      const Thumb &value)
 {
     std::size_t total_length{};
 
@@ -870,14 +852,13 @@ inline std::size_t Encoder::Serialize(
  *
  *  Returns:
  *      The number of octets appended to the data buffer or would have been
- *      appended if the data_buffer pointed to a valid DataBuffer.
+ *      appended if the data_buffer contains a zero-sized buffer.
  *
  *  Comments:
  *      None.
  */
-inline std::size_t Encoder::Serialize(
-                                std::unique_ptr<DataBuffer<>> &data_buffer,
-                                const Finger &value)
+inline std::size_t Encoder::Serialize(DataBuffer<> &data_buffer,
+                                      const Finger &value)
 {
     std::size_t total_length{};
 
@@ -906,13 +887,13 @@ inline std::size_t Encoder::Serialize(
  *
  *  Returns:
  *      The number of octets appended to the data buffer or would have been
- *      appended if the data_buffer is a nullptr value.
+ *      appended if the data_buffer contains a zero-sized buffer.
  *
  *  Comments:
  *      None.
  */
 template<typename T>
-std::size_t Encoder::Serialize(std::unique_ptr<DataBuffer<>> &data_buffer,
+std::size_t Encoder::Serialize(DataBuffer<> &data_buffer,
                                const std::vector<T> &value)
 {
     std::size_t total_length{};

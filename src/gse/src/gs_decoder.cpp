@@ -71,13 +71,12 @@ namespace gs
  *  Comments:
  *      None.
  */
-std::size_t Decoder::Decode(std::unique_ptr<DataBuffer<>> &data_buffer,
-                            GSObjects &value)
+std::size_t Decoder::Decode(DataBuffer<> &data_buffer, GSObjects &value)
 {
     std::size_t read_length{};
 
     // Loop until all data in the buffer is consumed, decoding objects serially
-    while (data_buffer->GetReadLength() < data_buffer->GetDataLength())
+    while (data_buffer.GetReadLength() < data_buffer.GetDataLength())
     {
         value.push_back({});
         read_length += Decode(data_buffer, value.back());
@@ -108,8 +107,7 @@ std::size_t Decoder::Decode(std::unique_ptr<DataBuffer<>> &data_buffer,
  *  Comments:
  *      None.
  */
-std::size_t Decoder::Decode(std::unique_ptr<DataBuffer<>> &data_buffer,
-                            GSObject &value)
+std::size_t Decoder::Decode(DataBuffer<> &data_buffer, GSObject &value)
 {
     Tag tag;
     VarUint raw_tag;
@@ -216,8 +214,7 @@ std::size_t Decoder::Decode(std::unique_ptr<DataBuffer<>> &data_buffer,
  *  Comments:
  *      None.
  */
-std::size_t Decoder::Decode(std::unique_ptr<DataBuffer<>> &data_buffer,
-                            Head1 &value)
+std::size_t Decoder::Decode(DataBuffer<> &data_buffer, Head1 &value)
 {
     VarUint length;
     std::size_t read_length;
@@ -253,7 +250,7 @@ std::size_t Decoder::Decode(std::unique_ptr<DataBuffer<>> &data_buffer,
         // Discard any octets not understood
         if ((read_length - length_field) < length.value)
         {
-            data_buffer->AdvanceReadLength(length.value - read_length);
+            data_buffer.AdvanceReadLength(length.value - read_length);
 
             // Update the read_length
             read_length += length.value - (read_length - length_field);
@@ -290,8 +287,7 @@ std::size_t Decoder::Decode(std::unique_ptr<DataBuffer<>> &data_buffer,
  *  Comments:
  *      None.
  */
-std::size_t Decoder::Decode(std::unique_ptr<DataBuffer<>> &data_buffer,
-                            Hand1 &value)
+std::size_t Decoder::Decode(DataBuffer<> &data_buffer, Hand1 &value)
 {
     VarUint length;
     std::size_t read_length;
@@ -312,8 +308,8 @@ std::size_t Decoder::Decode(std::unique_ptr<DataBuffer<>> &data_buffer,
     // Discard any octets not understood
     if ((read_length - length_field) < length.value)
     {
-        data_buffer->AdvanceReadLength(length.value -
-                                       (read_length - length_field));
+        data_buffer.AdvanceReadLength(length.value -
+                                      (read_length - length_field));
 
         // Update the read_length
         read_length += length.value - (read_length - length_field);
@@ -349,8 +345,7 @@ std::size_t Decoder::Decode(std::unique_ptr<DataBuffer<>> &data_buffer,
  *  Comments:
  *      None.
  */
-std::size_t Decoder::Decode(std::unique_ptr<DataBuffer<>> &data_buffer,
-                            Hand2 &value)
+std::size_t Decoder::Decode(DataBuffer<> &data_buffer, Hand2 &value)
 {
     VarUint length;
     std::size_t read_length;
@@ -377,8 +372,8 @@ std::size_t Decoder::Decode(std::unique_ptr<DataBuffer<>> &data_buffer,
     // Discard any octets not understood
     if ((read_length - length_field) < length.value)
     {
-        data_buffer->AdvanceReadLength(length.value -
-                                       (read_length - length_field));
+        data_buffer.AdvanceReadLength(length.value -
+                                      (read_length - length_field));
 
         // Update the read_length
         read_length += length.value - (read_length - length_field);
@@ -414,8 +409,7 @@ std::size_t Decoder::Decode(std::unique_ptr<DataBuffer<>> &data_buffer,
  *  Comments:
  *      None.
  */
-std::size_t Decoder::Decode(std::unique_ptr<DataBuffer<>> &data_buffer,
-                            Mesh1 &value)
+std::size_t Decoder::Decode(DataBuffer<> &data_buffer, Mesh1 &value)
 {
     VarUint length;
     std::size_t read_length;
@@ -436,8 +430,8 @@ std::size_t Decoder::Decode(std::unique_ptr<DataBuffer<>> &data_buffer,
     // Discard any octets not understood
     if ((read_length - length_field) < length.value)
     {
-        data_buffer->AdvanceReadLength(length.value -
-                                       (read_length - length_field));
+        data_buffer.AdvanceReadLength(length.value -
+                                      (read_length - length_field));
 
         // Update the read_length
         read_length += length.value - (read_length - length_field);
@@ -473,8 +467,7 @@ std::size_t Decoder::Decode(std::unique_ptr<DataBuffer<>> &data_buffer,
  *  Comments:
  *      None.
  */
-std::size_t Decoder::Decode(std::unique_ptr<DataBuffer<>> &data_buffer,
-                            HeadIPD1 &value)
+std::size_t Decoder::Decode(DataBuffer<> &data_buffer, HeadIPD1 &value)
 {
     VarUint length;
     std::size_t read_length;
@@ -491,8 +484,8 @@ std::size_t Decoder::Decode(std::unique_ptr<DataBuffer<>> &data_buffer,
     // Discard any octets not understood
     if ((read_length - length_field) < length.value)
     {
-        data_buffer->AdvanceReadLength(length.value -
-                                       (read_length - length_field));
+        data_buffer.AdvanceReadLength(length.value -
+                                      (read_length - length_field));
 
         // Update the read_length
         read_length += length.value - (read_length - length_field);
@@ -528,8 +521,7 @@ std::size_t Decoder::Decode(std::unique_ptr<DataBuffer<>> &data_buffer,
  *  Comments:
  *      None.
  */
-std::size_t Decoder::Decode(std::unique_ptr<DataBuffer<>> &data_buffer,
-                            UnknownObject &value)
+std::size_t Decoder::Decode(DataBuffer<> &data_buffer, UnknownObject &value)
 {
     return Deserialize(data_buffer, value.data);
 }
@@ -555,8 +547,7 @@ std::size_t Decoder::Decode(std::unique_ptr<DataBuffer<>> &data_buffer,
  *  Comments:
  *      None.
  */
-std::size_t Decoder::Decode(std::unique_ptr<DataBuffer<>>& data_buffer,
-                            Object1& value)
+std::size_t Decoder::Decode(DataBuffer<> &data_buffer, Object1 &value)
 {
     VarUint length;
     std::size_t read_length;
@@ -587,7 +578,7 @@ std::size_t Decoder::Decode(std::unique_ptr<DataBuffer<>>& data_buffer,
         // Discard any octets not understood
         if ((read_length - length_field) < length.value)
         {
-            data_buffer->AdvanceReadLength(length.value - read_length);
+            data_buffer.AdvanceReadLength(length.value - read_length);
 
             // Update the read_length
             read_length += length.value - (read_length - length_field);
@@ -627,7 +618,7 @@ std::size_t Decoder::Decode(std::unique_ptr<DataBuffer<>>& data_buffer,
  *  Comments:
  *      None.
  */
-std::size_t Decoder::Deserialize(std::unique_ptr<DataBuffer<>> &data_buffer,
+std::size_t Decoder::Deserialize(DataBuffer<> &data_buffer,
                                  Tag &value,
                                  VarUint &raw_value)
 {
@@ -698,8 +689,7 @@ std::size_t Decoder::Deserialize(std::unique_ptr<DataBuffer<>> &data_buffer,
  *  Comments:
  *      None.
  */
-std::size_t Decoder::Deserialize(std::unique_ptr<DataBuffer<>> &data_buffer,
-                                 Loc1 &value)
+std::size_t Decoder::Deserialize(DataBuffer<> &data_buffer, Loc1 &value)
 {
     std::size_t read_length{};
 
@@ -730,7 +720,7 @@ std::size_t Decoder::Deserialize(std::unique_ptr<DataBuffer<>> &data_buffer,
  *  Comments:
  *      None.
  */
-std::size_t Decoder::Deserialize(std::unique_ptr<DataBuffer<>> &data_buffer,
+std::size_t Decoder::Deserialize(DataBuffer<> &data_buffer,
                                  Loc2 &value)
 {
     std::size_t read_length{};
@@ -765,7 +755,7 @@ std::size_t Decoder::Deserialize(std::unique_ptr<DataBuffer<>> &data_buffer,
  *  Comments:
  *      None.
  */
-std::size_t Decoder::Deserialize(std::unique_ptr<DataBuffer<>> &data_buffer,
+std::size_t Decoder::Deserialize(DataBuffer<> &data_buffer,
                                  Norm1 &value)
 {
     std::size_t read_length{};
@@ -797,8 +787,7 @@ std::size_t Decoder::Deserialize(std::unique_ptr<DataBuffer<>> &data_buffer,
  *  Comments:
  *      None.
  */
-std::size_t Decoder::Deserialize(std::unique_ptr<DataBuffer<>> &data_buffer,
-                                 TextureUV1 &value)
+std::size_t Decoder::Deserialize(DataBuffer<> &data_buffer, TextureUV1 &value)
 {
     std::size_t read_length{};
 
@@ -828,7 +817,7 @@ std::size_t Decoder::Deserialize(std::unique_ptr<DataBuffer<>> &data_buffer,
  *  Comments:
  *      None.
  */
-std::size_t Decoder::Deserialize(std::unique_ptr<DataBuffer<>> &data_buffer,
+std::size_t Decoder::Deserialize(DataBuffer<> &data_buffer,
                                  Rot1 &value)
 {
     std::size_t read_length{};
@@ -860,8 +849,7 @@ std::size_t Decoder::Deserialize(std::unique_ptr<DataBuffer<>> &data_buffer,
  *  Comments:
  *      None.
  */
-std::size_t Decoder::Deserialize(std::unique_ptr<DataBuffer<>> &data_buffer,
-                                 Rot2 &value)
+std::size_t Decoder::Deserialize(DataBuffer<> &data_buffer, Rot2 &value)
 {
     std::size_t read_length{};
 
@@ -895,8 +883,7 @@ std::size_t Decoder::Deserialize(std::unique_ptr<DataBuffer<>> &data_buffer,
  *  Comments:
  *      None.
  */
-std::size_t Decoder::Deserialize(std::unique_ptr<DataBuffer<>> &data_buffer,
-                                 Transform1 &value)
+std::size_t Decoder::Deserialize(DataBuffer<> &data_buffer, Transform1 &value)
 {
     std::size_t read_length{};
 
@@ -927,8 +914,7 @@ std::size_t Decoder::Deserialize(std::unique_ptr<DataBuffer<>> &data_buffer,
  *  Comments:
  *      None.
  */
-std::size_t Decoder::Deserialize(std::unique_ptr<DataBuffer<>> &data_buffer,
-                                 Thumb &value)
+std::size_t Decoder::Deserialize(DataBuffer<> &data_buffer, Thumb &value)
 {
     std::size_t read_length{};
 
@@ -960,7 +946,7 @@ std::size_t Decoder::Deserialize(std::unique_ptr<DataBuffer<>> &data_buffer,
  *  Comments:
  *      None.
  */
-std::size_t Decoder::Deserialize(std::unique_ptr<DataBuffer<>> &data_buffer,
+std::size_t Decoder::Deserialize(DataBuffer<> &data_buffer,
                                  Finger &value)
 {
     std::size_t read_length{};
@@ -995,7 +981,7 @@ std::size_t Decoder::Deserialize(std::unique_ptr<DataBuffer<>> &data_buffer,
  *      None.
  */
 template <typename T>
-std::size_t Decoder::Deserialize(std::unique_ptr<DataBuffer<>> &data_buffer,
+std::size_t Decoder::Deserialize(DataBuffer<> &data_buffer,
                                  std::vector<T> &values)
 {
     std::size_t read_length;

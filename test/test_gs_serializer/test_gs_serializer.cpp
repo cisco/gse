@@ -43,8 +43,7 @@
  */
 
 #include <cstring>
-#include <cstdint>
-#include <memory>
+#include <cstddef>
 #include "gtest/gtest.h"
 #include "gs_serializer.h"
 #include "data_buffer.h"
@@ -55,7 +54,7 @@ namespace {
     class GSSerializerTest : public ::testing::Test
     {
         public:
-            GSSerializerTest() : data_buffer(std::make_unique<DataBuffer<>>(1500))
+            GSSerializerTest() : data_buffer(1500)
             {
             }
 
@@ -65,7 +64,7 @@ namespace {
 
         protected:
             gs::Serializer serializer;
-            std::unique_ptr<DataBuffer<>> data_buffer;
+            DataBuffer<> data_buffer;
     };
 
     /////////////////////////////////
@@ -80,9 +79,9 @@ namespace {
 
         ASSERT_EQ(l, 1);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
-        ASSERT_EQ((*data_buffer)[0], 0x00);
+        ASSERT_EQ(data_buffer[0], 0x00);
     };
 
     // Serialize unsigned value 127
@@ -93,9 +92,9 @@ namespace {
 
         ASSERT_EQ(l, 1);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
-        ASSERT_EQ((*data_buffer)[0], 0x7f);
+        ASSERT_EQ(data_buffer[0], 0x7f);
     };
 
     // Serialize unsigned value 255
@@ -106,9 +105,9 @@ namespace {
 
         ASSERT_EQ(l, 1);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
-        ASSERT_EQ((*data_buffer)[0], 0xff);
+        ASSERT_EQ(data_buffer[0], 0xff);
     };
 
     // Serialize unsigned value 0
@@ -119,10 +118,10 @@ namespace {
 
         ASSERT_EQ(l, 2);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 2);
+        ASSERT_EQ(data_buffer.GetDataLength(), 2);
 
-        ASSERT_EQ((*data_buffer)[0], 0x00);
-        ASSERT_EQ((*data_buffer)[1], 0x00);
+        ASSERT_EQ(data_buffer[0], 0x00);
+        ASSERT_EQ(data_buffer[1], 0x00);
     };
 
     // Serialize unsigned value 32767
@@ -133,10 +132,10 @@ namespace {
 
         ASSERT_EQ(l, 2);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 2);
+        ASSERT_EQ(data_buffer.GetDataLength(), 2);
 
-        ASSERT_EQ((*data_buffer)[0], 0x7f);
-        ASSERT_EQ((*data_buffer)[1], 0xff);
+        ASSERT_EQ(data_buffer[0], 0x7f);
+        ASSERT_EQ(data_buffer[1], 0xff);
     };
 
     // Serialize unsigned value 65535
@@ -147,10 +146,10 @@ namespace {
 
         ASSERT_EQ(l, 2);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 2);
+        ASSERT_EQ(data_buffer.GetDataLength(), 2);
 
-        ASSERT_EQ((*data_buffer)[0], 0xff);
-        ASSERT_EQ((*data_buffer)[1], 0xff);
+        ASSERT_EQ(data_buffer[0], 0xff);
+        ASSERT_EQ(data_buffer[1], 0xff);
     };
 
     // Serialize unsigned value 0
@@ -161,12 +160,12 @@ namespace {
 
         ASSERT_EQ(l, 4);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 4);
+        ASSERT_EQ(data_buffer.GetDataLength(), 4);
 
-        ASSERT_EQ((*data_buffer)[0], 0x00);
-        ASSERT_EQ((*data_buffer)[1], 0x00);
-        ASSERT_EQ((*data_buffer)[2], 0x00);
-        ASSERT_EQ((*data_buffer)[3], 0x00);
+        ASSERT_EQ(data_buffer[0], 0x00);
+        ASSERT_EQ(data_buffer[1], 0x00);
+        ASSERT_EQ(data_buffer[2], 0x00);
+        ASSERT_EQ(data_buffer[3], 0x00);
     };
 
     // Serialize unsigned value 2147483649
@@ -177,12 +176,12 @@ namespace {
 
         ASSERT_EQ(l, 4);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 4);
+        ASSERT_EQ(data_buffer.GetDataLength(), 4);
 
-        ASSERT_EQ((*data_buffer)[0], 0x80);
-        ASSERT_EQ((*data_buffer)[1], 0x00);
-        ASSERT_EQ((*data_buffer)[2], 0x00);
-        ASSERT_EQ((*data_buffer)[3], 0x01);
+        ASSERT_EQ(data_buffer[0], 0x80);
+        ASSERT_EQ(data_buffer[1], 0x00);
+        ASSERT_EQ(data_buffer[2], 0x00);
+        ASSERT_EQ(data_buffer[3], 0x01);
     };
 
     // Serialize unsigned value DEADBEEF
@@ -193,12 +192,12 @@ namespace {
 
         ASSERT_EQ(l, 4);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 4);
+        ASSERT_EQ(data_buffer.GetDataLength(), 4);
 
-        ASSERT_EQ((*data_buffer)[0], 0xde);
-        ASSERT_EQ((*data_buffer)[1], 0xad);
-        ASSERT_EQ((*data_buffer)[2], 0xbe);
-        ASSERT_EQ((*data_buffer)[3], 0xef);
+        ASSERT_EQ(data_buffer[0], 0xde);
+        ASSERT_EQ(data_buffer[1], 0xad);
+        ASSERT_EQ(data_buffer[2], 0xbe);
+        ASSERT_EQ(data_buffer[3], 0xef);
     };
 
     // Serialize unsigned value 0
@@ -209,16 +208,16 @@ namespace {
 
         ASSERT_EQ(l, 8);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 8);
+        ASSERT_EQ(data_buffer.GetDataLength(), 8);
 
-        ASSERT_EQ((*data_buffer)[0], 0x00);
-        ASSERT_EQ((*data_buffer)[1], 0x00);
-        ASSERT_EQ((*data_buffer)[2], 0x00);
-        ASSERT_EQ((*data_buffer)[3], 0x00);
-        ASSERT_EQ((*data_buffer)[4], 0x00);
-        ASSERT_EQ((*data_buffer)[5], 0x00);
-        ASSERT_EQ((*data_buffer)[6], 0x00);
-        ASSERT_EQ((*data_buffer)[7], 0x00);
+        ASSERT_EQ(data_buffer[0], 0x00);
+        ASSERT_EQ(data_buffer[1], 0x00);
+        ASSERT_EQ(data_buffer[2], 0x00);
+        ASSERT_EQ(data_buffer[3], 0x00);
+        ASSERT_EQ(data_buffer[4], 0x00);
+        ASSERT_EQ(data_buffer[5], 0x00);
+        ASSERT_EQ(data_buffer[6], 0x00);
+        ASSERT_EQ(data_buffer[7], 0x00);
     };
 
     // Serialize unsigned value 0xdeadbeefcafebabe
@@ -229,16 +228,16 @@ namespace {
 
         ASSERT_EQ(l, 8);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 8);
+        ASSERT_EQ(data_buffer.GetDataLength(), 8);
 
-        ASSERT_EQ((*data_buffer)[0], 0xde);
-        ASSERT_EQ((*data_buffer)[1], 0xad);
-        ASSERT_EQ((*data_buffer)[2], 0xbe);
-        ASSERT_EQ((*data_buffer)[3], 0xef);
-        ASSERT_EQ((*data_buffer)[4], 0xca);
-        ASSERT_EQ((*data_buffer)[5], 0xfe);
-        ASSERT_EQ((*data_buffer)[6], 0xba);
-        ASSERT_EQ((*data_buffer)[7], 0xbe);
+        ASSERT_EQ(data_buffer[0], 0xde);
+        ASSERT_EQ(data_buffer[1], 0xad);
+        ASSERT_EQ(data_buffer[2], 0xbe);
+        ASSERT_EQ(data_buffer[3], 0xef);
+        ASSERT_EQ(data_buffer[4], 0xca);
+        ASSERT_EQ(data_buffer[5], 0xfe);
+        ASSERT_EQ(data_buffer[6], 0xba);
+        ASSERT_EQ(data_buffer[7], 0xbe);
     };
 
     /////////////////////////////////
@@ -253,9 +252,9 @@ namespace {
 
         ASSERT_EQ(l, 1);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
-        ASSERT_EQ((*data_buffer)[0], 0x00);
+        ASSERT_EQ(data_buffer[0], 0x00);
     };
 
     // Serialize signed value 1
@@ -266,9 +265,9 @@ namespace {
 
         ASSERT_EQ(l, 1);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
-        ASSERT_EQ((*data_buffer)[0], 0x01);
+        ASSERT_EQ(data_buffer[0], 0x01);
     };
 
     // Serialize signed value -1
@@ -279,9 +278,9 @@ namespace {
 
         ASSERT_EQ(l, 1);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
-        ASSERT_EQ((*data_buffer)[0], 0x0FF);
+        ASSERT_EQ(data_buffer[0], 0x0FF);
     };
 
     // Serialize signed value 127
@@ -292,9 +291,9 @@ namespace {
 
         ASSERT_EQ(l, 1);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
-        ASSERT_EQ((*data_buffer)[0], 0x7f);
+        ASSERT_EQ(data_buffer[0], 0x7f);
     };
 
     // Serialize signed value -128
@@ -305,9 +304,9 @@ namespace {
 
         ASSERT_EQ(l, 1);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
-        ASSERT_EQ((*data_buffer)[0], 0x80);
+        ASSERT_EQ(data_buffer[0], 0x80);
     };
 
     // Serialize signed value 0
@@ -318,10 +317,10 @@ namespace {
 
         ASSERT_EQ(l, 2);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 2);
+        ASSERT_EQ(data_buffer.GetDataLength(), 2);
 
-        ASSERT_EQ((*data_buffer)[0], 0x00);
-        ASSERT_EQ((*data_buffer)[1], 0x00);
+        ASSERT_EQ(data_buffer[0], 0x00);
+        ASSERT_EQ(data_buffer[1], 0x00);
     };
 
     // Serialize signed value 1
@@ -332,10 +331,10 @@ namespace {
 
         ASSERT_EQ(l, 2);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 2);
+        ASSERT_EQ(data_buffer.GetDataLength(), 2);
 
-        ASSERT_EQ((*data_buffer)[0], 0x00);
-        ASSERT_EQ((*data_buffer)[1], 0x01);
+        ASSERT_EQ(data_buffer[0], 0x00);
+        ASSERT_EQ(data_buffer[1], 0x01);
     };
 
     // Serialize signed value -1
@@ -346,10 +345,10 @@ namespace {
 
         ASSERT_EQ(l, 2);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 2);
+        ASSERT_EQ(data_buffer.GetDataLength(), 2);
 
-        ASSERT_EQ((*data_buffer)[0], 0x0FF);
-        ASSERT_EQ((*data_buffer)[1], 0x0FF);
+        ASSERT_EQ(data_buffer[0], 0x0FF);
+        ASSERT_EQ(data_buffer[1], 0x0FF);
     };
 
     // Serialize signed value 32767
@@ -360,10 +359,10 @@ namespace {
 
         ASSERT_EQ(l, 2);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 2);
+        ASSERT_EQ(data_buffer.GetDataLength(), 2);
 
-        ASSERT_EQ((*data_buffer)[0], 0x7f);
-        ASSERT_EQ((*data_buffer)[1], 0xff);
+        ASSERT_EQ(data_buffer[0], 0x7f);
+        ASSERT_EQ(data_buffer[1], 0xff);
     };
 
     // Serialize signed value -32768
@@ -374,10 +373,10 @@ namespace {
 
         ASSERT_EQ(l, 2);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 2);
+        ASSERT_EQ(data_buffer.GetDataLength(), 2);
 
-        ASSERT_EQ((*data_buffer)[0], 0x080);
-        ASSERT_EQ((*data_buffer)[1], 0x000);
+        ASSERT_EQ(data_buffer[0], 0x080);
+        ASSERT_EQ(data_buffer[1], 0x000);
     };
 
     // Serialize signed value 0
@@ -388,12 +387,12 @@ namespace {
 
         ASSERT_EQ(l, 4);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 4);
+        ASSERT_EQ(data_buffer.GetDataLength(), 4);
 
-        ASSERT_EQ((*data_buffer)[0], 0x00);
-        ASSERT_EQ((*data_buffer)[1], 0x00);
-        ASSERT_EQ((*data_buffer)[2], 0x00);
-        ASSERT_EQ((*data_buffer)[3], 0x00);
+        ASSERT_EQ(data_buffer[0], 0x00);
+        ASSERT_EQ(data_buffer[1], 0x00);
+        ASSERT_EQ(data_buffer[2], 0x00);
+        ASSERT_EQ(data_buffer[3], 0x00);
     };
 
     // Serialize signed value 1
@@ -404,12 +403,12 @@ namespace {
 
         ASSERT_EQ(l, 4);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 4);
+        ASSERT_EQ(data_buffer.GetDataLength(), 4);
 
-        ASSERT_EQ((*data_buffer)[0], 0x00);
-        ASSERT_EQ((*data_buffer)[1], 0x00);
-        ASSERT_EQ((*data_buffer)[2], 0x00);
-        ASSERT_EQ((*data_buffer)[3], 0x01);
+        ASSERT_EQ(data_buffer[0], 0x00);
+        ASSERT_EQ(data_buffer[1], 0x00);
+        ASSERT_EQ(data_buffer[2], 0x00);
+        ASSERT_EQ(data_buffer[3], 0x01);
     };
 
     // Serialize signed value -1
@@ -420,12 +419,12 @@ namespace {
 
         ASSERT_EQ(l, 4);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 4);
+        ASSERT_EQ(data_buffer.GetDataLength(), 4);
 
-        ASSERT_EQ((*data_buffer)[0], 0xff);
-        ASSERT_EQ((*data_buffer)[1], 0xff);
-        ASSERT_EQ((*data_buffer)[2], 0xff);
-        ASSERT_EQ((*data_buffer)[3], 0xff);
+        ASSERT_EQ(data_buffer[0], 0xff);
+        ASSERT_EQ(data_buffer[1], 0xff);
+        ASSERT_EQ(data_buffer[2], 0xff);
+        ASSERT_EQ(data_buffer[3], 0xff);
     };
 
     // Serialize signed value 2147483647
@@ -436,12 +435,12 @@ namespace {
 
         ASSERT_EQ(l, 4);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 4);
+        ASSERT_EQ(data_buffer.GetDataLength(), 4);
 
-        ASSERT_EQ((*data_buffer)[0], 0x7f);
-        ASSERT_EQ((*data_buffer)[1], 0xff);
-        ASSERT_EQ((*data_buffer)[2], 0xff);
-        ASSERT_EQ((*data_buffer)[3], 0xff);
+        ASSERT_EQ(data_buffer[0], 0x7f);
+        ASSERT_EQ(data_buffer[1], 0xff);
+        ASSERT_EQ(data_buffer[2], 0xff);
+        ASSERT_EQ(data_buffer[3], 0xff);
     };
 
     // Serialize signed value -2147483648
@@ -452,12 +451,12 @@ namespace {
 
         ASSERT_EQ(l, 4);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 4);
+        ASSERT_EQ(data_buffer.GetDataLength(), 4);
 
-        ASSERT_EQ((*data_buffer)[0], 0x80);
-        ASSERT_EQ((*data_buffer)[1], 0x00);
-        ASSERT_EQ((*data_buffer)[2], 0x00);
-        ASSERT_EQ((*data_buffer)[3], 0x00);
+        ASSERT_EQ(data_buffer[0], 0x80);
+        ASSERT_EQ(data_buffer[1], 0x00);
+        ASSERT_EQ(data_buffer[2], 0x00);
+        ASSERT_EQ(data_buffer[3], 0x00);
     };
 
     // Serialize signed value 0
@@ -468,16 +467,16 @@ namespace {
 
         ASSERT_EQ(l, 8);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 8);
+        ASSERT_EQ(data_buffer.GetDataLength(), 8);
 
-        ASSERT_EQ((*data_buffer)[0], 0x00);
-        ASSERT_EQ((*data_buffer)[1], 0x00);
-        ASSERT_EQ((*data_buffer)[2], 0x00);
-        ASSERT_EQ((*data_buffer)[3], 0x00);
-        ASSERT_EQ((*data_buffer)[4], 0x00);
-        ASSERT_EQ((*data_buffer)[5], 0x00);
-        ASSERT_EQ((*data_buffer)[6], 0x00);
-        ASSERT_EQ((*data_buffer)[7], 0x00);
+        ASSERT_EQ(data_buffer[0], 0x00);
+        ASSERT_EQ(data_buffer[1], 0x00);
+        ASSERT_EQ(data_buffer[2], 0x00);
+        ASSERT_EQ(data_buffer[3], 0x00);
+        ASSERT_EQ(data_buffer[4], 0x00);
+        ASSERT_EQ(data_buffer[5], 0x00);
+        ASSERT_EQ(data_buffer[6], 0x00);
+        ASSERT_EQ(data_buffer[7], 0x00);
     };
 
     // Serialize signed value 1
@@ -488,16 +487,16 @@ namespace {
 
         ASSERT_EQ(l, 8);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 8);
+        ASSERT_EQ(data_buffer.GetDataLength(), 8);
 
-        ASSERT_EQ((*data_buffer)[0], 0x00);
-        ASSERT_EQ((*data_buffer)[1], 0x00);
-        ASSERT_EQ((*data_buffer)[2], 0x00);
-        ASSERT_EQ((*data_buffer)[3], 0x00);
-        ASSERT_EQ((*data_buffer)[4], 0x00);
-        ASSERT_EQ((*data_buffer)[5], 0x00);
-        ASSERT_EQ((*data_buffer)[6], 0x00);
-        ASSERT_EQ((*data_buffer)[7], 0x01);
+        ASSERT_EQ(data_buffer[0], 0x00);
+        ASSERT_EQ(data_buffer[1], 0x00);
+        ASSERT_EQ(data_buffer[2], 0x00);
+        ASSERT_EQ(data_buffer[3], 0x00);
+        ASSERT_EQ(data_buffer[4], 0x00);
+        ASSERT_EQ(data_buffer[5], 0x00);
+        ASSERT_EQ(data_buffer[6], 0x00);
+        ASSERT_EQ(data_buffer[7], 0x01);
     };
 
     // Serialize signed value -1
@@ -508,16 +507,16 @@ namespace {
 
         ASSERT_EQ(l, 8);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 8);
+        ASSERT_EQ(data_buffer.GetDataLength(), 8);
 
-        ASSERT_EQ((*data_buffer)[0], 0xff);
-        ASSERT_EQ((*data_buffer)[1], 0xff);
-        ASSERT_EQ((*data_buffer)[2], 0xff);
-        ASSERT_EQ((*data_buffer)[3], 0xff);
-        ASSERT_EQ((*data_buffer)[4], 0xff);
-        ASSERT_EQ((*data_buffer)[5], 0xff);
-        ASSERT_EQ((*data_buffer)[6], 0xff);
-        ASSERT_EQ((*data_buffer)[7], 0xff);
+        ASSERT_EQ(data_buffer[0], 0xff);
+        ASSERT_EQ(data_buffer[1], 0xff);
+        ASSERT_EQ(data_buffer[2], 0xff);
+        ASSERT_EQ(data_buffer[3], 0xff);
+        ASSERT_EQ(data_buffer[4], 0xff);
+        ASSERT_EQ(data_buffer[5], 0xff);
+        ASSERT_EQ(data_buffer[6], 0xff);
+        ASSERT_EQ(data_buffer[7], 0xff);
     };
 
     // Serialize signed value 9223372036854775807
@@ -528,16 +527,16 @@ namespace {
 
         ASSERT_EQ(l, 8);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 8);
+        ASSERT_EQ(data_buffer.GetDataLength(), 8);
 
-        ASSERT_EQ((*data_buffer)[0], 0x7f);
-        ASSERT_EQ((*data_buffer)[1], 0xff);
-        ASSERT_EQ((*data_buffer)[2], 0xff);
-        ASSERT_EQ((*data_buffer)[3], 0xff);
-        ASSERT_EQ((*data_buffer)[4], 0xff);
-        ASSERT_EQ((*data_buffer)[5], 0xff);
-        ASSERT_EQ((*data_buffer)[6], 0xff);
-        ASSERT_EQ((*data_buffer)[7], 0xff);
+        ASSERT_EQ(data_buffer[0], 0x7f);
+        ASSERT_EQ(data_buffer[1], 0xff);
+        ASSERT_EQ(data_buffer[2], 0xff);
+        ASSERT_EQ(data_buffer[3], 0xff);
+        ASSERT_EQ(data_buffer[4], 0xff);
+        ASSERT_EQ(data_buffer[5], 0xff);
+        ASSERT_EQ(data_buffer[6], 0xff);
+        ASSERT_EQ(data_buffer[7], 0xff);
     };
 
     // Serialize signed value -9223372036854775808
@@ -548,16 +547,16 @@ namespace {
 
         ASSERT_EQ(l, 8);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 8);
+        ASSERT_EQ(data_buffer.GetDataLength(), 8);
 
-        ASSERT_EQ((*data_buffer)[0], 0x80);
-        ASSERT_EQ((*data_buffer)[1], 0x00);
-        ASSERT_EQ((*data_buffer)[2], 0x00);
-        ASSERT_EQ((*data_buffer)[3], 0x00);
-        ASSERT_EQ((*data_buffer)[4], 0x00);
-        ASSERT_EQ((*data_buffer)[5], 0x00);
-        ASSERT_EQ((*data_buffer)[6], 0x00);
-        ASSERT_EQ((*data_buffer)[7], 0x00);
+        ASSERT_EQ(data_buffer[0], 0x80);
+        ASSERT_EQ(data_buffer[1], 0x00);
+        ASSERT_EQ(data_buffer[2], 0x00);
+        ASSERT_EQ(data_buffer[3], 0x00);
+        ASSERT_EQ(data_buffer[4], 0x00);
+        ASSERT_EQ(data_buffer[5], 0x00);
+        ASSERT_EQ(data_buffer[6], 0x00);
+        ASSERT_EQ(data_buffer[7], 0x00);
     };
 
     /////////////////////////////////
@@ -572,9 +571,9 @@ namespace {
 
         ASSERT_EQ(l, 1);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
-        ASSERT_EQ((*data_buffer)[0], 0x00);
+        ASSERT_EQ(data_buffer[0], 0x00);
     };
 
     // Serialize 64-bit VarUint 1
@@ -585,9 +584,9 @@ namespace {
 
         ASSERT_EQ(l, 1);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
-        ASSERT_EQ((*data_buffer)[0], 0b00000001);
+        ASSERT_EQ(data_buffer[0], 0b00000001);
     };
 
     // Serialize 64-bit VarUint 63
@@ -598,9 +597,9 @@ namespace {
 
         ASSERT_EQ(l, 1);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
-        ASSERT_EQ((*data_buffer)[0], 0b00111111);
+        ASSERT_EQ(data_buffer[0], 0b00111111);
     };
 
     // Serialize 64-bit VarUint 64
@@ -611,9 +610,9 @@ namespace {
 
         ASSERT_EQ(l, 1);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
-        ASSERT_EQ((*data_buffer)[0], 0b01000000);
+        ASSERT_EQ(data_buffer[0], 0b01000000);
     };
 
     // Serialize 64-bit VarUint 127
@@ -624,9 +623,9 @@ namespace {
 
         ASSERT_EQ(l, 1);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
-        ASSERT_EQ((*data_buffer)[0], 0b01111111);
+        ASSERT_EQ(data_buffer[0], 0b01111111);
     };
 
     // Serialize 64-bit VarUint 128
@@ -637,10 +636,10 @@ namespace {
 
         ASSERT_EQ(l, 2);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 2);
+        ASSERT_EQ(data_buffer.GetDataLength(), 2);
 
-        ASSERT_EQ((*data_buffer)[0], 0b10000000);
-        ASSERT_EQ((*data_buffer)[1], 0b10000000);
+        ASSERT_EQ(data_buffer[0], 0b10000000);
+        ASSERT_EQ(data_buffer[1], 0b10000000);
     };
 
     // Serialize 64-bit VarUint 8191
@@ -651,10 +650,10 @@ namespace {
 
         ASSERT_EQ(l, 2);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 2);
+        ASSERT_EQ(data_buffer.GetDataLength(), 2);
 
-        ASSERT_EQ((*data_buffer)[0], 0b10011111);
-        ASSERT_EQ((*data_buffer)[1], 0b11111111);
+        ASSERT_EQ(data_buffer[0], 0b10011111);
+        ASSERT_EQ(data_buffer[1], 0b11111111);
     };
 
     // Serialize 64-bit VarUint 8192
@@ -665,10 +664,10 @@ namespace {
 
         ASSERT_EQ(l, 2);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 2);
+        ASSERT_EQ(data_buffer.GetDataLength(), 2);
 
-        ASSERT_EQ((*data_buffer)[0], 0b10100000);
-        ASSERT_EQ((*data_buffer)[1], 0b00000000);
+        ASSERT_EQ(data_buffer[0], 0b10100000);
+        ASSERT_EQ(data_buffer[1], 0b00000000);
     };
 
     // Serialize 64-bit VarUint 16383
@@ -679,10 +678,10 @@ namespace {
 
         ASSERT_EQ(l, 2);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 2);
+        ASSERT_EQ(data_buffer.GetDataLength(), 2);
 
-        ASSERT_EQ((*data_buffer)[0], 0b10111111);
-        ASSERT_EQ((*data_buffer)[1], 0b11111111);
+        ASSERT_EQ(data_buffer[0], 0b10111111);
+        ASSERT_EQ(data_buffer[1], 0b11111111);
     };
 
     // Serialize 64-bit VarUint 16384
@@ -693,11 +692,11 @@ namespace {
 
         ASSERT_EQ(l, 3);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 3);
+        ASSERT_EQ(data_buffer.GetDataLength(), 3);
 
-        ASSERT_EQ((*data_buffer)[0], 0b11000000);
-        ASSERT_EQ((*data_buffer)[1], 0b01000000);
-        ASSERT_EQ((*data_buffer)[2], 0b00000000);
+        ASSERT_EQ(data_buffer[0], 0b11000000);
+        ASSERT_EQ(data_buffer[1], 0b01000000);
+        ASSERT_EQ(data_buffer[2], 0b00000000);
     };
 
     // Serialize 64-bit VarUint 1048575
@@ -708,11 +707,11 @@ namespace {
 
         ASSERT_EQ(l, 3);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 3);
+        ASSERT_EQ(data_buffer.GetDataLength(), 3);
 
-        ASSERT_EQ((*data_buffer)[0], 0b11001111);
-        ASSERT_EQ((*data_buffer)[1], 0b11111111);
-        ASSERT_EQ((*data_buffer)[2], 0b11111111);
+        ASSERT_EQ(data_buffer[0], 0b11001111);
+        ASSERT_EQ(data_buffer[1], 0b11111111);
+        ASSERT_EQ(data_buffer[2], 0b11111111);
     };
 
     // Serialize 64-bit VarUint 1048576
@@ -723,11 +722,11 @@ namespace {
 
         ASSERT_EQ(l, 3);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 3);
+        ASSERT_EQ(data_buffer.GetDataLength(), 3);
 
-        ASSERT_EQ((*data_buffer)[0], 0b11010000);
-        ASSERT_EQ((*data_buffer)[1], 0b00000000);
-        ASSERT_EQ((*data_buffer)[2], 0b00000000);
+        ASSERT_EQ(data_buffer[0], 0b11010000);
+        ASSERT_EQ(data_buffer[1], 0b00000000);
+        ASSERT_EQ(data_buffer[2], 0b00000000);
     };
 
     // Serialize 64-bit VarUint 2097151
@@ -738,11 +737,11 @@ namespace {
 
         ASSERT_EQ(l, 3);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 3);
+        ASSERT_EQ(data_buffer.GetDataLength(), 3);
 
-        ASSERT_EQ((*data_buffer)[0], 0b11011111);
-        ASSERT_EQ((*data_buffer)[1], 0b11111111);
-        ASSERT_EQ((*data_buffer)[2], 0b11111111);
+        ASSERT_EQ(data_buffer[0], 0b11011111);
+        ASSERT_EQ(data_buffer[1], 0b11111111);
+        ASSERT_EQ(data_buffer[2], 0b11111111);
     };
 
     // Serialize 64-bit VarUint 2147483647
@@ -753,13 +752,13 @@ namespace {
 
         ASSERT_EQ(l, 5);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 5);
+        ASSERT_EQ(data_buffer.GetDataLength(), 5);
 
-        ASSERT_EQ((*data_buffer)[0], 0b11100001);
-        ASSERT_EQ((*data_buffer)[1], 0b01111111);
-        ASSERT_EQ((*data_buffer)[2], 0b11111111);
-        ASSERT_EQ((*data_buffer)[3], 0b11111111);
-        ASSERT_EQ((*data_buffer)[4], 0b11111111);
+        ASSERT_EQ(data_buffer[0], 0b11100001);
+        ASSERT_EQ(data_buffer[1], 0b01111111);
+        ASSERT_EQ(data_buffer[2], 0b11111111);
+        ASSERT_EQ(data_buffer[3], 0b11111111);
+        ASSERT_EQ(data_buffer[4], 0b11111111);
     };
 
     // Serialize 64-bit VarUint 2147483648
@@ -770,13 +769,13 @@ namespace {
 
         ASSERT_EQ(l, 5);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 5);
+        ASSERT_EQ(data_buffer.GetDataLength(), 5);
 
-        ASSERT_EQ((*data_buffer)[0], 0b11100001);
-        ASSERT_EQ((*data_buffer)[1], 0b10000000);
-        ASSERT_EQ((*data_buffer)[2], 0b00000000);
-        ASSERT_EQ((*data_buffer)[3], 0b00000000);
-        ASSERT_EQ((*data_buffer)[4], 0b00000000);
+        ASSERT_EQ(data_buffer[0], 0b11100001);
+        ASSERT_EQ(data_buffer[1], 0b10000000);
+        ASSERT_EQ(data_buffer[2], 0b00000000);
+        ASSERT_EQ(data_buffer[3], 0b00000000);
+        ASSERT_EQ(data_buffer[4], 0b00000000);
     };
 
     // Serialize 64-bit VarUint 4294967295
@@ -787,13 +786,13 @@ namespace {
 
         ASSERT_EQ(l, 5);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 5);
+        ASSERT_EQ(data_buffer.GetDataLength(), 5);
 
-        ASSERT_EQ((*data_buffer)[0], 0b11100001);
-        ASSERT_EQ((*data_buffer)[1], 0b11111111);
-        ASSERT_EQ((*data_buffer)[2], 0b11111111);
-        ASSERT_EQ((*data_buffer)[3], 0b11111111);
-        ASSERT_EQ((*data_buffer)[4], 0b11111111);
+        ASSERT_EQ(data_buffer[0], 0b11100001);
+        ASSERT_EQ(data_buffer[1], 0b11111111);
+        ASSERT_EQ(data_buffer[2], 0b11111111);
+        ASSERT_EQ(data_buffer[3], 0b11111111);
+        ASSERT_EQ(data_buffer[4], 0b11111111);
     };
 
     // Serialize 64-bit VarUint 4294967296
@@ -804,17 +803,17 @@ namespace {
 
         ASSERT_EQ(l, 9);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 9);
+        ASSERT_EQ(data_buffer.GetDataLength(), 9);
 
-        ASSERT_EQ((*data_buffer)[0], 0b11100010);
-        ASSERT_EQ((*data_buffer)[1], 0b00000000);
-        ASSERT_EQ((*data_buffer)[2], 0b00000000);
-        ASSERT_EQ((*data_buffer)[3], 0b00000000);
-        ASSERT_EQ((*data_buffer)[4], 0b00000001);
-        ASSERT_EQ((*data_buffer)[5], 0b00000000);
-        ASSERT_EQ((*data_buffer)[6], 0b00000000);
-        ASSERT_EQ((*data_buffer)[7], 0b00000000);
-        ASSERT_EQ((*data_buffer)[8], 0b00000000);
+        ASSERT_EQ(data_buffer[0], 0b11100010);
+        ASSERT_EQ(data_buffer[1], 0b00000000);
+        ASSERT_EQ(data_buffer[2], 0b00000000);
+        ASSERT_EQ(data_buffer[3], 0b00000000);
+        ASSERT_EQ(data_buffer[4], 0b00000001);
+        ASSERT_EQ(data_buffer[5], 0b00000000);
+        ASSERT_EQ(data_buffer[6], 0b00000000);
+        ASSERT_EQ(data_buffer[7], 0b00000000);
+        ASSERT_EQ(data_buffer[8], 0b00000000);
     };
 
     // Serialize 64-bit VarUint 2^64-1
@@ -825,17 +824,17 @@ namespace {
 
         ASSERT_EQ(l, 9);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 9);
+        ASSERT_EQ(data_buffer.GetDataLength(), 9);
 
-        ASSERT_EQ((*data_buffer)[0], 0b11100010);
-        ASSERT_EQ((*data_buffer)[1], 0b11111111);
-        ASSERT_EQ((*data_buffer)[2], 0b11111111);
-        ASSERT_EQ((*data_buffer)[3], 0b11111111);
-        ASSERT_EQ((*data_buffer)[4], 0b11111111);
-        ASSERT_EQ((*data_buffer)[5], 0b11111111);
-        ASSERT_EQ((*data_buffer)[6], 0b11111111);
-        ASSERT_EQ((*data_buffer)[7], 0b11111111);
-        ASSERT_EQ((*data_buffer)[8], 0b11111111);
+        ASSERT_EQ(data_buffer[0], 0b11100010);
+        ASSERT_EQ(data_buffer[1], 0b11111111);
+        ASSERT_EQ(data_buffer[2], 0b11111111);
+        ASSERT_EQ(data_buffer[3], 0b11111111);
+        ASSERT_EQ(data_buffer[4], 0b11111111);
+        ASSERT_EQ(data_buffer[5], 0b11111111);
+        ASSERT_EQ(data_buffer[6], 0b11111111);
+        ASSERT_EQ(data_buffer[7], 0b11111111);
+        ASSERT_EQ(data_buffer[8], 0b11111111);
     };
 
     /////////////////////////////////
@@ -850,9 +849,9 @@ namespace {
 
         ASSERT_EQ(l, 1);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
-        ASSERT_EQ((*data_buffer)[0], 0x00);
+        ASSERT_EQ(data_buffer[0], 0x00);
     };
 
     // Serialize 64-bit VarInt 1
@@ -863,9 +862,9 @@ namespace {
 
         ASSERT_EQ(l, 1);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
-        ASSERT_EQ((*data_buffer)[0], 0b00000001);
+        ASSERT_EQ(data_buffer[0], 0b00000001);
     };
 
     // Serialize 64-bit VarInt -1
@@ -876,9 +875,9 @@ namespace {
 
         ASSERT_EQ(l, 1);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
-        ASSERT_EQ((*data_buffer)[0], 0b01111111);
+        ASSERT_EQ(data_buffer[0], 0b01111111);
     };
 
     // Serialize 64-bit VarInt -64
@@ -889,9 +888,9 @@ namespace {
 
         ASSERT_EQ(l, 1);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
-        ASSERT_EQ((*data_buffer)[0], 0b01000000);
+        ASSERT_EQ(data_buffer[0], 0b01000000);
     };
 
     // Serialize 64-bit VarInt 63
@@ -902,9 +901,9 @@ namespace {
 
         ASSERT_EQ(l, 1);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
-        ASSERT_EQ((*data_buffer)[0], 0b00111111);
+        ASSERT_EQ(data_buffer[0], 0b00111111);
     };
 
     // Serialize 64-bit VarInt 64
@@ -915,10 +914,10 @@ namespace {
 
         ASSERT_EQ(l, 2);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 2);
+        ASSERT_EQ(data_buffer.GetDataLength(), 2);
 
-        ASSERT_EQ((*data_buffer)[0], 0b10000000);
-        ASSERT_EQ((*data_buffer)[1], 0b01000000);
+        ASSERT_EQ(data_buffer[0], 0b10000000);
+        ASSERT_EQ(data_buffer[1], 0b01000000);
     };
 
     // Serialize 64-bit VarInt -65
@@ -929,10 +928,10 @@ namespace {
 
         ASSERT_EQ(l, 2);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 2);
+        ASSERT_EQ(data_buffer.GetDataLength(), 2);
 
-        ASSERT_EQ((*data_buffer)[0], 0b10111111);
-        ASSERT_EQ((*data_buffer)[1], 0b10111111);
+        ASSERT_EQ(data_buffer[0], 0b10111111);
+        ASSERT_EQ(data_buffer[1], 0b10111111);
     };
 
     // Serialize 64-bit VarInt -8192
@@ -943,10 +942,10 @@ namespace {
 
         ASSERT_EQ(l, 2);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 2);
+        ASSERT_EQ(data_buffer.GetDataLength(), 2);
 
-        ASSERT_EQ((*data_buffer)[0], 0b10100000);
-        ASSERT_EQ((*data_buffer)[1], 0b00000000);
+        ASSERT_EQ(data_buffer[0], 0b10100000);
+        ASSERT_EQ(data_buffer[1], 0b00000000);
     };
 
     // Serialize 64-bit VarInt 8191
@@ -957,10 +956,10 @@ namespace {
 
         ASSERT_EQ(l, 2);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 2);
+        ASSERT_EQ(data_buffer.GetDataLength(), 2);
 
-        ASSERT_EQ((*data_buffer)[0], 0b10011111);
-        ASSERT_EQ((*data_buffer)[1], 0b11111111);
+        ASSERT_EQ(data_buffer[0], 0b10011111);
+        ASSERT_EQ(data_buffer[1], 0b11111111);
     };
 
     // Serialize 64-bit VarInt -8193
@@ -971,11 +970,11 @@ namespace {
 
         ASSERT_EQ(l, 3);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 3);
+        ASSERT_EQ(data_buffer.GetDataLength(), 3);
 
-        ASSERT_EQ((*data_buffer)[0], 0b11011111);
-        ASSERT_EQ((*data_buffer)[1], 0b11011111);
-        ASSERT_EQ((*data_buffer)[2], 0b11111111);
+        ASSERT_EQ(data_buffer[0], 0b11011111);
+        ASSERT_EQ(data_buffer[1], 0b11011111);
+        ASSERT_EQ(data_buffer[2], 0b11111111);
     };
 
     // Serialize 64-bit VarInt 8192
@@ -986,11 +985,11 @@ namespace {
 
         ASSERT_EQ(l, 3);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 3);
+        ASSERT_EQ(data_buffer.GetDataLength(), 3);
 
-        ASSERT_EQ((*data_buffer)[0], 0b11000000);
-        ASSERT_EQ((*data_buffer)[1], 0b00100000);
-        ASSERT_EQ((*data_buffer)[2], 0b00000000);
+        ASSERT_EQ(data_buffer[0], 0b11000000);
+        ASSERT_EQ(data_buffer[1], 0b00100000);
+        ASSERT_EQ(data_buffer[2], 0b00000000);
     };
 
     // Serialize 64-bit VarInt -1048576
@@ -1001,11 +1000,11 @@ namespace {
 
         ASSERT_EQ(l, 3);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 3);
+        ASSERT_EQ(data_buffer.GetDataLength(), 3);
 
-        ASSERT_EQ((*data_buffer)[0], 0b11010000);
-        ASSERT_EQ((*data_buffer)[1], 0b00000000);
-        ASSERT_EQ((*data_buffer)[2], 0b00000000);
+        ASSERT_EQ(data_buffer[0], 0b11010000);
+        ASSERT_EQ(data_buffer[1], 0b00000000);
+        ASSERT_EQ(data_buffer[2], 0b00000000);
     };
 
     // Serialize 64-bit VarInt 1048575
@@ -1016,11 +1015,11 @@ namespace {
 
         ASSERT_EQ(l, 3);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 3);
+        ASSERT_EQ(data_buffer.GetDataLength(), 3);
 
-        ASSERT_EQ((*data_buffer)[0], 0b11001111);
-        ASSERT_EQ((*data_buffer)[1], 0b11111111);
-        ASSERT_EQ((*data_buffer)[2], 0b11111111);
+        ASSERT_EQ(data_buffer[0], 0b11001111);
+        ASSERT_EQ(data_buffer[1], 0b11111111);
+        ASSERT_EQ(data_buffer[2], 0b11111111);
     };
 
     // Serialize 64-bit VarInt -1048577
@@ -1031,13 +1030,13 @@ namespace {
 
         ASSERT_EQ(l, 5);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 5);
+        ASSERT_EQ(data_buffer.GetDataLength(), 5);
 
-        ASSERT_EQ((*data_buffer)[0], 0b11100001);
-        ASSERT_EQ((*data_buffer)[1], 0b11111111);
-        ASSERT_EQ((*data_buffer)[2], 0b11101111);
-        ASSERT_EQ((*data_buffer)[3], 0b11111111);
-        ASSERT_EQ((*data_buffer)[4], 0b11111111);
+        ASSERT_EQ(data_buffer[0], 0b11100001);
+        ASSERT_EQ(data_buffer[1], 0b11111111);
+        ASSERT_EQ(data_buffer[2], 0b11101111);
+        ASSERT_EQ(data_buffer[3], 0b11111111);
+        ASSERT_EQ(data_buffer[4], 0b11111111);
     };
 
     // Serialize 64-bit VarInt 1048576
@@ -1048,13 +1047,13 @@ namespace {
 
         ASSERT_EQ(l, 5);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 5);
+        ASSERT_EQ(data_buffer.GetDataLength(), 5);
 
-        ASSERT_EQ((*data_buffer)[0], 0b11100001);
-        ASSERT_EQ((*data_buffer)[1], 0b00000000);
-        ASSERT_EQ((*data_buffer)[2], 0b00010000);
-        ASSERT_EQ((*data_buffer)[3], 0b00000000);
-        ASSERT_EQ((*data_buffer)[4], 0b00000000);
+        ASSERT_EQ(data_buffer[0], 0b11100001);
+        ASSERT_EQ(data_buffer[1], 0b00000000);
+        ASSERT_EQ(data_buffer[2], 0b00010000);
+        ASSERT_EQ(data_buffer[3], 0b00000000);
+        ASSERT_EQ(data_buffer[4], 0b00000000);
     };
 
     // Serialize 64-bit VarInt -2147483648
@@ -1065,13 +1064,13 @@ namespace {
 
         ASSERT_EQ(l, 5);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 5);
+        ASSERT_EQ(data_buffer.GetDataLength(), 5);
 
-        ASSERT_EQ((*data_buffer)[0], 0b11100001);
-        ASSERT_EQ((*data_buffer)[1], 0b10000000);
-        ASSERT_EQ((*data_buffer)[2], 0b00000000);
-        ASSERT_EQ((*data_buffer)[3], 0b00000000);
-        ASSERT_EQ((*data_buffer)[4], 0b00000000);
+        ASSERT_EQ(data_buffer[0], 0b11100001);
+        ASSERT_EQ(data_buffer[1], 0b10000000);
+        ASSERT_EQ(data_buffer[2], 0b00000000);
+        ASSERT_EQ(data_buffer[3], 0b00000000);
+        ASSERT_EQ(data_buffer[4], 0b00000000);
     };
 
     // Serialize 64-bit VarInt 2147483647
@@ -1082,13 +1081,13 @@ namespace {
 
         ASSERT_EQ(l, 5);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 5);
+        ASSERT_EQ(data_buffer.GetDataLength(), 5);
 
-        ASSERT_EQ((*data_buffer)[0], 0b11100001);
-        ASSERT_EQ((*data_buffer)[1], 0b01111111);
-        ASSERT_EQ((*data_buffer)[2], 0b11111111);
-        ASSERT_EQ((*data_buffer)[3], 0b11111111);
-        ASSERT_EQ((*data_buffer)[4], 0b11111111);
+        ASSERT_EQ(data_buffer[0], 0b11100001);
+        ASSERT_EQ(data_buffer[1], 0b01111111);
+        ASSERT_EQ(data_buffer[2], 0b11111111);
+        ASSERT_EQ(data_buffer[3], 0b11111111);
+        ASSERT_EQ(data_buffer[4], 0b11111111);
     };
 
     // Serialize 64-bit VarInt -2147483649
@@ -1099,17 +1098,17 @@ namespace {
 
         ASSERT_EQ(l, 9);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 9);
+        ASSERT_EQ(data_buffer.GetDataLength(), 9);
 
-        ASSERT_EQ((*data_buffer)[0], 0b11100010);
-        ASSERT_EQ((*data_buffer)[1], 0b11111111);
-        ASSERT_EQ((*data_buffer)[2], 0b11111111);
-        ASSERT_EQ((*data_buffer)[3], 0b11111111);
-        ASSERT_EQ((*data_buffer)[4], 0b11111111);
-        ASSERT_EQ((*data_buffer)[5], 0b01111111);
-        ASSERT_EQ((*data_buffer)[6], 0b11111111);
-        ASSERT_EQ((*data_buffer)[7], 0b11111111);
-        ASSERT_EQ((*data_buffer)[8], 0b11111111);
+        ASSERT_EQ(data_buffer[0], 0b11100010);
+        ASSERT_EQ(data_buffer[1], 0b11111111);
+        ASSERT_EQ(data_buffer[2], 0b11111111);
+        ASSERT_EQ(data_buffer[3], 0b11111111);
+        ASSERT_EQ(data_buffer[4], 0b11111111);
+        ASSERT_EQ(data_buffer[5], 0b01111111);
+        ASSERT_EQ(data_buffer[6], 0b11111111);
+        ASSERT_EQ(data_buffer[7], 0b11111111);
+        ASSERT_EQ(data_buffer[8], 0b11111111);
     };
 
     // Serialize 64-bit VarInt 2147483648
@@ -1120,17 +1119,17 @@ namespace {
 
         ASSERT_EQ(l, 9);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 9);
+        ASSERT_EQ(data_buffer.GetDataLength(), 9);
 
-        ASSERT_EQ((*data_buffer)[0], 0b11100010);
-        ASSERT_EQ((*data_buffer)[1], 0b00000000);
-        ASSERT_EQ((*data_buffer)[2], 0b00000000);
-        ASSERT_EQ((*data_buffer)[3], 0b00000000);
-        ASSERT_EQ((*data_buffer)[4], 0b00000000);
-        ASSERT_EQ((*data_buffer)[5], 0b10000000);
-        ASSERT_EQ((*data_buffer)[6], 0b00000000);
-        ASSERT_EQ((*data_buffer)[7], 0b00000000);
-        ASSERT_EQ((*data_buffer)[8], 0b00000000);
+        ASSERT_EQ(data_buffer[0], 0b11100010);
+        ASSERT_EQ(data_buffer[1], 0b00000000);
+        ASSERT_EQ(data_buffer[2], 0b00000000);
+        ASSERT_EQ(data_buffer[3], 0b00000000);
+        ASSERT_EQ(data_buffer[4], 0b00000000);
+        ASSERT_EQ(data_buffer[5], 0b10000000);
+        ASSERT_EQ(data_buffer[6], 0b00000000);
+        ASSERT_EQ(data_buffer[7], 0b00000000);
+        ASSERT_EQ(data_buffer[8], 0b00000000);
     };
 
     // Serialize 64-bit VarInt -9223372036854775808
@@ -1141,17 +1140,17 @@ namespace {
 
         ASSERT_EQ(l, 9);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 9);
+        ASSERT_EQ(data_buffer.GetDataLength(), 9);
 
-        ASSERT_EQ((*data_buffer)[0], 0b11100010);
-        ASSERT_EQ((*data_buffer)[1], 0b10000000);
-        ASSERT_EQ((*data_buffer)[2], 0b00000000);
-        ASSERT_EQ((*data_buffer)[3], 0b00000000);
-        ASSERT_EQ((*data_buffer)[4], 0b00000000);
-        ASSERT_EQ((*data_buffer)[5], 0b00000000);
-        ASSERT_EQ((*data_buffer)[6], 0b00000000);
-        ASSERT_EQ((*data_buffer)[7], 0b00000000);
-        ASSERT_EQ((*data_buffer)[8], 0b00000000);
+        ASSERT_EQ(data_buffer[0], 0b11100010);
+        ASSERT_EQ(data_buffer[1], 0b10000000);
+        ASSERT_EQ(data_buffer[2], 0b00000000);
+        ASSERT_EQ(data_buffer[3], 0b00000000);
+        ASSERT_EQ(data_buffer[4], 0b00000000);
+        ASSERT_EQ(data_buffer[5], 0b00000000);
+        ASSERT_EQ(data_buffer[6], 0b00000000);
+        ASSERT_EQ(data_buffer[7], 0b00000000);
+        ASSERT_EQ(data_buffer[8], 0b00000000);
     };
 
     // Serialize 64-bit VarInt 9223372036854775807
@@ -1162,17 +1161,17 @@ namespace {
 
         ASSERT_EQ(l, 9);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 9);
+        ASSERT_EQ(data_buffer.GetDataLength(), 9);
 
-        ASSERT_EQ((*data_buffer)[0], 0b11100010);
-        ASSERT_EQ((*data_buffer)[1], 0b01111111);
-        ASSERT_EQ((*data_buffer)[2], 0b11111111);
-        ASSERT_EQ((*data_buffer)[3], 0b11111111);
-        ASSERT_EQ((*data_buffer)[4], 0b11111111);
-        ASSERT_EQ((*data_buffer)[5], 0b11111111);
-        ASSERT_EQ((*data_buffer)[6], 0b11111111);
-        ASSERT_EQ((*data_buffer)[7], 0b11111111);
-        ASSERT_EQ((*data_buffer)[8], 0b11111111);
+        ASSERT_EQ(data_buffer[0], 0b11100010);
+        ASSERT_EQ(data_buffer[1], 0b01111111);
+        ASSERT_EQ(data_buffer[2], 0b11111111);
+        ASSERT_EQ(data_buffer[3], 0b11111111);
+        ASSERT_EQ(data_buffer[4], 0b11111111);
+        ASSERT_EQ(data_buffer[5], 0b11111111);
+        ASSERT_EQ(data_buffer[6], 0b11111111);
+        ASSERT_EQ(data_buffer[7], 0b11111111);
+        ASSERT_EQ(data_buffer[8], 0b11111111);
     };
 
     /////////////////////////////////
@@ -1187,10 +1186,10 @@ namespace {
 
         ASSERT_EQ(l, 2);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 2);
+        ASSERT_EQ(data_buffer.GetDataLength(), 2);
 
-        ASSERT_EQ((*data_buffer)[0], 0x42);
-        ASSERT_EQ((*data_buffer)[1], 0x48);
+        ASSERT_EQ(data_buffer[0], 0x42);
+        ASSERT_EQ(data_buffer[1], 0x48);
     };
 
     /////////////////////////////////
@@ -1205,12 +1204,12 @@ namespace {
 
         ASSERT_EQ(l, 4);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 4);
+        ASSERT_EQ(data_buffer.GetDataLength(), 4);
 
-        ASSERT_EQ((*data_buffer)[0], 0x40);
-        ASSERT_EQ((*data_buffer)[1], 0x49);
-        ASSERT_EQ((*data_buffer)[2], 0x0f);
-        ASSERT_EQ((*data_buffer)[3], 0xdb);
+        ASSERT_EQ(data_buffer[0], 0x40);
+        ASSERT_EQ(data_buffer[1], 0x49);
+        ASSERT_EQ(data_buffer[2], 0x0f);
+        ASSERT_EQ(data_buffer[3], 0xdb);
     };
 
     /////////////////////////////////
@@ -1225,16 +1224,16 @@ namespace {
 
         ASSERT_EQ(l, 8);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 8);
+        ASSERT_EQ(data_buffer.GetDataLength(), 8);
 
-        ASSERT_EQ((*data_buffer)[0], 0x40);
-        ASSERT_EQ((*data_buffer)[1], 0x09);
-        ASSERT_EQ((*data_buffer)[2], 0x21);
-        ASSERT_EQ((*data_buffer)[3], 0xfb);
-        ASSERT_EQ((*data_buffer)[4], 0x54);
-        ASSERT_EQ((*data_buffer)[5], 0x44);
-        ASSERT_EQ((*data_buffer)[6], 0x2d);
-        ASSERT_EQ((*data_buffer)[7], 0x18);
+        ASSERT_EQ(data_buffer[0], 0x40);
+        ASSERT_EQ(data_buffer[1], 0x09);
+        ASSERT_EQ(data_buffer[2], 0x21);
+        ASSERT_EQ(data_buffer[3], 0xfb);
+        ASSERT_EQ(data_buffer[4], 0x54);
+        ASSERT_EQ(data_buffer[5], 0x44);
+        ASSERT_EQ(data_buffer[6], 0x2d);
+        ASSERT_EQ(data_buffer[7], 0x18);
     };
 
     /////////////////////////////////
@@ -1249,9 +1248,9 @@ namespace {
 
         ASSERT_EQ(l, 1);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
-        ASSERT_EQ((*data_buffer)[0], 0x01);
+        ASSERT_EQ(data_buffer[0], 0x01);
     };
 
     // Serialize boolean false
@@ -1262,9 +1261,9 @@ namespace {
 
         ASSERT_EQ(l, 1);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
-        ASSERT_EQ((*data_buffer)[0], 0x00);
+        ASSERT_EQ(data_buffer[0], 0x00);
     };
 
     /////////////////////////////////
@@ -1279,9 +1278,9 @@ namespace {
 
         ASSERT_EQ(l, 1);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
-        ASSERT_EQ((*data_buffer)[0], 0x00);
+        ASSERT_EQ(data_buffer[0], 0x00);
     };
 
     // Serialize Byte 128
@@ -1292,9 +1291,9 @@ namespace {
 
         ASSERT_EQ(l, 1);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
-        ASSERT_EQ((*data_buffer)[0], 0x80);
+        ASSERT_EQ(data_buffer[0], 0x80);
     };
 
     // Serialize Byte 255
@@ -1305,9 +1304,9 @@ namespace {
 
         ASSERT_EQ(l, 1);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
-        ASSERT_EQ((*data_buffer)[0], 0xff);
+        ASSERT_EQ(data_buffer[0], 0xff);
     };
 
     /////////////////////////////////
@@ -1322,9 +1321,9 @@ namespace {
 
         ASSERT_EQ(l, 1);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
-        ASSERT_EQ((*data_buffer)[0], 0x00);
+        ASSERT_EQ(data_buffer[0], 0x00);
     };
 
     // Serialize String "Hello"
@@ -1335,14 +1334,14 @@ namespace {
 
         ASSERT_EQ(l, 6);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 6);
+        ASSERT_EQ(data_buffer.GetDataLength(), 6);
 
-        ASSERT_EQ((*data_buffer)[0], 0x05);
-        ASSERT_EQ((*data_buffer)[1], 'H');
-        ASSERT_EQ((*data_buffer)[2], 'e');
-        ASSERT_EQ((*data_buffer)[3], 'l');
-        ASSERT_EQ((*data_buffer)[4], 'l');
-        ASSERT_EQ((*data_buffer)[5], 'o');
+        ASSERT_EQ(data_buffer[0], 0x05);
+        ASSERT_EQ(data_buffer[1], 'H');
+        ASSERT_EQ(data_buffer[2], 'e');
+        ASSERT_EQ(data_buffer[3], 'l');
+        ASSERT_EQ(data_buffer[4], 'l');
+        ASSERT_EQ(data_buffer[5], 'o');
     };
 
     // Serialize String that's a little longer
@@ -1355,13 +1354,13 @@ namespace {
 
         ASSERT_EQ(l, 136);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 136);
+        ASSERT_EQ(data_buffer.GetDataLength(), 136);
 
-        ASSERT_EQ((*data_buffer)[0], 0b10000000);
-        ASSERT_EQ((*data_buffer)[1], 0b10000110);
+        ASSERT_EQ(data_buffer[0], 0b10000000);
+        ASSERT_EQ(data_buffer[1], 0b10000110);
         for (std::size_t i = 0; i < value.size(); i++)
         {
-            ASSERT_EQ((*data_buffer)[i + 2],
+            ASSERT_EQ(data_buffer[i + 2],
                       static_cast<unsigned char>(value[i]));
         }
     };
@@ -1376,9 +1375,9 @@ namespace {
         gs::Blob value;
         std::size_t l = serializer.Write(data_buffer, value);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 1);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1);
 
-        ASSERT_EQ((*data_buffer)[0], 0x00);
+        ASSERT_EQ(data_buffer[0], 0x00);
     };
 
     // Serialize Blob "Hello"
@@ -1393,14 +1392,14 @@ namespace {
 
         ASSERT_EQ(l, 6);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 6);
+        ASSERT_EQ(data_buffer.GetDataLength(), 6);
 
-        ASSERT_EQ((*data_buffer)[0], 0x05);
-        ASSERT_EQ((*data_buffer)[1], 'H');
-        ASSERT_EQ((*data_buffer)[2], 'e');
-        ASSERT_EQ((*data_buffer)[3], 'l');
-        ASSERT_EQ((*data_buffer)[4], 'l');
-        ASSERT_EQ((*data_buffer)[5], 'o');
+        ASSERT_EQ(data_buffer[0], 0x05);
+        ASSERT_EQ(data_buffer[1], 'H');
+        ASSERT_EQ(data_buffer[2], 'e');
+        ASSERT_EQ(data_buffer[3], 'l');
+        ASSERT_EQ(data_buffer[4], 'l');
+        ASSERT_EQ(data_buffer[5], 'o');
     };
 
     // Serialize Blob that's a little longer
@@ -1417,16 +1416,16 @@ namespace {
 
         ASSERT_EQ(l, 136);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 136);
+        ASSERT_EQ(data_buffer.GetDataLength(), 136);
 
         // Check the VarUint length
-        ASSERT_EQ((*data_buffer)[0], 0b10000000);
-        ASSERT_EQ((*data_buffer)[1], 0b10000110);
+        ASSERT_EQ(data_buffer[0], 0b10000000);
+        ASSERT_EQ(data_buffer[1], 0b10000110);
 
         // Check the blob data
         for (std::size_t i = 0; i < value.size(); i++)
         {
-            ASSERT_EQ((*data_buffer)[i + 2],
+            ASSERT_EQ(data_buffer[i + 2],
                       static_cast<unsigned char>(value[i]));
         }
     };
@@ -1442,16 +1441,16 @@ namespace {
 
         ASSERT_EQ(l, 1002);
 
-        ASSERT_EQ(data_buffer->GetDataLength(), 1002);
+        ASSERT_EQ(data_buffer.GetDataLength(), 1002);
 
         // Check the VarUint length
-        ASSERT_EQ((*data_buffer)[0], 0b10000011);
-        ASSERT_EQ((*data_buffer)[1], 0b11101000);
+        ASSERT_EQ(data_buffer[0], 0b10000011);
+        ASSERT_EQ(data_buffer[1], 0b11101000);
 
         // Check the blob data
         for (std::size_t i = 0; i < value.size(); i++)
         {
-            ASSERT_EQ((*data_buffer)[i + 2],
+            ASSERT_EQ(data_buffer[i + 2],
                       static_cast<unsigned char>(i % 256));
         }
     };

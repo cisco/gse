@@ -44,7 +44,7 @@
 
 #include <cstring>
 #include <cstdint>
-#include <memory>
+#include <cstddef>
 #include <variant>
 #include <vector>
 #include "gtest/gtest.h"
@@ -59,7 +59,7 @@ namespace {
     class GSDecoderTest : public ::testing::Test
     {
         public:
-            GSDecoderTest() : data_buffer(std::make_unique<DataBuffer<>>(1500))
+            GSDecoderTest() : data_buffer(1500)
             {
             }
 
@@ -71,7 +71,7 @@ namespace {
             gs::Encoder encoder;
             gs::Decoder decoder;
             gs::GSObjects decoded_objects;
-            std::unique_ptr<DataBuffer<>> data_buffer;
+            DataBuffer<> data_buffer;
     };
 
     // Test vector B.1
@@ -112,16 +112,16 @@ namespace {
         // Verify the buffer contents
         for (std::size_t i = 0; i < expected.size(); i++)
         {
-            ASSERT_EQ((*data_buffer)[i], expected[i]);
+            ASSERT_EQ(data_buffer[i], expected[i]);
         }
 
         // PORTION TO TEST THE GAME STATE DECODER
 
         // Ensure we are at the start of the buffer
-        ASSERT_EQ(data_buffer->GetReadLength(), 0);
+        ASSERT_EQ(data_buffer.GetReadLength(), 0);
 
         // Decode the data buffer
-        ASSERT_EQ(decoder.Decode(data_buffer, decoded_objects), data_buffer->GetDataLength());
+        ASSERT_EQ(decoder.Decode(data_buffer, decoded_objects), data_buffer.GetDataLength());
 
         // We should have found a single object
         ASSERT_EQ(decoded_objects.size(), 1);
@@ -188,16 +188,16 @@ namespace {
         // Verify the buffer contents
         for (std::size_t i = 0; i < expected.size(); i++)
         {
-            ASSERT_EQ((*data_buffer)[i], expected[i]);
+            ASSERT_EQ(data_buffer[i], expected[i]);
         }
 
         // PORTION TO TEST THE GAME STATE DECODER
 
         // Ensure we are at the start of the buffer
-        ASSERT_EQ(data_buffer->GetReadLength(), 0);
+        ASSERT_EQ(data_buffer.GetReadLength(), 0);
 
         // Decode the data buffer
-        ASSERT_EQ(decoder.Decode(data_buffer, decoded_objects), data_buffer->GetDataLength());
+        ASSERT_EQ(decoder.Decode(data_buffer, decoded_objects), data_buffer.GetDataLength());
 
         // We should have found a single object
         ASSERT_EQ(decoded_objects.size(), 1);
@@ -257,17 +257,17 @@ namespace {
         // Verify the buffer contents
         for (std::size_t i = 0; i < expected.size(); i++)
         {
-            ASSERT_EQ((*data_buffer)[i], expected[i]);
+            ASSERT_EQ(data_buffer[i], expected[i]);
         }
 
         // PORTION TO TEST THE GAME STATE DECODER
 
         // Ensure we are at the start of the buffer
-        ASSERT_EQ(data_buffer->GetReadLength(), 0);
+        ASSERT_EQ(data_buffer.GetReadLength(), 0);
 
         // Decode the data buffer
         ASSERT_EQ(decoder.Decode(data_buffer, decoded_objects),
-                  data_buffer->GetDataLength());
+                  data_buffer.GetDataLength());
 
         // We should have found a single object
         ASSERT_EQ(decoded_objects.size(), 1);
@@ -368,16 +368,16 @@ namespace {
         // Verify the buffer contents
         for (std::size_t i = 0; i < expected.size(); i++)
         {
-            ASSERT_EQ((*data_buffer)[i], expected[i]);
+            ASSERT_EQ(data_buffer[i], expected[i]);
         }
 
         // PORTION TO TEST THE GAME STATE DECODER
 
         // Ensure we are at the start of the buffer
-        ASSERT_EQ(data_buffer->GetReadLength(), 0);
+        ASSERT_EQ(data_buffer.GetReadLength(), 0);
 
         // Decode the data buffer
-        ASSERT_EQ(decoder.Decode(data_buffer, decoded_objects), data_buffer->GetDataLength());
+        ASSERT_EQ(decoder.Decode(data_buffer, decoded_objects), data_buffer.GetDataLength());
 
         // We should have found a single object
         ASSERT_EQ(decoded_objects.size(), 1);
@@ -496,16 +496,16 @@ namespace {
         // Verify the buffer contents
         for (std::size_t i = 0; i < expected.size(); i++)
         {
-            ASSERT_EQ((*data_buffer)[i], expected[i]);
+            ASSERT_EQ(data_buffer[i], expected[i]);
         }
 
         // PORTION TO TEST THE GAME STATE DECODER
 
         // Ensure we are at the start of the buffer
-        ASSERT_EQ(data_buffer->GetReadLength(), 0);
+        ASSERT_EQ(data_buffer.GetReadLength(), 0);
 
         // Decode the data buffer
-        ASSERT_EQ(decoder.Decode(data_buffer, decoded_objects), data_buffer->GetDataLength());
+        ASSERT_EQ(decoder.Decode(data_buffer, decoded_objects), data_buffer.GetDataLength());
 
         // We should have found three object
         ASSERT_EQ(decoded_objects.size(), 3);
@@ -555,16 +555,16 @@ namespace {
         // Verify the buffer contents
         for (std::size_t i = 0; i < expected.size(); i++)
         {
-            ASSERT_EQ((*data_buffer)[i], expected[i]);
+            ASSERT_EQ(data_buffer[i], expected[i]);
         }
 
         // PORTION TO TEST THE GAME STATE DECODER
 
         // Ensure we are at the start of the buffer
-        ASSERT_EQ(data_buffer->GetReadLength(), 0);
+        ASSERT_EQ(data_buffer.GetReadLength(), 0);
 
         // Decode the data buffer
-        ASSERT_EQ(decoder.Decode(data_buffer, decoded_objects), data_buffer->GetDataLength());
+        ASSERT_EQ(decoder.Decode(data_buffer, decoded_objects), data_buffer.GetDataLength());
 
         // We should have found a single object
         ASSERT_EQ(decoded_objects.size(), 1);
@@ -700,17 +700,17 @@ namespace {
         // Verify the buffer contents
         for (std::size_t i = 0; i < expected.size(); i++)
         {
-            ASSERT_EQ((*data_buffer)[i], expected[i]);
+            ASSERT_EQ(data_buffer[i], expected[i]);
         }
 
         // PORTION TO TEST THE GAME STATE DECODER
 
         // Ensure we are at the start of the buffer
-        ASSERT_EQ(data_buffer->GetReadLength(), 0);
+        ASSERT_EQ(data_buffer.GetReadLength(), 0);
 
         // Decode the data buffer
         ASSERT_EQ(decoder.Decode(data_buffer, decoded_objects),
-                  data_buffer->GetDataLength());
+                  data_buffer.GetDataLength());
 
         // We should have found a single object
         ASSERT_EQ(decoded_objects.size(), 1);
