@@ -231,8 +231,6 @@ typedef struct
     GS_Finger pinky;
 } GS_Hand2;
 
-#define GS_MAX_BLOB_SIZE 1500
-
 typedef struct
 {
     GS_VarUint tag;
