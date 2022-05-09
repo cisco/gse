@@ -21,7 +21,7 @@ Building
 -------
 
 ```
-( mkdir build ; cd build ; cmake .. ; make )
+cmake -S . -B build ; cmake --build build --parallel
 ```
 
 
