@@ -24,6 +24,29 @@ Building
 cmake -S . -B build ; cmake --build build --parallel
 ```
 
+Integrating In Other Projects
+-----------------------------
+
+The following is an example CMakeLists.txt file that can be used to include
+this library in other software package builds.
+
+```cmake
+# Enable fetching content
+include(FetchContent)
+
+# Fetch the Game State Encoder Library
+FetchContent_Declare(
+    gse
+    GIT_REPOSITORY  https://github.com/cisco/gse.git
+    GIT_TAG         origin/main
+)
+
+# Set this option to OFF to disable building unit tests (recommended)
+set(gse_BUILD_TESTS OFF)
+
+# Make the library available
+FetchContent_MakeAvailable(gse)
+```
 
 C Interface
 -----------
