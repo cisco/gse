@@ -267,16 +267,18 @@ typedef struct
 EXPORT int CALL GSEncoderInit(GS_Encoder_Context **gs_encoder_context,
                               unsigned char *buffer,
                               uint64_t buffer_length);
-EXPORT int CALL GSEncodeObject(GS_Encoder_Context *gs_encoder_context, GS_Object *object);
-EXPORT size_t CALL GSEncoderDataLength(GS_Encoder_Context* gs_encoder_context);
-EXPORT const char * CALL GetEncoderError(GS_Encoder_Context *gs_encoder_context);
+EXPORT int CALL GSEncodeObject(GS_Encoder_Context *gs_encoder_context,
+                               GS_Object *object);
+EXPORT size_t CALL GSEncoderDataLength(GS_Encoder_Context *gs_encoder_context);
+EXPORT const char *CALL GetEncoderError(GS_Encoder_Context *gs_encoder_context);
 EXPORT int CALL GSEncoderDestroy(GS_Encoder_Context *gs_encoder_context);
 
 EXPORT int CALL GSDecoderInit(GS_Decoder_Context **gs_decoder_context,
                               unsigned char *buffer,
                               uint64_t data_length);
-EXPORT int CALL GSDecodeObject(GS_Decoder_Context *gs_decoder_context, GS_Object *object);
-EXPORT const char * CALL GetDecoderError(GS_Decoder_Context *gs_decoder_context);
+EXPORT int CALL GSDecodeObject(GS_Decoder_Context *gs_decoder_context,
+                               GS_Object *object);
+EXPORT const char *CALL GetDecoderError(GS_Decoder_Context *gs_decoder_context);
 EXPORT int CALL GSDecoderDestroy(GS_Decoder_Context *gs_decoder_context);
 
 } // extern C
