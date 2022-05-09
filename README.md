@@ -20,7 +20,7 @@ calls functions in the DataBuffer object to extract primitive types.
 Building
 -------
 
-```
+```bash
 cmake -S . -B build ; cmake --build build --parallel
 ```
 
