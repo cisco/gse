@@ -43,6 +43,7 @@
 
 #include <cstring>
 #include <cstdint>
+#include <cstddef>
 #include <vector>
 #include "gtest/gtest.h"
 #include "gs_api.h"

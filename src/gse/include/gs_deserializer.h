@@ -57,6 +57,7 @@
 #define GS_DESERIALIZER_H
 
 #include <stdexcept>
+#include <cstddef>
 #include "gs_types.h"
 #include "data_buffer.h"
 

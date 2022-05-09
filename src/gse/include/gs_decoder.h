@@ -47,8 +47,9 @@
 #define GS_DECODER_H
 
 #include <stdexcept>
-#include <string>
 #include <cstddef>
+#include <string>
+#include <vector>
 #include "data_buffer.h"
 #include "gs_types.h"
 #include "gs_deserializer.h"

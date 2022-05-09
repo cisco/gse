@@ -47,6 +47,7 @@
 
 #include <string>
 #include <vector>
+#include <cstdint>
 #include "gs_api.h"
 #include "gs_encoder.h"
 #include "gs_decoder.h"

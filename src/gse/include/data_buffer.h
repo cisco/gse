@@ -52,9 +52,7 @@
 #ifndef DATA_BUFFER_H
 #define DATA_BUFFER_H
 
-#include <cstdint>
 #include <cstddef>
-#include <chrono>
 #include <memory>
 #include "data_buffer_interface.h"
 

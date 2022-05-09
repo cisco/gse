@@ -50,8 +50,10 @@
 #include "gs_api.h"
 #include "gs_api_internal.h"
 
+#ifdef __cplusplus
 extern "C"
 {
+#endif
 
 /*
  *  GSEncoderInit
@@ -600,4 +602,6 @@ int CALL GSDecoderDestroy(GS_Decoder_Context *gs_decoder_context)
     return result;
 }
 
+#ifdef __cplusplus
 } // extern C
+#endif

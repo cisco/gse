@@ -60,6 +60,8 @@
 #define GS_SERIALIZER_H
 
 #include <stdexcept>
+#include <cstddef>
+#include <string>
 #include "gs_types.h"
 #include "data_buffer.h"
 

@@ -51,9 +51,10 @@
 #ifndef DATA_BUFFER_INTERFACE_H
 #define DATA_BUFFER_INTERFACE_H
 
+#include <stdexcept>
+#include <ostream>
 #include <cstdint>
 #include <cstddef>
-#include <chrono>
 #include <memory>
 #include "octet_string.h"
 

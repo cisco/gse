@@ -47,11 +47,10 @@
  */
 
 #include <cstring>
-#include <stdexcept>
 #include <string.h>
-#include <ostream>
 #include <iomanip>
 #include <ctype.h>
+#include <algorithm>
 #ifdef _WIN32
 #ifndef NOMINMAX
 #define NOMINMAX

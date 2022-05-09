@@ -42,8 +42,8 @@
  *      OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <cstdint>
 #include <algorithm>
+#include <cstddef>
 #include "gs_types.h"
 #include "gs_api_internal.h"
 

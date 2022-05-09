@@ -45,8 +45,8 @@
 #ifndef GS_API_H
 #define GS_API_H
 
+#include <stddef.h>
 #include <stdint.h>
-#include "gs_types.h"
 
 #if defined(__linux__) || defined(__APPLE__)
 #define EXPORT
@@ -56,8 +56,10 @@
 #define CALL __stdcall
 #endif
 
+#ifdef __cplusplus
 extern "C"
 {
+#endif
 
 // Primitive types
 typedef uint64_t GS_VarUint;
@@ -281,6 +283,8 @@ EXPORT int CALL GSDecodeObject(GS_Decoder_Context *gs_decoder_context,
 EXPORT const char *CALL GetDecoderError(GS_Decoder_Context *gs_decoder_context);
 EXPORT int CALL GSDecoderDestroy(GS_Decoder_Context *gs_decoder_context);
 
+#ifdef __cplusplus
 } // extern C
+#endif
 
 #endif // GS_API_H

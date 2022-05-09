@@ -56,6 +56,7 @@
 #include <iomanip>
 #include <ctype.h>
 #include <utility>
+#include <stddef.h>
 #include "data_buffer.h"
 
 /*
