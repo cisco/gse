@@ -72,9 +72,6 @@ repetitively until there are no further objects) or a vector of variants
 `gs::GSObjects` (requiring a single call to decode the entire buffer) as the
 second parameter into which the decoded object(s) will be written.
 
-For examples of how to use these objects, see the unit test code in
-test/test_gs_encoder and test/test_gs_decoder or the C API code.
-
 Note that the objects `gs::Serializer` and `gs::Deserializer` exist to
 facilitate serialization and deserialization of various simpler data types
 into and out of the `DataBuffer`.  One does not use those object directly.
@@ -87,6 +84,9 @@ an effort was made to detect such issues to avoid such exceptions from being
 thrown.  Likewise, `gs::Decoder` may throw an exception of the type
 `DataBufferException` or `gs::DecoderException` if there is an error reading
 from the data before or decoding the data buffer.
+
+For examples of how to use these objects, see the unit test code in
+test/test_gs_encoder and test/test_gs_decoder or the C API code.
 
 C Interface
 -----------
