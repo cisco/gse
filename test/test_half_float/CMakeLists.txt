@@ -1,6 +1,6 @@
 add_executable(test_half_float test_main.cpp test_half_float.cpp)
 
-target_include_directories(test_half_float PRIVATE ${libgse_SOURCE_DIR}/src/gse/src)
+target_include_directories(test_half_float PRIVATE ${libgse_SOURCE_DIR}/src)
 
 include(GoogleTest)
 

@@ -1,5 +1,17 @@
 cmake_minimum_required(VERSION 3.17)
 
+# Building tests by default depends on whether this is a subproject
+if (DEFINED PROJECT_NAME)
+    # Option to control building tests
+    option(gse_BUILD_TESTS "Build Tests for the Game State Encoder Library" OFF)
+else()
+    # Option to control building tests
+    option(gse_BUILD_TESTS "Build Tests for the Game State Encoder Library" ON)
+endif()
+
+# Option to control library installation
+option(gse_INSTALL "Install the Game State Encoder Library" ON)
+
 project(libgse
         VERSION 1.0.0.0
         DESCRIPTION "Game State Encoder Library"
@@ -14,9 +26,6 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}")
 
 add_subdirectory(src)
-
-# Option to simplify disabling tests in downstream projects
-option(gse_BUILD_TESTS "Build Tests for Game State Encoder Library" ON)
 
 include(CTest)
 

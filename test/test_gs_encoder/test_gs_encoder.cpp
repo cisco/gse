@@ -593,7 +593,6 @@ namespace {
         hand2.wrist.tx.value = 0.0f;
         hand2.wrist.ty.value = 3.140625f;
         hand2.wrist.tz.value = 0.0f;
-
         hand2.thumb.tip.tx.value = 0.0f;
         hand2.thumb.tip.ty.value = 3.140625f;
         hand2.thumb.tip.tz.value = 0.0f;

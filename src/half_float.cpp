@@ -53,6 +53,7 @@
 
 #include <cstring>
 #include <cstdint>
+#include "half_float.h"
 
 namespace gs
 {
