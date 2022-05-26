@@ -58,6 +58,9 @@
 #include <memory>
 #include "octet_string.h"
 
+namespace gs
+{
+
 /*
  * DataBufferException
  *
@@ -176,11 +179,10 @@ class DataBufferInterface
         std::size_t read_length;                // Number of octets read
 };
 
-// Define a shared pointer type for the DataBufferInterface object
-typedef std::shared_ptr<DataBufferInterface> DataBufferInterfacePointer;
+} // namespace gs
 
 // Produce a hex dump for data buffer contents
 std::ostream &operator<<(std::ostream &o,
-                         const DataBufferInterface &data_buffer);
+                         const gs::DataBufferInterface &data_buffer);
 
 #endif // DATA_BUFFER_INTERFACE_H

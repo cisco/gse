@@ -64,7 +64,7 @@ namespace {
 
         protected:
             gs::Serializer serializer;
-            DataBuffer<> data_buffer;
+            gs::DataBuffer<> data_buffer;
     };
 
     /////////////////////////////////

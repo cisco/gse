@@ -60,7 +60,7 @@ namespace gs_api
 typedef struct
 {
     gs::Encoder encoder;                        // gs::Encoder object
-    DataBuffer<> data_buffer;                   // DataBuffer object
+    gs::DataBuffer<> data_buffer;               // DataBuffer object
     std::string error;                          // Text for last error
 } GS_Encoder_Context_Internal;
 
@@ -68,7 +68,7 @@ typedef struct
 typedef struct
 {
     gs::Decoder decoder;                        // gs::Decoder object
-    DataBuffer<> data_buffer;                   // DataBuffer object
+    gs::DataBuffer<> data_buffer;               // DataBuffer object
     std::string error;                          // Text for last error
     std::vector<std::uint8_t *> allocations;    // Memory allocations
 } GS_Decoder_Context_Internal;

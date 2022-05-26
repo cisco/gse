@@ -66,7 +66,7 @@ namespace {
         protected:
             gs::Deserializer deserializer;
             gs::Serializer serializer;
-            DataBuffer<> data_buffer;
+            gs::DataBuffer<> data_buffer;
     };
 
     /////////////////////////////////

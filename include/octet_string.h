@@ -47,10 +47,15 @@
 #include <vector>
 #include <cstdint>
 
+namespace gs
+{
+
 // OctetString to store a vector of octets
 typedef std::vector<std::uint8_t> OctetString;
 
+} // namespace gs
+
 // Produce a hex dump for OctetStrings using DataBuffer for assistance
-std::ostream &operator<<(std::ostream &o, const OctetString &octet_string);
+std::ostream &operator<<(std::ostream &o, const gs::OctetString &octet_string);
 
 #endif // OCTET_STRING_H

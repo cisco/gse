@@ -56,6 +56,9 @@
 #include <memory>
 #include "data_buffer_interface.h"
 
+namespace gs
+{
+
 // DataBuffer object declaration
 template <typename Alloc = std::allocator<unsigned char>>
 class DataBuffer : public DataBufferInterface
@@ -84,8 +87,7 @@ class DataBuffer : public DataBufferInterface
         Alloc allocator;                        // Memory allocator
 };
 
-// Define a shared pointer type for the DataBuffer object
-typedef std::shared_ptr<DataBuffer<>> DataBufferPointer;
+} // namespace gs
 
 // Pull in all of the template function definitions
 #include "data_buffer.cpp"

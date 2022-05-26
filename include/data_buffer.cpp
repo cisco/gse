@@ -59,6 +59,9 @@
 #include <stddef.h>
 #include "data_buffer.h"
 
+namespace gs
+{
+
 /*
  *  DataBuffer::DataBuffer
  *
@@ -456,5 +459,7 @@ bool DataBuffer<Alloc>::operator!=(const DataBuffer<Alloc> &other) const
 {
     return !(*this == other);
 }
+
+} // namespace gs
 
 #endif // DATA_BUFFER_CPP

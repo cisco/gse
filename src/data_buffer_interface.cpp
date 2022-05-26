@@ -62,6 +62,9 @@
 #endif
 #include "data_buffer_interface.h"
 
+namespace gs
+{
+
 /*
  *  DataBufferInterface::DataBufferInterface
  *
@@ -1738,6 +1741,8 @@ void DataBufferInterface::ReadValue(double &value)
     read_length += sizeof(value);
 }
 
+} // namespace gs
+
 /*
  *  operator<< for DataBufferInterface
  *
@@ -1759,7 +1764,7 @@ void DataBufferInterface::ReadValue(double &value)
  *      None.
  */
 std::ostream &operator<<(std::ostream &o,
-                         const DataBufferInterface &data_buffer)
+                         const gs::DataBufferInterface &data_buffer)
 {
     unsigned counter = 0;                       // Character counter
 

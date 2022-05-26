@@ -71,7 +71,7 @@ namespace {
             gs::Encoder encoder;
             gs::Decoder decoder;
             gs::GSObjects decoded_objects;
-            DataBuffer<> data_buffer;
+            gs::DataBuffer<> data_buffer;
     };
 
     // Test vector B.1
