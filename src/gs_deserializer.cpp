@@ -69,7 +69,7 @@ namespace gs
  *  Comments:
  *      None.
  */
-std::size_t Deserializer::Read(DataBuffer<> &data_buffer, Uint8 &value) const
+std::size_t Deserializer::Read(DataBuffer &data_buffer, Uint8 &value) const
 {
     data_buffer.ReadValue(value);
 
@@ -96,7 +96,7 @@ std::size_t Deserializer::Read(DataBuffer<> &data_buffer, Uint8 &value) const
  *  Comments:
  *      None.
  */
-std::size_t Deserializer::Read(DataBuffer<> &data_buffer, Uint16 &value) const
+std::size_t Deserializer::Read(DataBuffer &data_buffer, Uint16 &value) const
 {
     data_buffer.ReadValue(value);
 
@@ -123,7 +123,7 @@ std::size_t Deserializer::Read(DataBuffer<> &data_buffer, Uint16 &value) const
  *  Comments:
  *      None.
  */
-std::size_t Deserializer::Read(DataBuffer<> &data_buffer, Uint32 &value) const
+std::size_t Deserializer::Read(DataBuffer &data_buffer, Uint32 &value) const
 {
     data_buffer.ReadValue(value);
 
@@ -150,7 +150,7 @@ std::size_t Deserializer::Read(DataBuffer<> &data_buffer, Uint32 &value) const
  *  Comments:
  *      None.
  */
-std::size_t Deserializer::Read(DataBuffer<> &data_buffer, Uint64 &value) const
+std::size_t Deserializer::Read(DataBuffer &data_buffer, Uint64 &value) const
 {
     data_buffer.ReadValue(value);
 
@@ -177,7 +177,7 @@ std::size_t Deserializer::Read(DataBuffer<> &data_buffer, Uint64 &value) const
  *  Comments:
  *      None.
  */
-std::size_t Deserializer::Read(DataBuffer<> &data_buffer, Int8 &value) const
+std::size_t Deserializer::Read(DataBuffer &data_buffer, Int8 &value) const
 {
     data_buffer.ReadValue(reinterpret_cast<Uint8&>(value));
 
@@ -204,7 +204,7 @@ std::size_t Deserializer::Read(DataBuffer<> &data_buffer, Int8 &value) const
  *  Comments:
  *      None.
  */
-std::size_t Deserializer::Read(DataBuffer<> &data_buffer, Int16 &value) const
+std::size_t Deserializer::Read(DataBuffer &data_buffer, Int16 &value) const
 {
     data_buffer.ReadValue(reinterpret_cast<Uint16&>(value));
 
@@ -231,7 +231,7 @@ std::size_t Deserializer::Read(DataBuffer<> &data_buffer, Int16 &value) const
  *  Comments:
  *      None.
  */
-std::size_t Deserializer::Read(DataBuffer<> &data_buffer, Int32 &value) const
+std::size_t Deserializer::Read(DataBuffer &data_buffer, Int32 &value) const
 {
     data_buffer.ReadValue(reinterpret_cast<Uint32&>(value));
 
@@ -258,7 +258,7 @@ std::size_t Deserializer::Read(DataBuffer<> &data_buffer, Int32 &value) const
  *  Comments:
  *      None.
  */
-std::size_t Deserializer::Read(DataBuffer<> &data_buffer, Int64 &value) const
+std::size_t Deserializer::Read(DataBuffer &data_buffer, Int64 &value) const
 {
     data_buffer.ReadValue(reinterpret_cast<Uint64&>(value));
 
@@ -284,7 +284,7 @@ std::size_t Deserializer::Read(DataBuffer<> &data_buffer, Int64 &value) const
  *  Comments:
  *      None.
  */
-std::size_t Deserializer::Read(DataBuffer<> &data_buffer, VarUint &value) const
+std::size_t Deserializer::Read(DataBuffer &data_buffer, VarUint &value) const
 {
     std::uint8_t octet;
 
@@ -375,7 +375,7 @@ std::size_t Deserializer::Read(DataBuffer<> &data_buffer, VarUint &value) const
  *  Comments:
  *      None.
  */
-std::size_t Deserializer::Read(DataBuffer<> &data_buffer, VarInt &value) const
+std::size_t Deserializer::Read(DataBuffer &data_buffer, VarInt &value) const
 {
     std::uint8_t octet;
 
@@ -476,7 +476,7 @@ std::size_t Deserializer::Read(DataBuffer<> &data_buffer, VarInt &value) const
  *  Comments:
  *      None.
  */
-std::size_t Deserializer::Read(DataBuffer<> &data_buffer, Float16 &value) const
+std::size_t Deserializer::Read(DataBuffer &data_buffer, Float16 &value) const
 {
     std::uint16_t half_float;
 
@@ -510,7 +510,7 @@ std::size_t Deserializer::Read(DataBuffer<> &data_buffer, Float16 &value) const
  *  Comments:
  *      None.
  */
-std::size_t Deserializer::Read(DataBuffer<> &data_buffer, Float32 &value) const
+std::size_t Deserializer::Read(DataBuffer &data_buffer, Float32 &value) const
 {
     // Read the 32-bit value
     data_buffer.ReadValue(value);
@@ -539,7 +539,7 @@ std::size_t Deserializer::Read(DataBuffer<> &data_buffer, Float32 &value) const
  *  Comments:
  *      None.
  */
-std::size_t Deserializer::Read(DataBuffer<> &data_buffer, Float64 &value) const
+std::size_t Deserializer::Read(DataBuffer &data_buffer, Float64 &value) const
 {
     // Read the 64-bit value
     data_buffer.ReadValue(value);
@@ -566,7 +566,7 @@ std::size_t Deserializer::Read(DataBuffer<> &data_buffer, Float64 &value) const
  *  Comments:
  *      None.
  */
-std::size_t Deserializer::Read(DataBuffer<> &data_buffer, Boolean &value) const
+std::size_t Deserializer::Read(DataBuffer &data_buffer, Boolean &value) const
 {
     // Read the 64-bit value
     data_buffer.ReadValue(reinterpret_cast<std::uint8_t&>(value));
@@ -593,7 +593,7 @@ std::size_t Deserializer::Read(DataBuffer<> &data_buffer, Boolean &value) const
  *  Comments:
  *      None.
  */
-std::size_t Deserializer::Read(DataBuffer<> &data_buffer, String &value) const
+std::size_t Deserializer::Read(DataBuffer &data_buffer, String &value) const
 {
     std::size_t read_length;
     VarUint length;
@@ -629,7 +629,7 @@ std::size_t Deserializer::Read(DataBuffer<> &data_buffer, String &value) const
  *  Comments:
  *      None.
  */
-std::size_t Deserializer::Read(DataBuffer<> &data_buffer, Blob &value) const
+std::size_t Deserializer::Read(DataBuffer &data_buffer, Blob &value) const
 {
     std::size_t read_length;
     VarUint length;

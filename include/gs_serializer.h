@@ -72,7 +72,12 @@ namespace gs
 class SerializerException : public std::runtime_error
 {
     public:
-        SerializerException(const std::string &what_arg) :
+        explicit SerializerException(const std::string &what_arg) :
+            std::runtime_error(what_arg)
+        {
+        }
+
+        explicit SerializerException(const char *what_arg) :
             std::runtime_error(what_arg)
         {
         }
@@ -86,36 +91,36 @@ class Serializer
         ~Serializer() = default;
 
         // Write unsigned integer types
-        std::size_t Write(DataBuffer<> &data_buffer, Uint8 value) const;
-        std::size_t Write(DataBuffer<> &data_buffer, Uint16 value) const;
-        std::size_t Write(DataBuffer<> &data_buffer, Uint32 value) const;
-        std::size_t Write(DataBuffer<> &data_buffer, Uint64 value) const;
+        std::size_t Write(DataBuffer &data_buffer, Uint8 value) const;
+        std::size_t Write(DataBuffer &data_buffer, Uint16 value) const;
+        std::size_t Write(DataBuffer &data_buffer, Uint32 value) const;
+        std::size_t Write(DataBuffer &data_buffer, Uint64 value) const;
 
         // Write signed integer types
-        std::size_t Write(DataBuffer<> &data_buffer, Int8 value) const;
-        std::size_t Write(DataBuffer<> &data_buffer, Int16 value) const;
-        std::size_t Write(DataBuffer<> &data_buffer, Int32 value) const;
-        std::size_t Write(DataBuffer<> &data_buffer, Int64 value) const;
+        std::size_t Write(DataBuffer &data_buffer, Int8 value) const;
+        std::size_t Write(DataBuffer &data_buffer, Int16 value) const;
+        std::size_t Write(DataBuffer &data_buffer, Int32 value) const;
+        std::size_t Write(DataBuffer &data_buffer, Int64 value) const;
 
         // Write variable-width integer types
-        std::size_t Write(DataBuffer<> &data_buffer,
+        std::size_t Write(DataBuffer &data_buffer,
                           const VarUint &value) const;
-        std::size_t Write(DataBuffer<> &data_buffer, const VarInt &value) const;
+        std::size_t Write(DataBuffer &data_buffer, const VarInt &value) const;
 
         // Write floating point types
-        std::size_t Write(DataBuffer<> &data_buffer,
+        std::size_t Write(DataBuffer &data_buffer,
                           const Float16 &value) const;
-        std::size_t Write(DataBuffer<> &data_buffer, Float32 value) const;
-        std::size_t Write(DataBuffer<> &data_buffer, Float64 value) const;
+        std::size_t Write(DataBuffer &data_buffer, Float32 value) const;
+        std::size_t Write(DataBuffer &data_buffer, Float64 value) const;
 
         // Write the Boolean type
-        std::size_t Write(DataBuffer<> &data_buffer, Boolean value) const;
+        std::size_t Write(DataBuffer &data_buffer, Boolean value) const;
 
         // Write strings
-        std::size_t Write(DataBuffer<> &data_buffer, const String &value) const;
+        std::size_t Write(DataBuffer &data_buffer, const String &value) const;
 
         // Write a blob object
-        std::size_t Write(DataBuffer<> &data_buffer, const Blob &value) const;
+        std::size_t Write(DataBuffer &data_buffer, const Blob &value) const;
 };
 
 } // namespace gs

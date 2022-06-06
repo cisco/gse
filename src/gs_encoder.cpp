@@ -76,7 +76,7 @@ namespace gs
  *  Comments:
  *      None.
  */
-EncodeResult Encoder::Encode(DataBuffer<> &data_buffer, const GSObjects &value)
+EncodeResult Encoder::Encode(DataBuffer &data_buffer, const GSObjects &value)
 {
     std::size_t total_octets = 0;
     std::size_t object_count = 0;
@@ -116,7 +116,7 @@ EncodeResult Encoder::Encode(DataBuffer<> &data_buffer, const GSObjects &value)
  *  Comments:
  *      None.
  */
-EncodeResult Encoder::Encode(DataBuffer<> &data_buffer, const GSObject &value)
+EncodeResult Encoder::Encode(DataBuffer &data_buffer, const GSObject &value)
 {
     return std::visit([&](const auto &value) -> EncodeResult
                       {
@@ -148,7 +148,7 @@ EncodeResult Encoder::Encode(DataBuffer<> &data_buffer, const GSObject &value)
  *  Comments:
  *      None.
  */
-EncodeResult Encoder::Encode(DataBuffer<> &data_buffer, const Object1 &value)
+EncodeResult Encoder::Encode(DataBuffer &data_buffer, const Object1 &value)
 {
     std::size_t total_length{};
     Length data_length{};
@@ -213,7 +213,7 @@ EncodeResult Encoder::Encode(DataBuffer<> &data_buffer, const Object1 &value)
  *  Comments:
  *      None.
  */
-EncodeResult Encoder::Encode(DataBuffer<> &data_buffer, const Head1 &value)
+EncodeResult Encoder::Encode(DataBuffer &data_buffer, const Head1 &value)
 {
     std::size_t total_length{};
     Length data_length{};
@@ -276,7 +276,7 @@ EncodeResult Encoder::Encode(DataBuffer<> &data_buffer, const Head1 &value)
  *  Comments:
  *      None.
  */
-EncodeResult Encoder::Encode(DataBuffer<> &data_buffer, const Hand1 &value)
+EncodeResult Encoder::Encode(DataBuffer &data_buffer, const Hand1 &value)
 {
     std::size_t total_length{};
     Length data_length{};
@@ -331,7 +331,7 @@ EncodeResult Encoder::Encode(DataBuffer<> &data_buffer, const Hand1 &value)
  *  Comments:
  *      None.
  */
-EncodeResult Encoder::Encode(DataBuffer<> &data_buffer, const Hand2 &value)
+EncodeResult Encoder::Encode(DataBuffer &data_buffer, const Hand2 &value)
 {
     std::size_t total_length{};
     Length data_length{};
@@ -398,7 +398,7 @@ EncodeResult Encoder::Encode(DataBuffer<> &data_buffer, const Hand2 &value)
  *  Comments:
  *      None.
  */
-EncodeResult Encoder::Encode(DataBuffer<> &data_buffer, const Mesh1 &value)
+EncodeResult Encoder::Encode(DataBuffer &data_buffer, const Mesh1 &value)
 {
     std::size_t total_length{};
     Length data_length{};
@@ -453,7 +453,7 @@ EncodeResult Encoder::Encode(DataBuffer<> &data_buffer, const Mesh1 &value)
  *  Comments:
  *      None.
  */
-EncodeResult Encoder::Encode(DataBuffer<> &data_buffer,
+EncodeResult Encoder::Encode(DataBuffer &data_buffer,
                              const UnknownObject &value)
 {
     std::size_t total_length{};
@@ -491,7 +491,7 @@ EncodeResult Encoder::Encode(DataBuffer<> &data_buffer,
  *  Comments:
  *      None.
  */
-inline std::size_t Encoder::Serialize(DataBuffer<> &data_buffer, Tag value)
+inline std::size_t Encoder::Serialize(DataBuffer &data_buffer, Tag value)
 {
     VarUint tag{};
 
@@ -557,7 +557,7 @@ inline std::size_t Encoder::Serialize(DataBuffer<> &data_buffer, Tag value)
  *  Comments:
  *      None.
  */
-inline std::size_t Encoder::Serialize(DataBuffer<> &data_buffer,
+inline std::size_t Encoder::Serialize(DataBuffer &data_buffer,
                                       const HeadIPD1 &value)
 {
     std::size_t total_length{};
@@ -595,7 +595,7 @@ inline std::size_t Encoder::Serialize(DataBuffer<> &data_buffer,
  *  Comments:
  *      None.
  */
-inline std::size_t Encoder::Serialize(DataBuffer<> &data_buffer,
+inline std::size_t Encoder::Serialize(DataBuffer &data_buffer,
                                       const Loc1 &value)
 {
     std::size_t total_length{};
@@ -627,7 +627,7 @@ inline std::size_t Encoder::Serialize(DataBuffer<> &data_buffer,
  *  Comments:
  *      None.
  */
-inline std::size_t Encoder::Serialize(DataBuffer<> &data_buffer,
+inline std::size_t Encoder::Serialize(DataBuffer &data_buffer,
                                       const Loc2 &value)
 {
     std::size_t total_length{};
@@ -662,7 +662,7 @@ inline std::size_t Encoder::Serialize(DataBuffer<> &data_buffer,
  *  Comments:
  *      None.
  */
-inline std::size_t Encoder::Serialize(DataBuffer<> &data_buffer,
+inline std::size_t Encoder::Serialize(DataBuffer &data_buffer,
                                       const Norm1 &value)
 {
     std::size_t total_length{};
@@ -694,7 +694,7 @@ inline std::size_t Encoder::Serialize(DataBuffer<> &data_buffer,
  *  Comments:
  *      None.
  */
-inline std::size_t Encoder::Serialize(DataBuffer<> &data_buffer,
+inline std::size_t Encoder::Serialize(DataBuffer &data_buffer,
                                       const TextureUV1 &value)
 {
     std::size_t total_length{};
@@ -725,7 +725,7 @@ inline std::size_t Encoder::Serialize(DataBuffer<> &data_buffer,
  *  Comments:
  *      None.
  */
-inline std::size_t Encoder::Serialize(DataBuffer<> &data_buffer,
+inline std::size_t Encoder::Serialize(DataBuffer &data_buffer,
                                       const Rot1 &value)
 {
     std::size_t total_length{};
@@ -757,7 +757,7 @@ inline std::size_t Encoder::Serialize(DataBuffer<> &data_buffer,
  *  Comments:
  *      None.
  */
-inline std::size_t Encoder::Serialize(DataBuffer<> &data_buffer,
+inline std::size_t Encoder::Serialize(DataBuffer &data_buffer,
                                       const Rot2 &value)
 {
     std::size_t total_length{};
@@ -792,7 +792,7 @@ inline std::size_t Encoder::Serialize(DataBuffer<> &data_buffer,
  *  Comments:
  *      None.
  */
-inline std::size_t Encoder::Serialize(DataBuffer<> &data_buffer,
+inline std::size_t Encoder::Serialize(DataBuffer &data_buffer,
                                       const Transform1 &value)
 {
     std::size_t total_length{};
@@ -824,7 +824,7 @@ inline std::size_t Encoder::Serialize(DataBuffer<> &data_buffer,
  *  Comments:
  *      None.
  */
-inline std::size_t Encoder::Serialize(DataBuffer<> &data_buffer,
+inline std::size_t Encoder::Serialize(DataBuffer &data_buffer,
                                       const Thumb &value)
 {
     std::size_t total_length{};
@@ -857,7 +857,7 @@ inline std::size_t Encoder::Serialize(DataBuffer<> &data_buffer,
  *  Comments:
  *      None.
  */
-inline std::size_t Encoder::Serialize(DataBuffer<> &data_buffer,
+inline std::size_t Encoder::Serialize(DataBuffer &data_buffer,
                                       const Finger &value)
 {
     std::size_t total_length{};
@@ -893,7 +893,7 @@ inline std::size_t Encoder::Serialize(DataBuffer<> &data_buffer,
  *      None.
  */
 template<typename T>
-std::size_t Encoder::Serialize(DataBuffer<> &data_buffer,
+std::size_t Encoder::Serialize(DataBuffer &data_buffer,
                                const std::vector<T> &value)
 {
     std::size_t total_length{};

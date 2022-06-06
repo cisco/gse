@@ -71,7 +71,7 @@ namespace gs
  *  Comments:
  *      None.
  */
-std::size_t Serializer::Write(DataBuffer<> &data_buffer, Uint8 value) const
+std::size_t Serializer::Write(DataBuffer &data_buffer, Uint8 value) const
 {
     if (data_buffer.GetBufferSize()) data_buffer.AppendValue(value);
 
@@ -99,7 +99,7 @@ std::size_t Serializer::Write(DataBuffer<> &data_buffer, Uint8 value) const
  *  Comments:
  *      None.
  */
-std::size_t Serializer::Write(DataBuffer<> &data_buffer, Uint16 value) const
+std::size_t Serializer::Write(DataBuffer &data_buffer, Uint16 value) const
 {
     if (data_buffer.GetBufferSize()) data_buffer.AppendValue(value);
 
@@ -127,7 +127,7 @@ std::size_t Serializer::Write(DataBuffer<> &data_buffer, Uint16 value) const
  *  Comments:
  *      None.
  */
-std::size_t Serializer::Write(DataBuffer<> &data_buffer, Uint32 value) const
+std::size_t Serializer::Write(DataBuffer &data_buffer, Uint32 value) const
 {
     if (data_buffer.GetBufferSize()) data_buffer.AppendValue(value);
 
@@ -155,7 +155,7 @@ std::size_t Serializer::Write(DataBuffer<> &data_buffer, Uint32 value) const
  *  Comments:
  *      None.
  */
-std::size_t Serializer::Write(DataBuffer<> &data_buffer, Uint64 value) const
+std::size_t Serializer::Write(DataBuffer &data_buffer, Uint64 value) const
 {
     if (data_buffer.GetBufferSize()) data_buffer.AppendValue(value);
 
@@ -183,7 +183,7 @@ std::size_t Serializer::Write(DataBuffer<> &data_buffer, Uint64 value) const
  *  Comments:
  *      None.
  */
-std::size_t Serializer::Write(DataBuffer<> &data_buffer, Int8 value) const
+std::size_t Serializer::Write(DataBuffer &data_buffer, Int8 value) const
 {
     if (data_buffer.GetBufferSize())
     {
@@ -214,7 +214,7 @@ std::size_t Serializer::Write(DataBuffer<> &data_buffer, Int8 value) const
  *  Comments:
  *      None.
  */
-std::size_t Serializer::Write(DataBuffer<> &data_buffer, Int16 value) const
+std::size_t Serializer::Write(DataBuffer &data_buffer, Int16 value) const
 {
     if (data_buffer.GetBufferSize())
     {
@@ -245,7 +245,7 @@ std::size_t Serializer::Write(DataBuffer<> &data_buffer, Int16 value) const
  *  Comments:
  *      None.
  */
-std::size_t Serializer::Write(DataBuffer<> &data_buffer, Int32 value) const
+std::size_t Serializer::Write(DataBuffer &data_buffer, Int32 value) const
 {
     if (data_buffer.GetBufferSize())
     {
@@ -276,7 +276,7 @@ std::size_t Serializer::Write(DataBuffer<> &data_buffer, Int32 value) const
  *  Comments:
  *      None.
  */
-std::size_t Serializer::Write(DataBuffer<> &data_buffer, Int64 value) const
+std::size_t Serializer::Write(DataBuffer &data_buffer, Int64 value) const
 {
     if (data_buffer.GetBufferSize())
     {
@@ -312,7 +312,7 @@ std::size_t Serializer::Write(DataBuffer<> &data_buffer, Int64 value) const
  *          [d] 11100001b + 4 octets for a 32-bit unsigned integer
  *          [e] 11100010b + 8 octets for a 64-bit unsigned integer
  */
-std::size_t Serializer::Write(DataBuffer<> &data_buffer,
+std::size_t Serializer::Write(DataBuffer &data_buffer,
                               const VarUint &value) const
 {
     // [a] Produce a 7-bit unsigned integer
@@ -399,7 +399,7 @@ std::size_t Serializer::Write(DataBuffer<> &data_buffer,
  *          [d] 11100001b + 4 octets for a 32-bit signed integer
  *          [e] 11100010b + 8 octets for a 64-bit signed integer
  */
-std::size_t Serializer::Write(DataBuffer<> &data_buffer,
+std::size_t Serializer::Write(DataBuffer &data_buffer,
                               const VarInt &value) const
 {
     // [a] Produce a 7-bit signed integer
@@ -489,7 +489,7 @@ std::size_t Serializer::Write(DataBuffer<> &data_buffer,
  *  Comments:
  *      None.
  */
-std::size_t Serializer::Write(DataBuffer<> &data_buffer,
+std::size_t Serializer::Write(DataBuffer &data_buffer,
                               const Float16 &value) const
 {
     if (data_buffer.GetBufferSize())
@@ -523,7 +523,7 @@ std::size_t Serializer::Write(DataBuffer<> &data_buffer,
  *  Comments:
  *      None.
  */
-std::size_t Serializer::Write(DataBuffer<> &data_buffer, Float32 value) const
+std::size_t Serializer::Write(DataBuffer &data_buffer, Float32 value) const
 {
     static_assert(sizeof(value) == 4, "expected Float32 to be 32 bits");
 
@@ -558,7 +558,7 @@ std::size_t Serializer::Write(DataBuffer<> &data_buffer, Float32 value) const
  *  Comments:
  *      None.
  */
-std::size_t Serializer::Write(DataBuffer<> &data_buffer, Float64 value) const
+std::size_t Serializer::Write(DataBuffer &data_buffer, Float64 value) const
 {
     static_assert(sizeof(value) == 8, "expected Float64 to be 64 bits");
 
@@ -591,7 +591,7 @@ std::size_t Serializer::Write(DataBuffer<> &data_buffer, Float64 value) const
  *  Comments:
  *      None.
  */
-std::size_t Serializer::Write(DataBuffer<> &data_buffer, Boolean value) const
+std::size_t Serializer::Write(DataBuffer &data_buffer, Boolean value) const
 {
     if (data_buffer.GetBufferSize())
     {
@@ -629,7 +629,7 @@ std::size_t Serializer::Write(DataBuffer<> &data_buffer, Boolean value) const
  *  Comments:
  *      None.
  */
-std::size_t Serializer::Write(DataBuffer<> &data_buffer,
+std::size_t Serializer::Write(DataBuffer &data_buffer,
                               const String &value) const
 {
     std::size_t total_length{};
@@ -670,7 +670,7 @@ std::size_t Serializer::Write(DataBuffer<> &data_buffer,
  *  Comments:
  *      None.
  */
-std::size_t Serializer::Write(DataBuffer<> &data_buffer,
+std::size_t Serializer::Write(DataBuffer &data_buffer,
                               const Blob &value) const
 {
     std::size_t total_length{};

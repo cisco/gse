@@ -58,13 +58,11 @@ namespace {
             {
             }
 
-            ~GSSerializerTest()
-            {
-            }
+            ~GSSerializerTest() = default;
 
         protected:
             gs::Serializer serializer;
-            gs::DataBuffer<> data_buffer;
+            gs::DataBuffer data_buffer;
     };
 
     /////////////////////////////////

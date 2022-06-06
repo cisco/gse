@@ -1,5 +1,5 @@
 add_library(gse
-            data_buffer_interface.cpp
+            data_buffer.cpp
             gs_api.cpp
             gs_api_internal.cpp
             gs_decoder.cpp

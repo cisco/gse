@@ -1,4 +1,4 @@
-add_executable(test_gs_encoder test_main.cpp test_gs_encoder.cpp)
+add_executable(test_gs_encoder test_gs_encoder.cpp)
 
 include(GoogleTest)
 

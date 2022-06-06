@@ -1,4 +1,5 @@
 find_package(GTest REQUIRED)
+add_subdirectory(test_databuffer)
 add_subdirectory(test_float)
 add_subdirectory(test_gs_api)
 add_subdirectory(test_gs_decoder)
