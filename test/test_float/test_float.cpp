@@ -53,13 +53,8 @@ namespace {
     class FloatTest : public ::testing::Test
     {
         protected:
-            FloatTest()
-            {
-            }
-
-            ~FloatTest()
-            {
-            }
+            FloatTest() = default;
+            ~FloatTest() = default;
     };
 
     // Test that float is a proper Binary32 format

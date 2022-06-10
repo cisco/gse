@@ -67,7 +67,7 @@
  */
 std::ostream &operator<<(std::ostream &o, const gs::OctetString &octet_string)
 {
-    gs::DataBuffer<> buffer(
+    gs::DataBuffer buffer(
         const_cast<unsigned char *>(&octet_string[0]),
         octet_string.size(),
         octet_string.size());

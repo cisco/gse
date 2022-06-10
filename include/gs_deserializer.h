@@ -68,7 +68,12 @@ namespace gs
 class DeserializerException : public std::runtime_error
 {
     public:
-        DeserializerException(const std::string &what_arg) :
+        explicit DeserializerException(const std::string &what_arg) :
+            std::runtime_error(what_arg)
+        {
+        }
+
+        explicit DeserializerException(const char *what_arg) :
             std::runtime_error(what_arg)
         {
         }
@@ -82,34 +87,34 @@ class Deserializer
         ~Deserializer() = default;
 
         // Read unsigned integer types
-        std::size_t Read(DataBuffer<> &data_buffer, Uint8 &value) const;
-        std::size_t Read(DataBuffer<> &data_buffer, Uint16 &value) const;
-        std::size_t Read(DataBuffer<> &data_buffer, Uint32 &value) const;
-        std::size_t Read(DataBuffer<> &data_buffer, Uint64 &value) const;
+        std::size_t Read(DataBuffer &data_buffer, Uint8 &value) const;
+        std::size_t Read(DataBuffer &data_buffer, Uint16 &value) const;
+        std::size_t Read(DataBuffer &data_buffer, Uint32 &value) const;
+        std::size_t Read(DataBuffer &data_buffer, Uint64 &value) const;
 
         // Read signed integer types
-        std::size_t Read(DataBuffer<> &data_buffer, Int8 &value) const;
-        std::size_t Read(DataBuffer<> &data_buffer, Int16 &value) const;
-        std::size_t Read(DataBuffer<> &data_buffer, Int32 &value) const;
-        std::size_t Read(DataBuffer<> &data_buffer, Int64 &value) const;
+        std::size_t Read(DataBuffer &data_buffer, Int8 &value) const;
+        std::size_t Read(DataBuffer &data_buffer, Int16 &value) const;
+        std::size_t Read(DataBuffer &data_buffer, Int32 &value) const;
+        std::size_t Read(DataBuffer &data_buffer, Int64 &value) const;
 
         // Read variable-width integer types
-        std::size_t Read(DataBuffer<> &data_buffer, VarUint &value) const;
-        std::size_t Read(DataBuffer<> &data_buffer, VarInt &value) const;
+        std::size_t Read(DataBuffer &data_buffer, VarUint &value) const;
+        std::size_t Read(DataBuffer &data_buffer, VarInt &value) const;
 
         // Read floating point types
-        std::size_t Read(DataBuffer<> &data_buffer, Float16 &value) const;
-        std::size_t Read(DataBuffer<> &data_buffer, Float32 &value) const;
-        std::size_t Read(DataBuffer<> &data_buffer, Float64 &value) const;
+        std::size_t Read(DataBuffer &data_buffer, Float16 &value) const;
+        std::size_t Read(DataBuffer &data_buffer, Float32 &value) const;
+        std::size_t Read(DataBuffer &data_buffer, Float64 &value) const;
 
         // Read the Boolean type
-        std::size_t Read(DataBuffer<> &data_buffer, Boolean &value) const;
+        std::size_t Read(DataBuffer &data_buffer, Boolean &value) const;
 
         // Read strings
-        std::size_t Read(DataBuffer<> &data_buffer, String &value) const;
+        std::size_t Read(DataBuffer &data_buffer, String &value) const;
 
         // Read a blob object
-        std::size_t Read(DataBuffer<> &data_buffer, Blob &value) const;
+        std::size_t Read(DataBuffer &data_buffer, Blob &value) const;
 };
 
 } // namespace gs

@@ -44,6 +44,7 @@
 
 #include <algorithm>
 #include <cstddef>
+#include <cstring>
 #include "gs_types.h"
 #include "gs_api_internal.h"
 

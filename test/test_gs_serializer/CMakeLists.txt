@@ -1,4 +1,4 @@
-add_executable(test_gs_serializer test_main.cpp test_gs_serializer.cpp)
+add_executable(test_gs_serializer test_gs_serializer.cpp)
 
 include(GoogleTest)
 

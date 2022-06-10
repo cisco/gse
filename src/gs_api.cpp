@@ -99,7 +99,7 @@ int CALL GSEncoderInit(GS_Encoder_Context **gs_encoder_context,
         context = new gs_api::GS_Encoder_Context_Internal
             {
                 gs::Encoder(),
-                gs::DataBuffer<>(buffer, buffer_length, 0),
+                gs::DataBuffer(buffer, buffer_length, 0),
                 std::string()
             };
 
@@ -404,7 +404,7 @@ int CALL GSDecoderInit(GS_Decoder_Context **gs_decoder_context,
         context = new gs_api::GS_Decoder_Context_Internal
             {
                 gs::Decoder(),
-                gs::DataBuffer<>(buffer, data_length, data_length),
+                gs::DataBuffer(buffer, data_length, data_length),
                 std::string(),
                 std::vector<unsigned char *>()
             };

@@ -60,9 +60,7 @@ namespace {
                 static_assert(sizeof(h) == 2);
             }
 
-            ~HalfFloatTest()
-            {
-            }
+            ~HalfFloatTest() = default;
 
         protected:
             std::uint16_t h;

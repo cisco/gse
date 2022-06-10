@@ -1,17 +1,15 @@
 /*
- *  data_buffer_interface.cpp
+ *  data_buffer.cpp
  *
  *  Copyright (C) 2018 - 2022
  *  Cisco Systems, Inc.
  *  All Rights Reserved.
  *
  *  Description:
- *      This file implements the DataBufferInterface object, which provides
- *      functions to make it easy to read and write into a buffer.  Values are
- *      written to or read from the buffer in network byte order.
- *
- *      Note that this is an abstract base class that lacks the functionality
- *      to allocate memory, assign objects to another, or compare for equality.
+ *      This file implements the DataBuffer object, which provides functions to
+ *      make it easy to read and write into a buffer.  Numeric values written
+ *      to the buffer are stored in network byte order.  Likewise, numeric
+ *      values read from the buffer are converted back to host byte order.
  *
  *  Portability Issues:
  *      None.
@@ -60,17 +58,16 @@
 #else
 #include <arpa/inet.h>
 #endif
-#include "data_buffer_interface.h"
+#include "data_buffer.h"
 
 namespace gs
 {
 
 /*
- *  DataBufferInterface::DataBufferInterface
+ *  DataBuffer::DataBuffer
  *
  *  Description:
- *      Constructor for the DataBufferInterface object to initialize all
- *      members to zero.
+ *      Constructor to create an empty DataBuffer object.
  *
  *  Parameters:
  *      None.
@@ -81,7 +78,7 @@ namespace gs
  *  Comments:
  *      None.
  */
-DataBufferInterface::DataBufferInterface() :
+DataBuffer::DataBuffer() :
     buffer(nullptr),
     owns_buffer(false),
     buffer_size(0),
@@ -91,12 +88,11 @@ DataBufferInterface::DataBufferInterface() :
 }
 
 /*
- *  DataBufferInterface::DataBufferInterface
+ *  DataBuffer::DataBuffer
  *
  *  Description:
- *      Constructor for the DataBufferInterface object to initialize all members
- *      to zero, setting the buffer size to the value given.  This base
- *      class does not allocate any memory.
+ *      Constructor for the DataBuffer object to initialize all members
+ *      to zero, setting the buffer size to the value given.
  *
  *  Parameters:
  *      buffer_size [in]
@@ -109,21 +105,23 @@ DataBufferInterface::DataBufferInterface() :
  *  Comments:
  *      None.
  */
-DataBufferInterface::DataBufferInterface(std::size_t buffer_size) :
+DataBuffer::DataBuffer(std::size_t buffer_size) :
     buffer(nullptr),
     owns_buffer(false),
     buffer_size(buffer_size),
     data_length(0),
     read_length(0)
 {
+    // Allocate the data buffer memory as requested
+    AllocateBuffer();
 }
 
 /*
- *  DataBufferInterface::DataBufferInterface
+ *  DataBuffer::DataBuffer
  *
  *  Description:
- *      Constructor for the DataBufferInterface object to assign a pre-existing
- *      buffer.  The DataBufferInterface does NOT take ownership of the buffer
+ *      Constructor for the DataBuffer object to assign a pre-existing
+ *      buffer.  The DataBuffer does NOT take ownership of the buffer
  *      pointer.  When the object is destroyed, non-owned buffers are not freed.
  *      This form of construction exists to get the benefit of member
  *      functions to manipulate a pre-existing buffer without creating
@@ -131,7 +129,7 @@ DataBufferInterface::DataBufferInterface(std::size_t buffer_size) :
  *
  *  Parameters:
  *      buffer [in]
- *          Pointer to buffer to use with the DataBufferInterface object.  This
+ *          Pointer to buffer to use with the DataBuffer object.  This
  *          may be a nullptr.
  *
  *      buffer_size [in]
@@ -147,9 +145,9 @@ DataBufferInterface::DataBufferInterface(std::size_t buffer_size) :
  *  Comments:
  *      None.
  */
-DataBufferInterface::DataBufferInterface(unsigned char *buffer,
-                              std::size_t buffer_size,
-                              std::size_t data_length) :
+DataBuffer::DataBuffer(unsigned char *buffer,
+                       std::size_t buffer_size,
+                       std::size_t data_length) :
     buffer(buffer),
     owns_buffer(false),
     buffer_size(buffer_size),
@@ -170,7 +168,7 @@ DataBufferInterface::DataBufferInterface(unsigned char *buffer,
 }
 
 /*
- *  DataBufferInterface::DataBufferInterface
+ *  DataBuffer::DataBuffer
  *
  *  Description:
  *      Copy constructor for the DataBuffer object.
@@ -186,24 +184,33 @@ DataBufferInterface::DataBufferInterface(unsigned char *buffer,
  *      Only internal non-buffer variables are copied.  The derived class
  *      is responsible for actually copying the buffer contents.
  */
-DataBufferInterface::DataBufferInterface(const DataBufferInterface &other) :
+DataBuffer::DataBuffer(const DataBuffer &other) :
     buffer(nullptr),
     owns_buffer(false),
     buffer_size(other.buffer_size),
     data_length(other.data_length),
     read_length(other.read_length)
 {
+    // Allocate memory as requested
+    if (buffer_size)
+    {
+        // Allocate the data buffer memory as requested
+        AllocateBuffer();
+
+        // Copy the buffer contents
+        std::memcpy(buffer, other.buffer, data_length);
+    }
 }
 
 /*
- *  DataBufferInterface::DataBufferInterface
+ *  DataBuffer::DataBuffer
  *
  *  Description:
- *      Move constructor for the DataBufferInterface object.
+ *      Move constructor for the DataBuffer object.
  *
  *  Parameters:
  *      other [in]
- *          The DataBufferInterface from which to move data.
+ *          The DataBuffer from which to move data.
  *
  *  Returns:
  *      Nothing.
@@ -211,7 +218,7 @@ DataBufferInterface::DataBufferInterface(const DataBufferInterface &other) :
  *  Comments:
  *      None.
  */
-DataBufferInterface::DataBufferInterface(DataBufferInterface &&other) noexcept :
+DataBuffer::DataBuffer(DataBuffer &&other) noexcept :
     buffer(other.buffer),
     owns_buffer(other.owns_buffer),
     buffer_size(other.buffer_size),
@@ -227,10 +234,50 @@ DataBufferInterface::DataBufferInterface(DataBufferInterface &&other) noexcept :
 }
 
 /*
- *  DataBufferInterface::~DataBufferInterface
+ *  DataBuffer::DataBuffer
  *
  *  Description:
- *      Destructor for the DataBufferInterface object.
+ *      Constructor for the DataBuffer object to create a data buffer holding
+ *      the contents of the OctetString "data".
+ *
+ *  Parameters:
+ *      data [in]
+ *          The data to use to populate the Data Buffer
+ *
+ *      buffer_size [in]
+ *          Size of the internal buffer to allocate.  If this value is 0,
+ *          the buffer size will be set equal to data.size().  If it is greater
+ *          than zero, it must be >= data.size().  The default is 0, meaning
+ *          the buffer size matches the size of the data parameter.
+ *
+ *  Returns:
+ *      Nothing.
+ *
+ *  Comments:
+ *      None.
+ */
+DataBuffer::DataBuffer(const OctetString &data, std::size_t buffer_size) :
+    DataBuffer(buffer_size ? buffer_size : data.size())
+{
+    // Allocate memory as requested
+    if (data.size() > this->buffer_size)
+    {
+        throw DataBufferException(
+                        "Given buffer size is too small to hold the data");
+    }
+
+    // Allocate the data buffer memory as requested
+    AllocateBuffer();
+
+    // Copy the octets from the OctetString "data"
+    AppendValue(data);
+}
+
+/*
+ *  DataBuffer::~DataBuffer
+ *
+ *  Description:
+ *      Destructor for the DataBuffer object.
  *
  *  Parameters:
  *      None.
@@ -241,12 +288,203 @@ DataBufferInterface::DataBufferInterface(DataBufferInterface &&other) noexcept :
  *  Comments:
  *      None.
  */
-DataBufferInterface::~DataBufferInterface()
+DataBuffer::~DataBuffer()
 {
+    // Free any allocated buffer
+    FreeBuffer();
 }
 
 /*
- *  DataBufferInterface::GetBufferPointer
+ *  DataBuffer::AllocateBuffer
+ *
+ *  Description:
+ *      This function will allocate a buffer of the size in the buffer_size
+ *      member variable using the MemoryManager (if valid) or from the heap
+ *      otherwise.
+ *
+ *  Parameters:
+ *      None.
+ *
+ *  Returns:
+ *      Nothing.
+ *
+ *  Comments:
+ *      None.
+ */
+void DataBuffer::AllocateBuffer()
+{
+    // Free any previously allocated buffer
+    if (buffer) FreeBuffer();
+
+    // if the buffer size is zero, do not allocate memory
+    if (!buffer_size)
+    {
+        buffer = nullptr;
+        return;
+    }
+
+    // Allocate memory for the buffer
+    try
+    {
+        buffer = new unsigned char[buffer_size];
+    }
+    catch (const std::exception &e)
+    {
+        throw DataBufferException(e.what());
+    }
+    catch (...)
+    {
+        throw DataBufferException("Could not allocate buffer");
+    }
+
+    // Note buffer ownership
+    owns_buffer = true;
+}
+
+/*
+ *  DataBuffer::FreeBuffer
+ *
+ *  Description:
+ *      Free the allocated memory buffer.
+ *
+ *  Parameters:
+ *      None.
+ *
+ *  Returns:
+ *      Nothing.
+ *
+ *  Comments:
+ *      None.
+ */
+void DataBuffer::FreeBuffer()
+{
+    // Reset data length and read length values
+    data_length = read_length = 0;
+
+    // Do not attempt to free a buffer if one does not exist or is not owned
+    if (!buffer || !owns_buffer)
+    {
+        buffer = nullptr;
+        return;
+    }
+
+    // Free the allocated buffer
+    delete[] buffer;
+
+    // Reset the buffer pointer
+    buffer = nullptr;
+}
+
+/*
+ *  DataBuffer::operator=
+ *
+ *  Description:
+ *      Assign one data buffer to another.  This will effectively
+ *      copy the contents from the right to the left.
+ *
+ *  Parameters:
+ *      other [in]
+ *          The DataBuffer from which to copy data.
+ *
+ *  Returns:
+ *      A reference to this DataBuffer.
+ *
+ *  Comments:
+ *      The memory manager assigned to the DataBuffer during construction
+ *      never changes.  Only the actual data is copied.  This allows buffers
+ *      to be moved between DataBuffer objects where different parts of the
+ *      application manage different memory pools.
+ *
+ *      Regardless if the copied-from DataBuffer owned its buffer or not,
+ *      the copied-to DataBuffer will owns its buffer.
+ */
+DataBuffer &DataBuffer::operator=(const DataBuffer &other)
+{
+    // Do nothing if assigning to this
+    if (this == &other) return *this;
+
+    // If this object does not owns it's buffer, clear the contents before
+    // copying
+    if (!owns_buffer)
+    {
+        buffer = nullptr;
+        buffer_size = 0;
+    }
+
+    // If the buffer sizes are not the same, re-allocate memory
+    if (buffer_size != other.buffer_size)
+    {
+        // Set the buffer size to match
+        buffer_size = other.buffer_size;
+
+        // Allocate a new buffer of the right size
+        AllocateBuffer();
+    }
+
+    // Copy the content of the other DataBuffer object
+    data_length = other.data_length;
+    if (data_length) std::memcpy(buffer, other.buffer, data_length);
+    read_length = other.read_length;
+
+    return *this;
+}
+
+/*
+ *  DataBuffer::operator==
+ *
+ *  Description:
+ *      Compare the equality of this and another DataBuffer.  This checks
+ *      that the contents of their respective buffers have the same
+ *      content by doing an octet-for-octet comparison.  For the purposes
+ *      of equality, the buffer_size and read position are immaterial.
+ *
+ *  Parameters:
+ *      other [in]
+ *          The DataBuffer against which to compare.
+ *
+ *  Returns:
+ *      True if equal, false if unequal.
+ *
+ *  Comments:
+ *      None.
+ */
+bool DataBuffer::operator==(const DataBuffer &other) const
+{
+    if (this == &other) return true;
+    if (data_length != other.data_length) return false;
+    if (data_length == 0) return true;
+    if ((buffer && !other.buffer) || (!buffer && other.buffer)) return false;
+    if (!buffer) return true;
+    if (!memcmp(buffer, other.buffer, data_length)) return true;
+
+    return false;
+}
+
+/*
+ *  DataBuffer::operator!=
+ *
+ *  Description:
+ *      Compare the inequality of this and another DataBuffer.  This checks
+ *      that the contents of their respective buffers have different
+ *      content by doing an octet-for-octet comparison.
+ *
+ *  Parameters:
+ *      other [in]
+ *          The DataBuffer against which to compare.
+ *
+ *  Returns:
+ *      True if unequal, false if equal.
+ *
+ *  Comments:
+ *      None.
+ */
+bool DataBuffer::operator!=(const DataBuffer &other) const
+{
+    return !(*this == other);
+}
+
+/*
+ *  DataBuffer::GetBufferPointer
  *
  *  Description:
  *      Return a const pointer into the data buffer at the given offset.
@@ -264,7 +502,7 @@ DataBufferInterface::~DataBufferInterface()
  *      None.
  */
 const unsigned char *
-DataBufferInterface::GetBufferPointer(std::size_t offset) const
+DataBuffer::GetBufferPointer(std::size_t offset) const
 {
     if (buffer && (offset < buffer_size))
     {
@@ -277,7 +515,7 @@ DataBufferInterface::GetBufferPointer(std::size_t offset) const
 }
 
 /*
- *  DataBufferInterface::GetMutableBufferPointer
+ *  DataBuffer::GetMutableBufferPointer
  *
  *  Description:
  *      Return a pointer into the data buffer at the given offset.
@@ -292,7 +530,7 @@ DataBufferInterface::GetBufferPointer(std::size_t offset) const
  *  Comments:
  *      None.
  */
-unsigned char *DataBufferInterface::GetMutableBufferPointer(std::size_t offset)
+unsigned char *DataBuffer::GetMutableBufferPointer(std::size_t offset)
 {
     if (buffer && (offset < buffer_size))
     {
@@ -305,7 +543,7 @@ unsigned char *DataBufferInterface::GetMutableBufferPointer(std::size_t offset)
 }
 
 /*
- *  DataBufferInterface::TakeBufferOwnership
+ *  DataBuffer::TakeBufferOwnership
  *
  *  Description:
  *      Transfer ownership of the internal data buffer to the caller.
@@ -320,7 +558,7 @@ unsigned char *DataBufferInterface::GetMutableBufferPointer(std::size_t offset)
  *      The internal buffer MUST have been allocated using the same type of
  *      allocator, else there is a risk that memory will not be freed properly.
  */
-unsigned char *DataBufferInterface::TakeBufferOwnership()
+unsigned char *DataBuffer::TakeBufferOwnership()
 {
     // Assign p to the current buffer
     unsigned char *p = buffer;
@@ -330,12 +568,13 @@ unsigned char *DataBufferInterface::TakeBufferOwnership()
     owns_buffer = false;
     buffer_size = 0;
     data_length = 0;
+    read_length = 0;
 
     return p;
 }
 
 /*
- *  DataBufferInterface::SetBuffer
+ *  DataBuffer::SetBuffer
  *
  *  Description:
  *      Set the internal data buffer to the one provided.
@@ -362,10 +601,10 @@ unsigned char *DataBufferInterface::TakeBufferOwnership()
  *      The given buffer MUST be allocated using the same type of allocator,
  *      else there is a risk that memory will not be freed properly.
  */
-void DataBufferInterface::SetBuffer(unsigned char *new_buffer,
-                                    std::size_t new_buffer_size,
-                                    std::size_t new_data_length,
-                                    bool take_ownership)
+void DataBuffer::SetBuffer(unsigned char *new_buffer,
+                           std::size_t new_buffer_size,
+                           std::size_t new_data_length,
+                           bool take_ownership)
 {
     // Make sure the data length is not larger than the buffer size
     if (new_data_length > new_buffer_size)
@@ -384,7 +623,7 @@ void DataBufferInterface::SetBuffer(unsigned char *new_buffer,
 }
 
 /*
- *  DataBufferInterface::GetBufferSize
+ *  DataBuffer::GetBufferSize
  *
  *  Description:
  *      Return the size of the underlying data buffer.
@@ -398,13 +637,59 @@ void DataBufferInterface::SetBuffer(unsigned char *new_buffer,
  *  Comments:
  *      None.
  */
-std::size_t DataBufferInterface::GetBufferSize() const
+std::size_t DataBuffer::GetBufferSize() const
 {
     return buffer_size;
 }
 
 /*
- *  DataBufferInterface::SetDataLength
+ *  DataBuffer::GetDataLength
+ *
+ *  Description:
+ *      Get the length of the data stored in the buffer.  Note that if a buffer
+ *      exists and data was inserted using SetValue(), that does not adjust the
+ *      buffer's data length and, as such, this function would still
+ *      indicate that the buffer is of zero length.  The data length is either
+ *      set explicitly via SetDataLength() or automatically when AppendValue()
+ *      functions are called.
+ *
+ *  Parameters:
+ *      None.
+ *
+ *  Returns:
+ *      Length of the data stored in the internal buffer.
+ *
+ *  Comments:
+ *      None.
+ */
+std::size_t DataBuffer::GetDataLength() const
+{
+    return data_length;
+}
+
+/*
+ *  DataBuffer::Empty
+ *
+ *  Description:
+ *      Determine whether the DataBuffer is empty (i.e., the data length is
+ *      zero).
+ *
+ *  Parameters:
+ *      None.
+ *
+ *  Returns:
+ *      True if the buffer is empty, false if it is not empty.
+ *
+ *  Comments:
+ *      None.
+ */
+bool DataBuffer::Empty() const
+{
+    return (data_length == 0);
+}
+
+/*
+ *  DataBuffer::SetDataLength
  *
  *  Description:
  *      Set the length of the data in the buffer.
@@ -419,8 +704,15 @@ std::size_t DataBufferInterface::GetBufferSize() const
  *  Comments:
  *      None.
  */
-void DataBufferInterface::SetDataLength(std::size_t length)
+void DataBuffer::SetDataLength(std::size_t length)
 {
+    // Ensure there is an allocated buffer if length > 0
+    if (!buffer && (length > 0))
+    {
+        throw DataBufferException("Cannot set non-zero data length as no "
+                                  "buffer was allocated");
+    }
+
     // Ensure the length value does not exceed the buffer size
     if (length > buffer_size)
     {
@@ -435,27 +727,7 @@ void DataBufferInterface::SetDataLength(std::size_t length)
 }
 
 /*
- *  DataBufferInterface::GetDataLength
- *
- *  Description:
- *      Get the length of the data stored in the buffer.
- *
- *  Parameters:
- *      None.
- *
- *  Returns:
- *      Length of the data stored in the internal buffer.
- *
- *  Comments:
- *      None.
- */
-std::size_t DataBufferInterface::GetDataLength() const
-{
-    return data_length;
-}
-
-/*
- *  DataBufferInterface::GetReadLength
+ *  DataBuffer::GetReadLength
  *
  *  Description:
  *      Get the length of the data that has been read.
@@ -469,13 +741,13 @@ std::size_t DataBufferInterface::GetDataLength() const
  *  Comments:
  *      None.
  */
-std::size_t DataBufferInterface::GetReadLength() const
+std::size_t DataBuffer::GetReadLength() const
 {
     return read_length;
 }
 
 /*
- *  DataBufferInterface::ResetReadLength
+ *  DataBuffer::ResetReadLength
  *
  *  Description:
  *      Reset the read length to zero.
@@ -489,13 +761,13 @@ std::size_t DataBufferInterface::GetReadLength() const
  *  Comments:
  *      None.
  */
-void DataBufferInterface::ResetReadLength()
+void DataBuffer::ResetReadLength()
 {
     read_length = 0;
 }
 
 /*
- *  DataBufferInterface::AdvanceReadLength
+ *  DataBuffer::AdvanceReadLength
  *
  *  Description:
  *      Update the read length value to efficiently skip octets when performing
@@ -511,7 +783,7 @@ void DataBufferInterface::ResetReadLength()
  *  Comments:
  *      None.
  */
-void DataBufferInterface::AdvanceReadLength(std::size_t count)
+void DataBuffer::AdvanceReadLength(std::size_t count)
 {
     if ((read_length + count) > data_length)
     {
@@ -524,7 +796,7 @@ void DataBufferInterface::AdvanceReadLength(std::size_t count)
 }
 
 /*
- *  DataBufferInterface::operator[]
+ *  DataBuffer::operator[]
  *
  *  Description:
  *      Return a reference to an octet in the data buffer at the specified
@@ -542,7 +814,7 @@ void DataBufferInterface::AdvanceReadLength(std::size_t count)
  *      into the buffer to insert a value, the caller must call SetDataLength()
  *      if the intent is to change the data length.
  */
-unsigned char &DataBufferInterface::operator[](std::size_t offset)
+unsigned char &DataBuffer::operator[](std::size_t offset)
 {
     // Ensure the parameters will not result in an access violation
     if (offset >= buffer_size)
@@ -556,7 +828,7 @@ unsigned char &DataBufferInterface::operator[](std::size_t offset)
 }
 
 /*
- *  DataBufferInterface::operator[]
+ *  DataBuffer::operator[]
  *
  *  Description:
  *      Return a reference to an octet in the data buffer at the specified
@@ -574,7 +846,7 @@ unsigned char &DataBufferInterface::operator[](std::size_t offset)
  *      into the buffer to insert a value, the caller must call SetDataLength()
  *      if the intent is to change the data length.
  */
-const unsigned char &DataBufferInterface::operator[](std::size_t offset) const
+const unsigned char &DataBuffer::operator[](std::size_t offset) const
 {
     // Ensure the parameters will not result in an access violation
     if (offset >= buffer_size)
@@ -588,7 +860,7 @@ const unsigned char &DataBufferInterface::operator[](std::size_t offset) const
 }
 
 /*
- *  DataBufferInterface::GetValue
+ *  DataBuffer::GetValue
  *
  *  Description:
  *      Peek at the contents in the buffer at the specified offset.
@@ -609,10 +881,13 @@ const unsigned char &DataBufferInterface::operator[](std::size_t offset) const
  *  Comments:
  *      None.
  */
-void DataBufferInterface::GetValue(unsigned char *value,
-                                   std::size_t offset,
-                                   std::size_t length) const
+void DataBuffer::GetValue(unsigned char *value,
+                          std::size_t offset,
+                          std::size_t length) const
 {
+    // If actually getting no data, just return
+    if (length == 0) return;
+
     // Ensure the parameters will not result in an access violation
     if ((offset + length) > data_length)
     {
@@ -625,7 +900,7 @@ void DataBufferInterface::GetValue(unsigned char *value,
 }
 
 /*
- *  DataBufferInterface::GetValue
+ *  DataBuffer::GetValue
  *
  *  Description:
  *      Peek at the octet in the buffer at the specified offset.
@@ -645,8 +920,7 @@ void DataBufferInterface::GetValue(unsigned char *value,
  *  Comments:
  *      None.
  */
-void DataBufferInterface::GetValue(std::uint8_t &value,
-                                   std::size_t offset) const
+void DataBuffer::GetValue(std::uint8_t &value, std::size_t offset) const
 {
     GetValue(static_cast<unsigned char *>(&value),
              offset,
@@ -654,7 +928,7 @@ void DataBufferInterface::GetValue(std::uint8_t &value,
 }
 
 /*
- *  DataBufferInterface::GetValue
+ *  DataBuffer::GetValue
  *
  *  Description:
  *      Peek at the contents in the buffer at the specified offset.
@@ -675,8 +949,7 @@ void DataBufferInterface::GetValue(std::uint8_t &value,
  *  Comments:
  *      None.
  */
-void DataBufferInterface::GetValue(std::uint16_t &value,
-                                   std::size_t offset) const
+void DataBuffer::GetValue(std::uint16_t &value, std::size_t offset) const
 {
     GetValue(reinterpret_cast<unsigned char *>(&value),
              offset,
@@ -685,7 +958,7 @@ void DataBufferInterface::GetValue(std::uint16_t &value,
 }
 
 /*
- *  DataBufferInterface::GetValue
+ *  DataBuffer::GetValue
  *
  *  Description:
  *      Peek at the contents in the buffer at the specified offset.
@@ -706,8 +979,7 @@ void DataBufferInterface::GetValue(std::uint16_t &value,
  *  Comments:
  *      None.
  */
-void DataBufferInterface::GetValue(std::uint32_t &value,
-                                   std::size_t offset) const
+void DataBuffer::GetValue(std::uint32_t &value, std::size_t offset) const
 {
     GetValue(reinterpret_cast<unsigned char *>(&value),
              offset,
@@ -716,7 +988,7 @@ void DataBufferInterface::GetValue(std::uint32_t &value,
 }
 
 /*
- *  DataBufferInterface::GetValue
+ *  DataBuffer::GetValue
  *
  *  Description:
  *      Peek at the contents in the buffer at the specified offset.
@@ -737,8 +1009,7 @@ void DataBufferInterface::GetValue(std::uint32_t &value,
  *  Comments:
  *      None.
  */
-void DataBufferInterface::GetValue(std::uint64_t &value,
-                                   std::size_t offset) const
+void DataBuffer::GetValue(std::uint64_t &value, std::size_t offset) const
 {
     std::uint32_t value_32;
 
@@ -752,7 +1023,7 @@ void DataBufferInterface::GetValue(std::uint64_t &value,
 }
 
 /*
- *  DataBufferInterface::GetValue
+ *  DataBuffer::GetValue
  *
  *  Description:
  *      Peek at the contents in the buffer at the specified offset.
@@ -774,7 +1045,7 @@ void DataBufferInterface::GetValue(std::uint64_t &value,
  *  Comments:
  *      None.
  */
-void DataBufferInterface::GetValue(float &value, std::size_t offset) const
+void DataBuffer::GetValue(float &value, std::size_t offset) const
 {
     std::uint32_t value_32;
 
@@ -790,7 +1061,7 @@ void DataBufferInterface::GetValue(float &value, std::size_t offset) const
 }
 
 /*
- *  DataBufferInterface::GetValue
+ *  DataBuffer::GetValue
  *
  *  Description:
  *      Peek at the contents in the buffer at the specified offset.
@@ -812,7 +1083,7 @@ void DataBufferInterface::GetValue(float &value, std::size_t offset) const
  *  Comments:
  *      None.
  */
-void DataBufferInterface::GetValue(double &value, std::size_t offset) const
+void DataBuffer::GetValue(double &value, std::size_t offset) const
 {
     std::uint64_t value_64;
 
@@ -828,7 +1099,7 @@ void DataBufferInterface::GetValue(double &value, std::size_t offset) const
 }
 
 /*
- *  DataBufferInterface::GetValue
+ *  DataBuffer::GetValue
  *
  *  Description:
  *      Peek at the contents in the buffer at the specified offset.
@@ -853,12 +1124,19 @@ void DataBufferInterface::GetValue(double &value, std::size_t offset) const
  *  Comments:
  *      None.
  */
-void DataBufferInterface::GetValue(OctetString &value,
-                                   std::size_t offset,
-                                   std::size_t length) const
+void DataBuffer::GetValue(OctetString &value,
+                          std::size_t offset,
+                          std::size_t length) const
 {
     // Set the length to reach the end of the data if length was 0
     if (!length && (offset < data_length)) length = data_length - offset;
+
+    // If the length is zero, just clear the octet string and return
+    if (length == 0)
+    {
+        value.clear();
+        return;
+    }
 
     // Ensure the parameters will not result in an access violation
     if ((offset + length) > data_length)
@@ -868,22 +1146,15 @@ void DataBufferInterface::GetValue(OctetString &value,
     }
 
     // Copy the buffer contents or clear the OctetString as appropriate
-    if (length > 0)
-    {
-        value.assign(buffer + offset, buffer + offset + length);
-    }
-    else
-    {
-        value.clear();
-    }
+    value.assign(buffer + offset, buffer + offset + length);
 }
 
 /*
- *  DataBufferInterface::SetValue
+ *  DataBuffer::SetValue
  *
  *  Description:
- *      Set the contents of the buffer at the given offset to be the provided
- *      value.  This is an overloaded function for setting at an arbitrary
+ *      Set the contents of the buffer at the given offset to the provided
+ *      value.  This is an overloaded function for setting an arbitrary
  *      number of octets.
  *
  *  Parameters:
@@ -903,27 +1174,30 @@ void DataBufferInterface::GetValue(OctetString &value,
  *  Comments:
  *      None.
  */
-void DataBufferInterface::SetValue(const unsigned char *value,
-                                   std::size_t offset,
-                                   std::size_t length)
+void DataBuffer::SetValue(const unsigned char *value,
+                          std::size_t offset,
+                          std::size_t length)
 {
+    // If actually writing no length, just return
+    if (length == 0) return;
+
     // Ensure the parameters will not result in an access violation
-    if ((offset + length) > buffer_size)
+    if (!buffer || ((offset + length) > buffer_size))
     {
         throw DataBufferException(
                     "Attempt to access memory beyond the end of the buffer");
     }
 
     // Copy the buffer contents
-    if (length) std::memcpy(buffer + offset, value, length);
+    std::memcpy(buffer + offset, value, length);
 }
 
 /*
- *  DataBufferInterface::SetValue
+ *  DataBuffer::SetValue
  *
  *  Description:
- *      Set the contents of the buffer at the given offset to be the provided
- *      value.  This is an overloaded function for setting at a single octet.
+ *      Set the contents of the buffer at the given offset to the provided
+ *      value.  This is an overloaded function for setting a single octet.
  *
  *  Parameters:
  *      value [in]
@@ -939,7 +1213,7 @@ void DataBufferInterface::SetValue(const unsigned char *value,
  *  Comments:
  *      None.
  */
-void DataBufferInterface::SetValue(std::uint8_t value, std::size_t offset)
+void DataBuffer::SetValue(std::uint8_t value, std::size_t offset)
 {
     SetValue(reinterpret_cast<const unsigned char *>(&value),
              offset,
@@ -947,11 +1221,11 @@ void DataBufferInterface::SetValue(std::uint8_t value, std::size_t offset)
 }
 
 /*
- *  DataBufferInterface::SetValue
+ *  DataBuffer::SetValue
  *
  *  Description:
- *      Set the contents of the buffer at the given offset to be the provided
- *      value.  This is an overloaded function for setting at a 16-bit value.
+ *      Set the contents of the buffer at the given offset to the provided
+ *      value.  This is an overloaded function for setting a 16-bit value.
  *      This function will convert from host byte order to network byte order.
  *
  *  Parameters:
@@ -968,7 +1242,7 @@ void DataBufferInterface::SetValue(std::uint8_t value, std::size_t offset)
  *  Comments:
  *      None.
  */
-void DataBufferInterface::SetValue(std::uint16_t value, std::size_t offset)
+void DataBuffer::SetValue(std::uint16_t value, std::size_t offset)
 {
     value = htons(value);
     SetValue(reinterpret_cast<const unsigned char *>(&value),
@@ -977,11 +1251,11 @@ void DataBufferInterface::SetValue(std::uint16_t value, std::size_t offset)
 }
 
 /*
- *  DataBufferInterface::SetValue
+ *  DataBuffer::SetValue
  *
  *  Description:
- *      Set the contents of the buffer at the given offset to be the provided
- *      value.  This is an overloaded function for setting at a 32-bit value.
+ *      Set the contents of the buffer at the given offset to the provided
+ *      value.  This is an overloaded function for setting a 32-bit value.
  *      This function will convert from host byte order to network byte order.
  *
  *  Parameters:
@@ -998,7 +1272,7 @@ void DataBufferInterface::SetValue(std::uint16_t value, std::size_t offset)
  *  Comments:
  *      None.
  */
-void DataBufferInterface::SetValue(std::uint32_t value, std::size_t offset)
+void DataBuffer::SetValue(std::uint32_t value, std::size_t offset)
 {
     value = htonl(value);
     SetValue(reinterpret_cast<const unsigned char *>(&value),
@@ -1007,11 +1281,11 @@ void DataBufferInterface::SetValue(std::uint32_t value, std::size_t offset)
 }
 
 /*
- *  DataBufferInterface::SetValue
+ *  DataBuffer::SetValue
  *
  *  Description:
- *      Set the contents of the buffer at the given offset to be the provided
- *      value.  This is an overloaded function for setting at a 64-bit value.
+ *      Set the contents of the buffer at the given offset to the provided
+ *      value.  This is an overloaded function for setting a 64-bit value.
  *      This function will convert from host byte order to network byte order.
  *
  *  Parameters:
@@ -1028,7 +1302,7 @@ void DataBufferInterface::SetValue(std::uint32_t value, std::size_t offset)
  *  Comments:
  *      None.
  */
-void DataBufferInterface::SetValue(std::uint64_t value, std::size_t offset)
+void DataBuffer::SetValue(std::uint64_t value, std::size_t offset)
 {
     // Set the high-order bits
     SetValue(static_cast<std::uint32_t>((value >> 32) & 0xffffffff), offset);
@@ -1039,11 +1313,11 @@ void DataBufferInterface::SetValue(std::uint64_t value, std::size_t offset)
 }
 
 /*
- *  DataBufferInterface::SetValue
+ *  DataBuffer::SetValue
  *
  *  Description:
- *      Set the contents of the buffer at the given offset to be the provided
- *      value.  This is an overloaded function for setting at a 32-bit floating
+ *      Set the contents of the buffer at the given offset to the provided
+ *      value.  This is an overloaded function for setting a 32-bit floating
  *      point value.  This function will convert from host byte order to
  *      network byte order.
  *
@@ -1061,7 +1335,7 @@ void DataBufferInterface::SetValue(std::uint64_t value, std::size_t offset)
  *  Comments:
  *      None.
  */
-void DataBufferInterface::SetValue(float value, std::size_t offset)
+void DataBuffer::SetValue(float value, std::size_t offset)
 {
     std::uint32_t value_32;
 
@@ -1077,11 +1351,11 @@ void DataBufferInterface::SetValue(float value, std::size_t offset)
 }
 
 /*
- *  DataBufferInterface::SetValue
+ *  DataBuffer::SetValue
  *
  *  Description:
- *      Set the contents of the buffer at the given offset to be the provided
- *      value.  This is an overloaded function for setting at a 64-bit floating
+ *      Set the contents of the buffer at the given offset to the provided
+ *      value.  This is an overloaded function for setting a 64-bit floating
  *      point value.  This function will convert from host byte order to
  *      network byte order.
  *
@@ -1099,7 +1373,7 @@ void DataBufferInterface::SetValue(float value, std::size_t offset)
  *  Comments:
  *      None.
  */
-void DataBufferInterface::SetValue(double value, std::size_t offset)
+void DataBuffer::SetValue(double value, std::size_t offset)
 {
     std::uint64_t value_64;
 
@@ -1115,7 +1389,34 @@ void DataBufferInterface::SetValue(double value, std::size_t offset)
 }
 
 /*
- *  DataBufferInterface::AppendValue
+ *  DataBuffer::SetValue
+ *
+ *  Description:
+ *      Set the contents of the buffer at the given offset to the provided
+ *      value.  This is an overloaded function for setting the contents of
+ *      the OctetString.
+ *
+ *  Parameters:
+ *      value [in]
+ *          The parameter holding the value to assign to the buffer at the
+ *          specified offset.
+ *
+ *      offset [in]
+ *          The offset into the buffer.
+ *
+ *  Returns:
+ *      Nothing.
+ *
+ *  Comments:
+ *      None.
+ */
+void DataBuffer::SetValue(const OctetString &value, std::size_t offset)
+{
+    SetValue(&value[0], offset, value.size());
+}
+
+/*
+ *  DataBuffer::AppendValue
  *
  *  Description:
  *      Append the given octets to the end of the existing data.  The data
@@ -1135,13 +1436,15 @@ void DataBufferInterface::SetValue(double value, std::size_t offset)
  *  Comments:
  *      None.
  */
-void DataBufferInterface::AppendValue(const unsigned char *value,
-                                      std::size_t length)
+void DataBuffer::AppendValue(const unsigned char *value, std::size_t length)
 {
     std::size_t offset;
 
+    // If appending no data, just return
+    if (length == 0) return;
+
     // Ensure appending the data will not result in an buffer overflow
-    if ((data_length + length) > buffer_size)
+    if (!buffer || ((data_length + length) > buffer_size))
     {
         throw DataBufferException(
                     "Attempt to access memory beyond the end of the buffer");
@@ -1158,7 +1461,7 @@ void DataBufferInterface::AppendValue(const unsigned char *value,
 }
 
 /*
- *  DataBufferInterface::AppendValue
+ *  DataBuffer::AppendValue
  *
  *  Description:
  *      Append the given octets to the end of the existing data.  The data
@@ -1178,13 +1481,13 @@ void DataBufferInterface::AppendValue(const unsigned char *value,
  *  Comments:
  *      None.
  */
-void DataBufferInterface::AppendValue(const char *value, std::size_t length)
+void DataBuffer::AppendValue(const char *value, std::size_t length)
 {
     AppendValue(reinterpret_cast<const unsigned char *>(value), length);
 }
 
 /*
- *  DataBufferInterface::AppendValue
+ *  DataBuffer::AppendValue
  *
  *  Description:
  *      Append the given string to the end of the existing data.  The data
@@ -1201,13 +1504,13 @@ void DataBufferInterface::AppendValue(const char *value, std::size_t length)
  *  Comments:
  *      None.
  */
-void DataBufferInterface::AppendValue(const std::string &value)
+void DataBuffer::AppendValue(const std::string &value)
 {
     AppendValue(value.c_str(), value.length());
 }
 
 /*
- *  DataBufferInterface::AppendValue
+ *  DataBuffer::AppendValue
  *
  *  Description:
  *      Append the given OctetString to the end of the existing data.  The data
@@ -1224,13 +1527,13 @@ void DataBufferInterface::AppendValue(const std::string &value)
  *  Comments:
  *      None.
  */
-void DataBufferInterface::AppendValue(const OctetString &value)
+void DataBuffer::AppendValue(const OctetString &value)
 {
     AppendValue(&value[0], value.size());
 }
 
 /*
- *  DataBufferInterface::AppendValue
+ *  DataBuffer::AppendValue
  *
  *  Description:
  *      Append the given value to the end of the existing data.  If the
@@ -1249,14 +1552,14 @@ void DataBufferInterface::AppendValue(const OctetString &value)
  *  Comments:
  *      None.
  */
-void DataBufferInterface::AppendValue(std::uint8_t value)
+void DataBuffer::AppendValue(std::uint8_t value)
 {
     AppendValue(reinterpret_cast<const unsigned char *>(&value),
                 sizeof(std::uint8_t));
 }
 
 /*
- *  DataBufferInterface::AppendValue
+ *  DataBuffer::AppendValue
  *
  *  Description:
  *      Append the given value to the end of the existing data.  The data
@@ -1273,7 +1576,7 @@ void DataBufferInterface::AppendValue(std::uint8_t value)
  *  Comments:
  *      None.
  */
-void DataBufferInterface::AppendValue(std::uint16_t value)
+void DataBuffer::AppendValue(std::uint16_t value)
 {
     value = htons(value);
     AppendValue(reinterpret_cast<const unsigned char *>(&value),
@@ -1281,7 +1584,7 @@ void DataBufferInterface::AppendValue(std::uint16_t value)
 }
 
 /*
- *  DataBufferInterface::AppendValue
+ *  DataBuffer::AppendValue
  *
  *  Description:
  *      Append the given value to the end of the existing data.  The data
@@ -1298,7 +1601,7 @@ void DataBufferInterface::AppendValue(std::uint16_t value)
  *  Comments:
  *      None.
  */
-void DataBufferInterface::AppendValue(std::uint32_t value)
+void DataBuffer::AppendValue(std::uint32_t value)
 {
     value = htonl(value);
     AppendValue(reinterpret_cast<const unsigned char *>(&value),
@@ -1306,7 +1609,7 @@ void DataBufferInterface::AppendValue(std::uint32_t value)
 }
 
 /*
- *  DataBufferInterface::AppendValue
+ *  DataBuffer::AppendValue
  *
  *  Description:
  *      Append the given value to the end of the existing data.  The data
@@ -1323,10 +1626,10 @@ void DataBufferInterface::AppendValue(std::uint32_t value)
  *  Comments:
  *      None.
  */
-void DataBufferInterface::AppendValue(std::uint64_t value)
+void DataBuffer::AppendValue(std::uint64_t value)
 {
     // Ensure appending the parameter will not result in an buffer overflow
-    if ((data_length + sizeof(std::uint64_t)) > buffer_size)
+    if (!buffer || ((data_length + sizeof(std::uint64_t)) > buffer_size))
     {
         throw DataBufferException(
                     "Attempt to access memory beyond the end of the buffer");
@@ -1340,7 +1643,7 @@ void DataBufferInterface::AppendValue(std::uint64_t value)
 }
 
 /*
- *  DataBufferInterface::AppendValue
+ *  DataBuffer::AppendValue
  *
  *  Description:
  *      Append the given value to the end of the existing data.  The data
@@ -1357,7 +1660,7 @@ void DataBufferInterface::AppendValue(std::uint64_t value)
  *  Comments:
  *      None.
  */
-void DataBufferInterface::AppendValue(float value)
+void DataBuffer::AppendValue(float value)
 {
     std::uint32_t value_32;
 
@@ -1373,7 +1676,7 @@ void DataBufferInterface::AppendValue(float value)
 }
 
 /*
- *  DataBufferInterface::AppendValue
+ *  DataBuffer::AppendValue
  *
  *  Description:
  *      Append the given value to the end of the existing data.  The data
@@ -1390,7 +1693,7 @@ void DataBufferInterface::AppendValue(float value)
  *  Comments:
  *      None.
  */
-void DataBufferInterface::AppendValue(double value)
+void DataBuffer::AppendValue(double value)
 {
     std::uint64_t value_64;
 
@@ -1406,11 +1709,11 @@ void DataBufferInterface::AppendValue(double value)
 }
 
 /*
- *  DataBufferInterface::ReadValue
+ *  DataBuffer::ReadValue
  *
  *  Description:
  *      Read the given number of octets from the data buffer.  The internal
- *      read length variable will be adjusted so that subsquent reads will
+ *      read length variable will be adjusted so that subsequent reads will
  *      be from the next position in the data buffer.  This function is limited
  *      by the length of the data, not the length of the buffer.
  *
@@ -1428,7 +1731,7 @@ void DataBufferInterface::AppendValue(double value)
  *  Comments:
  *      None.
  */
-void DataBufferInterface::ReadValue(unsigned char *value, std::size_t length)
+void DataBuffer::ReadValue(unsigned char *value, std::size_t length)
 {
     // Do nothing if the length is 0
     if (!length) return;
@@ -1447,11 +1750,11 @@ void DataBufferInterface::ReadValue(unsigned char *value, std::size_t length)
 }
 
 /*
- *  DataBufferInterface::ReadValue
+ *  DataBuffer::ReadValue
  *
  *  Description:
  *      Read the given number of octets from the data buffer.  The internal
- *      read length variable will be adjusted so that subsquent reads will
+ *      read length variable will be adjusted so that subsequent reads will
  *      be from the next position in the data buffer.  This function is limited
  *      by the length of the data, not the length of the buffer.
  *
@@ -1469,17 +1772,17 @@ void DataBufferInterface::ReadValue(unsigned char *value, std::size_t length)
  *  Comments:
  *      None.
  */
-void DataBufferInterface::ReadValue(char *value, std::size_t length)
+void DataBuffer::ReadValue(char *value, std::size_t length)
 {
     ReadValue(reinterpret_cast<unsigned char*>(value), length);
 }
 
 /*
- *  DataBufferInterface::ReadValue
+ *  DataBuffer::ReadValue
  *
  *  Description:
  *      Read the given number of octets from the data buffer.  The internal
- *      read length variable will be adjusted so that subsquent reads will
+ *      read length variable will be adjusted so that subsequent reads will
  *      be from the next position in the data buffer.  This function is limited
  *      by the length of the data, not the length of the buffer.
  *
@@ -1497,7 +1800,7 @@ void DataBufferInterface::ReadValue(char *value, std::size_t length)
  *  Comments:
  *      None.
  */
-void DataBufferInterface::ReadValue(std::string &value, std::size_t length)
+void DataBuffer::ReadValue(std::string &value, std::size_t length)
 {
     // Do nothing if the length is 0
     if (!length) return;
@@ -1519,11 +1822,11 @@ void DataBufferInterface::ReadValue(std::string &value, std::size_t length)
 }
 
 /*
- *  DataBufferInterface::ReadValue
+ *  DataBuffer::ReadValue
  *
  *  Description:
  *      Read the given number of octets from the data buffer.  The internal
- *      read length variable will be adjusted so that subsquent reads will
+ *      read length variable will be adjusted so that subsequent reads will
  *      be from the next position in the data buffer.  This function is limited
  *      by the length of the data, not the length of the buffer.
  *
@@ -1541,7 +1844,7 @@ void DataBufferInterface::ReadValue(std::string &value, std::size_t length)
  *  Comments:
  *      None.
  */
-void DataBufferInterface::ReadValue(OctetString &value, std::size_t length)
+void DataBuffer::ReadValue(OctetString &value, std::size_t length)
 {
     // Do nothing if the length is 0
     if (!length) return;
@@ -1563,11 +1866,11 @@ void DataBufferInterface::ReadValue(OctetString &value, std::size_t length)
 }
 
 /*
- *  DataBufferInterface::ReadValue
+ *  DataBuffer::ReadValue
  *
  *  Description:
  *      Read a single octet from the data buffer.  The internal read length
- *      variable will be adjusted so that subsquent reads will be from the next
+ *      variable will be adjusted so that subsequent reads will be from the next
  *      position in the data buffer.  This function is limited by the length of
  *      the data, not the length of the buffer.
  *
@@ -1581,17 +1884,17 @@ void DataBufferInterface::ReadValue(OctetString &value, std::size_t length)
  *  Comments:
  *      None.
  */
-void DataBufferInterface::ReadValue(std::uint8_t &value)
+void DataBuffer::ReadValue(std::uint8_t &value)
 {
     ReadValue(reinterpret_cast<unsigned char*>(&value), 1);
 }
 
 /*
- *  DataBufferInterface::ReadValue
+ *  DataBuffer::ReadValue
  *
  *  Description:
  *      Read a 16-bit unsigned integer from the data buffer.  The internal read
- *      length variable will be adjusted so that subsquent reads will be from
+ *      length variable will be adjusted so that subsequent reads will be from
  *      the next position in the data buffer.  This function is limited by the
  *      length of the data, not the length of the buffer.
  *
@@ -1605,18 +1908,18 @@ void DataBufferInterface::ReadValue(std::uint8_t &value)
  *  Comments:
  *      None.
  */
-void DataBufferInterface::ReadValue(std::uint16_t &value)
+void DataBuffer::ReadValue(std::uint16_t &value)
 {
     ReadValue(reinterpret_cast<unsigned char*>(&value), sizeof(value));
     value = ntohs(value);
 }
 
 /*
- *  DataBufferInterface::ReadValue
+ *  DataBuffer::ReadValue
  *
  *  Description:
  *      Read a 32-bit unsigned integer from the data buffer.  The internal read
- *      length variable will be adjusted so that subsquent reads will be from
+ *      length variable will be adjusted so that subsequent reads will be from
  *      the next position in the data buffer.  This function is limited by the
  *      length of the data, not the length of the buffer.
  *
@@ -1630,18 +1933,18 @@ void DataBufferInterface::ReadValue(std::uint16_t &value)
  *  Comments:
  *      None.
  */
-void DataBufferInterface::ReadValue(std::uint32_t &value)
+void DataBuffer::ReadValue(std::uint32_t &value)
 {
     ReadValue(reinterpret_cast<unsigned char*>(&value), sizeof(value));
     value = ntohl(value);
 }
 
 /*
- *  DataBufferInterface::ReadValue
+ *  DataBuffer::ReadValue
  *
  *  Description:
  *      Read a 64-bit unsigned integer from the data buffer.  The internal read
- *      length variable will be adjusted so that subsquent reads will be from
+ *      length variable will be adjusted so that subsequent reads will be from
  *      the next position in the data buffer.  This function is limited by the
  *      length of the data, not the length of the buffer.
  *
@@ -1655,7 +1958,7 @@ void DataBufferInterface::ReadValue(std::uint32_t &value)
  *  Comments:
  *      None.
  */
-void DataBufferInterface::ReadValue(std::uint64_t &value)
+void DataBuffer::ReadValue(std::uint64_t &value)
 {
     // Ensure appending the data will not result in an buffer overflow
     if ((read_length + sizeof(value)) > data_length)
@@ -1672,11 +1975,11 @@ void DataBufferInterface::ReadValue(std::uint64_t &value)
 }
 
 /*
- *  DataBufferInterface::ReadValue
+ *  DataBuffer::ReadValue
  *
  *  Description:
  *      Read a floating point value from the data buffer.  The internal read
- *      length variable will be adjusted so that subsquent reads will be from
+ *      length variable will be adjusted so that subsequent reads will be from
  *      the next position in the data buffer.  This function is limited by the
  *      length of the data, not the length of the buffer.
  *
@@ -1690,7 +1993,7 @@ void DataBufferInterface::ReadValue(std::uint64_t &value)
  *  Comments:
  *      None.
  */
-void DataBufferInterface::ReadValue(float &value)
+void DataBuffer::ReadValue(float &value)
 {
     // Ensure appending the data will not result in an buffer overflow
     if ((read_length + sizeof(value)) > data_length)
@@ -1707,11 +2010,11 @@ void DataBufferInterface::ReadValue(float &value)
 }
 
 /*
- *  DataBufferInterface::ReadValue
+ *  DataBuffer::ReadValue
  *
  *  Description:
  *      Read a double-precision floating point value from the data buffer.  The
- *      internal read length variable will be adjusted so that subsquent reads
+ *      internal read length variable will be adjusted so that subsequent reads
  *      will be from the next position in the data buffer.  This function is
  *      limited by the length of the data, not the length of the buffer.
  *
@@ -1725,7 +2028,7 @@ void DataBufferInterface::ReadValue(float &value)
  *  Comments:
  *      None.
  */
-void DataBufferInterface::ReadValue(double &value)
+void DataBuffer::ReadValue(double &value)
 {
     // Ensure appending the data will not result in an buffer overflow
     if ((read_length + sizeof(value)) > data_length)
@@ -1744,11 +2047,11 @@ void DataBufferInterface::ReadValue(double &value)
 } // namespace gs
 
 /*
- *  operator<< for DataBufferInterface
+ *  operator<< for DataBuffer
  *
  *  Description:
  *      This function will produce a hex dump of the contents of
- *      the DataBufferInterface object's internal buffer.
+ *      the DataBuffer object's internal buffer.
  *
  *  Parameters:
  *      o [in]
@@ -1764,15 +2067,18 @@ void DataBufferInterface::ReadValue(double &value)
  *      None.
  */
 std::ostream &operator<<(std::ostream &o,
-                         const gs::DataBufferInterface &data_buffer)
+                         const gs::DataBuffer &data_buffer)
 {
-    unsigned counter = 0;                       // Character counter
+    std::size_t counter = 0;                    // Character counter
 
     // Get the current stream flags
-    std::ios_base::fmtflags flags(o.flags());
+    auto flags = o.flags();
+
+    // Set the fill character and store the old fill character
+    auto fill = o.fill('0');
 
     // We want uppercase hex digits with zero-fill integers
-    o << std::hex << std::setfill('0') << std::uppercase;
+    o << std::hex << std::uppercase;
 
     // Get a pointer to the start of the buffer and buffer length
     const unsigned char *p = data_buffer.GetBufferPointer();
@@ -1793,7 +2099,7 @@ std::ostream &operator<<(std::ostream &o,
         if (!(counter % 16))
         {
             o << " :";
-            for (unsigned i = 0; i < 16; i++)
+            for (std::size_t i = 0; i < 16; i++)
             {
                 if (isprint(*(p - 16 + i)))
                 {
@@ -1811,9 +2117,10 @@ std::ostream &operator<<(std::ostream &o,
     // Create the last line of output
     if (counter % 16)
     {
-        for (unsigned i = 0; i < (16 - (counter % 16)); i++) o << "   ";
+        for (std::size_t i = 0; i < (16 - (counter % 16)); i++) o << "   ";
         o << " :";
-        for (unsigned i = 0; i < 16; i++) {
+        for (std::size_t i = 0; i < 16; i++)
+        {
             if (i < (counter % 16))
             {
                 if (isprint(*(p - (counter % 16) + i)))
@@ -1838,6 +2145,9 @@ std::ostream &operator<<(std::ostream &o,
 
     // Restore the ostream flags
     o.flags(flags);
+
+    // Restore the fill character
+    o.fill(fill);
 
     return o;
 }

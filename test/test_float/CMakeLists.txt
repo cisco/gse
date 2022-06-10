@@ -1,4 +1,4 @@
-add_executable(test_float test_main.cpp test_float.cpp)
+add_executable(test_float test_float.cpp)
 
 include(GoogleTest)
 

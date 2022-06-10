@@ -62,13 +62,11 @@ namespace {
             {
             }
 
-            ~GSEncoderTest()
-            {
-            }
+            ~GSEncoderTest() = default;
 
         protected:
             gs::Encoder encoder;
-            gs::DataBuffer<> data_buffer;
+            gs::DataBuffer data_buffer;
     };
 
     // Test vector B.1
@@ -456,7 +454,7 @@ namespace {
         objects.push_back(head);
 
         // Define a short data buffer
-        gs::DataBuffer<> db(100);
+        gs::DataBuffer db(100);
 
         // Check the expected encoded length, which should only be the
         // first too objects, aa the buffer is too short for all 3
