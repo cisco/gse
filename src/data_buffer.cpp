@@ -2077,7 +2077,7 @@ std::ostream &operator<<(std::ostream &o,
     // Set the fill character and store the old fill character
     auto fill = o.fill('0');
 
-    // We want uppercase hex digits with zero-fill integers
+    // We want uppercase hex digits
     o << std::hex << std::uppercase;
 
     // Get a pointer to the start of the buffer and buffer length
