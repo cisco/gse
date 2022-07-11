@@ -255,15 +255,9 @@ typedef struct
     } u;
 } GS_Object;
 
-typedef struct
-{
-    void *opaque;
-} GS_Encoder_Context;
-
-typedef struct
-{
-    void *opaque;
-} GS_Decoder_Context;
+// Encoder and decoder context types
+typedef struct GS_Encoder_Context GS_Encoder_Context;
+typedef struct GS_Decoder_Context GS_Decoder_Context;
 
 // Function prototypes for the public API
 EXPORT int CALL GSEncoderInit(GS_Encoder_Context **gs_encoder_context,

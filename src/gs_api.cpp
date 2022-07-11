@@ -50,10 +50,20 @@
 #include "gs_api.h"
 #include "gs_api_internal.h"
 
-#ifdef __cplusplus
 extern "C"
 {
-#endif
+
+// Define the encoder context type
+typedef struct GS_Encoder_Context
+{
+    gs_api::GS_Encoder_Context_Internal context;
+} GS_Encoder_Context;
+
+// Define the decoder context type
+typedef struct GS_Decoder_Context
+{
+    gs_api::GS_Decoder_Context_Internal context;
+} GS_Decoder_Context;
 
 /*
  *  GSEncoderInit
@@ -77,7 +87,7 @@ extern "C"
  *      0 if successful, -1 if there is an error.
  *
  *  Comments:
- *      The created context will retain a reference to the provded buffer
+ *      The created context will retain a reference to the provided buffer
  *      until the context is destroyed.
  */
 int CALL GSEncoderInit(GS_Encoder_Context **gs_encoder_context,
@@ -85,7 +95,6 @@ int CALL GSEncoderInit(GS_Encoder_Context **gs_encoder_context,
                        uint64_t buffer_length)
 {
     int result = -1;
-    gs_api::GS_Encoder_Context_Internal *context = nullptr;
 
     // Initialize the gs_encoder_context
     *gs_encoder_context = nullptr;
@@ -95,24 +104,17 @@ int CALL GSEncoderInit(GS_Encoder_Context **gs_encoder_context,
 
     try
     {
-        // Create the internal encoder context
-        context = new gs_api::GS_Encoder_Context_Internal
+        // Create the encoder context
+        *gs_encoder_context = new GS_Encoder_Context{
             {
                 gs::Encoder(),
                 gs::DataBuffer(buffer, buffer_length, 0),
-                std::string()
-            };
-
-        // Create the external encoder context
-        *gs_encoder_context = new GS_Encoder_Context();
-        (*gs_encoder_context)->opaque = context;
+                {}
+            }
+        };
 
         // Indicate success
         result = 0;
-    }
-    catch (const std::exception &)
-    {
-        // Nothing we can really do
     }
     catch (...)
     {
@@ -120,11 +122,7 @@ int CALL GSEncoderInit(GS_Encoder_Context **gs_encoder_context,
     }
 
     // If there was an error, destroy any allocated data
-    if (result)
-    {
-        if (*gs_encoder_context) delete *gs_encoder_context;
-        if (context) delete context;
-    }
+    if (result && *gs_encoder_context) delete *gs_encoder_context;
 
     return result;
 }
@@ -137,9 +135,8 @@ int CALL GSEncoderInit(GS_Encoder_Context **gs_encoder_context,
  *      when GSEncoderInit() was called.
  *
  *  Parameters:
- *      gs_decoder_context [in]
- *          A pointer to the decoder context created during initialization.
- *          Upon return, the context will no longer be valid.
+ *      gs_encoder_context [in]
+ *          A pointer to the encoder context created during initialization.
  *
  *      object [in]
  *          The object to serialize into the buffer.
@@ -154,59 +151,47 @@ int CALL GSEncoderInit(GS_Encoder_Context **gs_encoder_context,
  *  Comments:
  *      None.
  */
-int CALL GSEncodeObject(GS_Encoder_Context *gs_encoder_context, GS_Object *object)
+int CALL GSEncodeObject(GS_Encoder_Context *gs_encoder_context,
+                        GS_Object *object)
 {
     int result = -1;
     size_t data_length = SIZE_MAX;
-
-    gs_api::GS_Encoder_Context_Internal *context = nullptr;
 
     // If a null pointer is provided, return an error
     if (!gs_encoder_context) return result;
 
     try
     {
-        // Obtain a pointer to the internal context type
-        context = reinterpret_cast<gs_api::GS_Encoder_Context_Internal *>(
-            gs_encoder_context->opaque);
-
         // Clear the error text
-        context->error.clear();
+        gs_encoder_context->context.error.clear();
 
         // Take note of the data length so that it can be restored on error
-        data_length = context->data_buffer.GetDataLength();
+        data_length = gs_encoder_context->context.data_buffer.GetDataLength();
 
         // Serialize the object onto the buffer
-        result = gs_api::GSSerializeObject(*context, *object);
+        result = gs_api::GSSerializeObject(gs_encoder_context->context,
+                                           *object);
     }
     catch (const std::exception &e)
     {
-        // Is the context available?
-        if (context)
-        {
-            // Take note of the error text, if any
-            context->error = e.what();
+        // Take note of the error text, if any
+        gs_encoder_context->context.error = e.what();
 
-            // Restore the data length on failure, if we have a value
-            if (data_length != SIZE_MAX)
-            {
-                context->data_buffer.SetDataLength(data_length);
-            }
+        // Restore the data length on failure, if we have a value
+        if (data_length != SIZE_MAX)
+        {
+            gs_encoder_context->context.data_buffer.SetDataLength(data_length);
         }
     }
     catch (...)
     {
-        // Nothing we can really do, but clear the error string
-        if (context)
-        {
-            // Clear the error sting
-            context->error.clear();
+        // Clear the error sting
+        gs_encoder_context->context.error.clear();
 
-            // Restore the data length on failure, if we have a value
-            if (data_length != SIZE_MAX)
-            {
-                context->data_buffer.SetDataLength(data_length);
-            }
+        // Restore the data length on failure, if we have a value
+        if (data_length != SIZE_MAX)
+        {
+            gs_encoder_context->context.data_buffer.SetDataLength(data_length);
         }
     }
 
@@ -231,28 +216,22 @@ int CALL GSEncodeObject(GS_Encoder_Context *gs_encoder_context, GS_Object *objec
  */
 size_t CALL GSEncoderDataLength(GS_Encoder_Context *gs_encoder_context)
 {
-    gs_api::GS_Encoder_Context_Internal *context = nullptr;
-
     // If a null pointer is provided, return an error
     if (!gs_encoder_context) return SIZE_MAX;
 
     try
     {
-        // Obtain a pointer to the internal context type
-        context = reinterpret_cast<gs_api::GS_Encoder_Context_Internal *>(
-            gs_encoder_context->opaque);
-
-        return context->data_buffer.GetDataLength();
+        return gs_encoder_context->context.data_buffer.GetDataLength();
     }
     catch (const std::exception &e)
     {
         // Is the context available? If so, note the error reason.
-        if (context) context->error = e.what();
+        gs_encoder_context->context.error = e.what();
     }
     catch (...)
     {
         // Nothing we can really do, but clear the error string
-        if (context) context->error = std::string();
+        gs_encoder_context->context.error.clear();
     }
 
     return SIZE_MAX;
@@ -279,29 +258,24 @@ size_t CALL GSEncoderDataLength(GS_Encoder_Context *gs_encoder_context)
 const char * CALL GetEncoderError(GS_Encoder_Context *gs_encoder_context)
 {
     const char *error_string = nullptr;
-    gs_api::GS_Encoder_Context_Internal *context = nullptr;
 
     // If a null pointer is provided, return an error
     if (!gs_encoder_context) return error_string;
 
     try
     {
-        // Obtain a pointer to the internal context type
-        context = reinterpret_cast<gs_api::GS_Encoder_Context_Internal *>(
-            gs_encoder_context->opaque);
-
         // Take note of the data length so that it can be restored on error
-        error_string = context->error.c_str();
+        error_string = gs_encoder_context->context.error.c_str();
     }
     catch (const std::exception &e)
     {
         // Is the context available?
-        if (context) context->error = e.what();
+        gs_encoder_context->context.error = e.what();
     }
     catch (...)
     {
         // Nothing we can really do, but clear the error string
-        if (context) context->error = std::string();
+        gs_encoder_context->context.error.clear();
     }
 
     return error_string;
@@ -328,29 +302,17 @@ const char * CALL GetEncoderError(GS_Encoder_Context *gs_encoder_context)
 int CALL GSEncoderDestroy(GS_Encoder_Context *gs_encoder_context)
 {
     int result = -1;
-    gs_api::GS_Encoder_Context_Internal *context = nullptr;
 
     // If a null pointer is provided, return an error
     if (!gs_encoder_context) return result;
 
     try
     {
-        // Obtain a pointer to the internal context type
-        context = reinterpret_cast<gs_api::GS_Encoder_Context_Internal *>(
-            gs_encoder_context->opaque);
-
-        // Destroy the internal context object
-        delete context;
-
-        // Destroy the external context object
+        // Destroy the context object
         delete gs_encoder_context;
 
         // Indicate success
         result = 0;
-    }
-    catch (const std::exception &)
-    {
-        // Nothing we can really do
     }
     catch (...)
     {
@@ -382,15 +344,14 @@ int CALL GSEncoderDestroy(GS_Encoder_Context *gs_encoder_context)
  *      0 if successful, -1 if there is an error.
  *
  *  Comments:
- *      The created context will retain a reference to the provded buffer
+ *      The created context will retain a reference to the provided buffer
  *      until the context is destroyed.
  */
 int CALL GSDecoderInit(GS_Decoder_Context **gs_decoder_context,
-                  unsigned char *buffer,
-                  uint64_t data_length)
+                       unsigned char *buffer,
+                       uint64_t data_length)
 {
     int result = -1;
-    gs_api::GS_Decoder_Context_Internal *context = nullptr;
 
     // Initialize the gs_decoder_context
     *gs_decoder_context = nullptr;
@@ -400,25 +361,17 @@ int CALL GSDecoderInit(GS_Decoder_Context **gs_decoder_context,
 
     try
     {
-        // Create the internal encoder context
-        context = new gs_api::GS_Decoder_Context_Internal
+        *gs_decoder_context = new GS_Decoder_Context{
             {
                 gs::Decoder(),
                 gs::DataBuffer(buffer, data_length, data_length),
-                std::string(),
-                std::vector<unsigned char *>()
-            };
-
-        // Create the external encoder context
-        *gs_decoder_context = new GS_Decoder_Context();
-        (*gs_decoder_context)->opaque = context;
+                {},
+                {}
+            }
+        };
 
         // Indicate success
         result = 0;
-    }
-    catch (const std::exception &)
-    {
-        // Nothing we can really do
     }
     catch (...)
     {
@@ -426,11 +379,7 @@ int CALL GSDecoderInit(GS_Decoder_Context **gs_decoder_context,
     }
 
     // If there was an error, destroy any allocated data
-    if (result)
-    {
-        if (*gs_decoder_context) delete *gs_decoder_context;
-        if (context) delete context;
-    }
+    if (result && *gs_decoder_context) delete *gs_decoder_context;
 
     return result;
 }
@@ -463,35 +412,32 @@ int CALL GSDecoderInit(GS_Decoder_Context **gs_decoder_context,
  *  Comments:
  *      None.
  */
-int CALL GSDecodeObject(GS_Decoder_Context *gs_decoder_context, GS_Object *object)
+int CALL GSDecodeObject(GS_Decoder_Context *gs_decoder_context,
+                        GS_Object *object)
 {
     int result = -1;
-    gs_api::GS_Decoder_Context_Internal *context = nullptr;
 
     // If a null pointer is provided, return an error
     if (!gs_decoder_context) return result;
 
     try
     {
-        // Obtain a pointer to the internal context type
-        context = reinterpret_cast<gs_api::GS_Decoder_Context_Internal *>(
-            gs_decoder_context->opaque);
-
         // Clear the error text
-        context->error.clear();
+        gs_decoder_context->context.error.clear();
 
         // Deserialize the object into the provided object pointer
-        result = gs_api::GSDeserializeObject(*context, *object);
+        result = gs_api::GSDeserializeObject(gs_decoder_context->context,
+                                             *object);
     }
     catch (const std::exception &e)
     {
         // Is the context available?
-        if (context) context->error = e.what();
+        gs_decoder_context->context.error = e.what();
     }
     catch (...)
     {
         // Nothing we can really do, but clear the error string
-        if (context) context->error.clear();
+        gs_decoder_context->context.error.clear();
     }
 
     return result;
@@ -518,29 +464,24 @@ int CALL GSDecodeObject(GS_Decoder_Context *gs_decoder_context, GS_Object *objec
 const char * CALL GetDecoderError(GS_Decoder_Context *gs_decoder_context)
 {
     const char *error_string = nullptr;
-    gs_api::GS_Decoder_Context_Internal *context = nullptr;
 
     // If a null pointer is provided, return an error
     if (!gs_decoder_context) return error_string;
 
     try
     {
-        // Obtain a pointer to the internal context type
-        context = reinterpret_cast<gs_api::GS_Decoder_Context_Internal *>(
-            gs_decoder_context->opaque);
-
         // Take note of the data length so that it can be restored on error
-        error_string = context->error.c_str();
+        error_string = gs_decoder_context->context.error.c_str();
     }
     catch (const std::exception &e)
     {
         // Is the context available?
-        if (context) context->error = e.what();
+        gs_decoder_context->context.error = e.what();
     }
     catch (...)
     {
         // Nothing we can really do, but clear the error string
-        if (context) context->error = std::string();
+        gs_decoder_context->context.error.clear();
     }
 
     return error_string;
@@ -567,32 +508,20 @@ const char * CALL GetDecoderError(GS_Decoder_Context *gs_decoder_context)
 int CALL GSDecoderDestroy(GS_Decoder_Context *gs_decoder_context)
 {
     int result = -1;
-    gs_api::GS_Decoder_Context_Internal *context = nullptr;
 
     // If a null pointer is provided, return an error
     if (!gs_decoder_context) return result;
 
     try
     {
-        // Obtain a pointer to the internal context type
-        context = reinterpret_cast<gs_api::GS_Decoder_Context_Internal *>(
-            gs_decoder_context->opaque);
-
         // Free all of the allocated memory
-        for (auto p : context->allocations) delete[] p;
+        for (auto p : gs_decoder_context->context.allocations) delete[] p;
 
-        // Destroy the internal context object
-        delete context;
-
-        // Destroy the external context object
+        // Destroy the context object
         delete gs_decoder_context;
 
         // Indicate success
         result = 0;
-    }
-    catch (const std::exception &)
-    {
-        // Nothing we can really do
     }
     catch (...)
     {
@@ -602,6 +531,4 @@ int CALL GSDecoderDestroy(GS_Decoder_Context *gs_decoder_context)
     return result;
 }
 
-#ifdef __cplusplus
 } // extern C
-#endif
