@@ -71,7 +71,7 @@ namespace {
                 GS_Encoder_Context *context;
                 ASSERT_EQ(GSEncoderInit(&context, data_buffer, 1500), 0);
 
-                // Encode the objects
+                // Encode the object(s)
                 for (std::size_t i = 0; i < num_objects; i++)
                 {
                     ASSERT_EQ(GSEncodeObject(context, &objects[i]), 1);
@@ -101,7 +101,7 @@ namespace {
                                         expected.size()),
                           0);
 
-                // Decode the three objects
+                // Decode the object(s)
                 GS_Object *objects = new GS_Object[num_objects];
                 for (std::size_t i = 0; i < num_objects; i++)
                 {
@@ -185,6 +185,58 @@ namespace {
         object.u.head1.rotation.ek = 0.0f;
 
         PerformEncodeTest(expected, &object);
+    }
+
+    TEST_F(GSAPITest, Test_Encode_Head_Buffer_Assign_Reset)
+    {
+        std::vector<std::uint8_t> expected =
+        {
+            0x01, 0x21, 0x00, 0x05, 0x00, 0x3f, 0x8c, 0xcc,
+            0xcd, 0x3e, 0x4c, 0xcc, 0xcd, 0x41, 0xf0, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00
+        };
+
+        GS_Object object{};
+
+        object.type = GS_Tag_Head1;
+        object.u.head1.id = 0;
+        object.u.head1.time = 0x0500;
+        object.u.head1.location.x = 1.1f;
+        object.u.head1.location.y = 0.2f;
+        object.u.head1.location.z = 30.0f;
+        object.u.head1.location.vx = 0.0f;
+        object.u.head1.location.vy = 0.0f;
+        object.u.head1.location.vz = 0.0f;
+        object.u.head1.rotation.si = 0.0f;
+        object.u.head1.rotation.sj = 0.0f;
+        object.u.head1.rotation.sk = 0.0f;
+        object.u.head1.rotation.ei = 0.0f;
+        object.u.head1.rotation.ej = 0.0f;
+        object.u.head1.rotation.ek = 0.0f;
+
+        // Create the encoder context
+        GS_Encoder_Context *context;
+        ASSERT_EQ(GSEncoderInit(&context, nullptr, 0), 0);
+
+        // Set the data buffer
+        GSEncoderSetBuffer(context, data_buffer, 1500);
+
+        // Encode the objects
+        ASSERT_EQ(GSEncodeObject(context, &object), 1);
+
+        // Check the encoded length
+        ASSERT_EQ(GSEncoderDataLength(context), expected.size());
+
+        // Test resetting the data buffer
+        GSEncoderResetBuffer(context);
+
+        // Verify that the data length is 0
+        ASSERT_EQ(GSEncoderDataLength(context), 0);
+
+        // Destroy the encoder context
+        ASSERT_EQ(GSEncoderDestroy(context), 0);
     }
 
     TEST_F(GSAPITest, Test_Encode_Head_IPD)
@@ -485,6 +537,58 @@ namespace {
         };
 
         PerformDecodeTest(expected);
+    }
+
+    TEST_F(GSAPITest, Test_Decode_Head_Buffer_Assign_Reset)
+    {
+        std::vector<std::uint8_t> expected =
+        {
+            0x01, 0x21, 0x00, 0x05, 0x00, 0x3f, 0x8c, 0xcc,
+            0xcd, 0x3e, 0x4c, 0xcc, 0xcd, 0x41, 0xf0, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00
+        };
+
+        GS_Object object;
+
+        // Create the decoder context without a buffer
+        GS_Decoder_Context *context;
+        ASSERT_EQ(GSDecoderInit(&context, nullptr, 0), 0);
+
+        // Assign the buffer
+        ASSERT_EQ(GSDecoderSetBuffer(context, &expected[0], expected.size()),
+                  0);
+
+        // Perform a first round of decoding
+        {
+            // Decode the object
+            ASSERT_EQ(GSDecodeObject(context, &object), 1);
+
+            // Verify that a Head1 object was decoded
+            ASSERT_EQ(object.type, GS_Tag_Head1);
+
+            // Verify 0 return on trying to decode beyond last object
+            ASSERT_EQ(GSDecodeObject(context, &object), 0);
+        }
+
+        // Reset the data buffer
+        ASSERT_EQ(GSDecoderResetBuffer(context, expected.size()), 0);
+
+        // Perform a second round of decoding
+        {
+            // Decode the object
+            ASSERT_EQ(GSDecodeObject(context, &object), 1);
+
+            // Verify that a Head1 object was decoded
+            ASSERT_EQ(object.type, GS_Tag_Head1);
+
+            // Verify 0 return on trying to decode beyond last object
+            ASSERT_EQ(GSDecodeObject(context, &object), 0);
+        }
+
+        // Destroy the encoder context
+        ASSERT_EQ(GSDecoderDestroy(context), 0);
     }
 
     TEST_F(GSAPITest, Test_Decode_Head_IPD)
