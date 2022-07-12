@@ -79,9 +79,12 @@ typedef struct GS_Decoder_Context
  *
   *      buffer [in]
  *          A pointer to a data buffer to which objects will be serialized.
+ *          May be NULL if the buffer is later assigned by calling
+ *          GSEncoderSetBuffer().
  *
  *      buffer_length [in]
- *          The number of octets in the data buffer.
+ *          The number of octets in the data buffer.  Must be 0 if the
+ *          buffer is null.
  *
  *  Returns:
  *      0 if successful, -1 if there is an error.
@@ -92,15 +95,18 @@ typedef struct GS_Decoder_Context
  */
 int CALL GSEncoderInit(GS_Encoder_Context **gs_encoder_context,
                        unsigned char *buffer,
-                       uint64_t buffer_length)
+                       size_t buffer_length)
 {
     int result = -1;
 
     // Initialize the gs_encoder_context
     *gs_encoder_context = nullptr;
 
-    // Reject the request if the buffer length is zero
-    if (buffer_length == 0) return result;
+    // Reject the request if the buffer and associated length are incompatible
+    if ((buffer && (buffer_length == 0)) || (!buffer && (buffer_length > 0)))
+    {
+        return result;
+    }
 
     try
     {
@@ -118,11 +124,120 @@ int CALL GSEncoderInit(GS_Encoder_Context **gs_encoder_context,
     }
     catch (...)
     {
-        // Nothing we can really do
+        // Nothing to do
     }
 
-    // If there was an error, destroy any allocated data
-    if (result && *gs_encoder_context) delete *gs_encoder_context;
+    return result;
+}
+
+/*
+ *  GSEncoderSetBuffer
+ *
+ *  Description:
+ *      This function will set the buffer to use for encoding or decoding
+ *      to the buffer and length given, replacing the buffer previously
+ *      assigned (if any).
+ *
+ *  Parameters:
+ *      gs_encoder_context [in]
+ *          A pointer to the encoder context created during initialization.
+ *
+ *      buffer [in]
+ *          A pointer to a new data buffer into which objects will be
+ *          serialized.
+ *
+ *      buffer_length [in]
+ *          The number of octets in the data buffer (must be non-zero).
+ *
+ *  Returns:
+ *      0 if successful, -1 if there is an error.
+ *
+ *  Comments:
+ *      None.
+ */
+int CALL GSEncoderSetBuffer(GS_Encoder_Context *gs_encoder_context,
+                            unsigned char *buffer,
+                            size_t buffer_length)
+{
+    int result = -1;
+
+    // If a null pointer is provided, return an error
+    if (!gs_encoder_context) return result;
+
+    // Reject an error if there is an issue with the buffer-related parameters
+    if (!buffer || (buffer_length == 0)) return result;
+
+    try
+    {
+        // Clear the error string
+        gs_encoder_context->context.error.clear();
+
+        // Assign the new buffer to the context's DataBuffer
+        gs_encoder_context->context.data_buffer.SetBuffer(buffer,
+                                                          buffer_length,
+                                                          0,
+                                                          false);
+
+        // Indicate success
+        result = 0;
+    }
+    catch (const std::exception &e)
+    {
+        // Take note of the error text, if any
+        gs_encoder_context->context.error = e.what();
+    }
+    catch (...)
+    {
+        // Nothing to do
+    }
+
+    return result;
+}
+
+/*
+ *  GSEncoderResetBuffer
+ *
+ *  Description:
+ *      This function will clear the underlying DataBuffer of any content
+ *      stored.  Any previously encoded objects will be inaccessible.
+ *
+ *  Parameters:
+ *      gs_encoder_context [in]
+ *          A pointer to the encoder context created during initialization.
+ *
+ *  Returns:
+ *      0 if successful, -1 if there is an error.
+ *
+ *  Comments:
+ *      None.
+ */
+int CALL GSEncoderResetBuffer(GS_Encoder_Context *gs_encoder_context)
+{
+    int result = -1;
+
+    // If a null pointer is provided, return an error
+    if (!gs_encoder_context) return result;
+
+    try
+    {
+        // Clear the error string
+        gs_encoder_context->context.error.clear();
+
+        // Assign the new buffer to the context's DataBuffer
+        gs_encoder_context->context.data_buffer.SetDataLength(0);
+
+        // Indicate success
+        result = 0;
+    }
+    catch (const std::exception &e)
+    {
+        // Take note of the error text, if any
+        gs_encoder_context->context.error = e.what();
+    }
+    catch (...)
+    {
+        // Nothing to do
+    }
 
     return result;
 }
@@ -185,9 +300,6 @@ int CALL GSEncodeObject(GS_Encoder_Context *gs_encoder_context,
     }
     catch (...)
     {
-        // Clear the error sting
-        gs_encoder_context->context.error.clear();
-
         // Restore the data length on failure, if we have a value
         if (data_length != SIZE_MAX)
         {
@@ -221,17 +333,19 @@ size_t CALL GSEncoderDataLength(GS_Encoder_Context *gs_encoder_context)
 
     try
     {
+        // Clear the error string
+        gs_encoder_context->context.error.clear();
+
         return gs_encoder_context->context.data_buffer.GetDataLength();
     }
     catch (const std::exception &e)
     {
-        // Is the context available? If so, note the error reason.
+        // Take note of the error text, if any
         gs_encoder_context->context.error = e.what();
     }
     catch (...)
     {
-        // Nothing we can really do, but clear the error string
-        gs_encoder_context->context.error.clear();
+        // Nothing to do
     }
 
     return SIZE_MAX;
@@ -269,12 +383,12 @@ const char * CALL GetEncoderError(GS_Encoder_Context *gs_encoder_context)
     }
     catch (const std::exception &e)
     {
-        // Is the context available?
+        // Take note of the error text, if any
         gs_encoder_context->context.error = e.what();
     }
     catch (...)
     {
-        // Nothing we can really do, but clear the error string
+        // Clear the error string
         gs_encoder_context->context.error.clear();
     }
 
@@ -316,7 +430,7 @@ int CALL GSEncoderDestroy(GS_Encoder_Context *gs_encoder_context)
     }
     catch (...)
     {
-        // Nothing we can really do
+        // Nothing to do
     }
 
     return result;
@@ -336,9 +450,12 @@ int CALL GSEncoderDestroy(GS_Encoder_Context *gs_encoder_context)
  *
  *      buffer [in]
  *          A pointer to a data buffer from which objects will be deserialized.
+ *          May be NULL if the buffer is later assigned by calling
+ *          GSDecoderSetBuffer().
  *
  *      data_length [in]
- *          The number of octets in the data buffer to deserialize.
+ *          The number of octets in the data buffer to deserialize.  Must be
+ *          0 if the buffer is null.
  *
  *  Returns:
  *      0 if successful, -1 if there is an error.
@@ -349,15 +466,18 @@ int CALL GSEncoderDestroy(GS_Encoder_Context *gs_encoder_context)
  */
 int CALL GSDecoderInit(GS_Decoder_Context **gs_decoder_context,
                        unsigned char *buffer,
-                       uint64_t data_length)
+                       size_t data_length)
 {
     int result = -1;
 
     // Initialize the gs_decoder_context
     *gs_decoder_context = nullptr;
 
-    // Reject the request if the buffer length is zero
-    if (data_length == 0) return result;
+    // Reject the request if the buffer and associated length are incompatible
+    if ((buffer && (data_length == 0)) || (!buffer && (data_length > 0)))
+    {
+        return result;
+    }
 
     try
     {
@@ -375,11 +495,127 @@ int CALL GSDecoderInit(GS_Decoder_Context **gs_decoder_context,
     }
     catch (...)
     {
-        // Nothing we can really do
+        // Nothing to do
     }
 
     // If there was an error, destroy any allocated data
     if (result && *gs_decoder_context) delete *gs_decoder_context;
+
+    return result;
+}
+
+/*
+ *  GSDecoderSetBuffer
+ *
+ *  Description:
+ *      This function will set the buffer to use for decoding to the buffer
+ *      and length given, replacing the buffer previously assigned (if any).
+ *
+ *  Parameters:
+ *      gs_decoder_context [in]
+ *          A pointer to the encoder context created during initialization.
+ *
+ *      buffer [in]
+ *          A pointer to a data buffer from which objects will be deserialized.
+ *
+ *      data_length [in]
+ *          The number of octets in the data buffer to deserialize.
+ *
+ *  Returns:
+ *      0 if successful, -1 if there is an error.
+ *
+ *  Comments:
+ *      None.
+ */
+int CALL GSDecoderSetBuffer(GS_Decoder_Context *gs_decoder_context,
+                            unsigned char *buffer,
+                            size_t data_length)
+{
+    int result = -1;
+
+    // If a null pointer is provided, return an error
+    if (!gs_decoder_context) return result;
+
+    // Reject an error if there is an issue with the buffer-related parameters
+    if (!buffer || (data_length == 0)) return result;
+
+    try
+    {
+        // Clear the error string
+        gs_decoder_context->context.error.clear();
+
+        // Assign the new buffer to the context's DataBuffer
+        gs_decoder_context->context.data_buffer.SetBuffer(buffer,
+                                                          data_length,
+                                                          data_length,
+                                                          false);
+
+        // Indicate success
+        result = 0;
+    }
+    catch (const std::exception &e)
+    {
+        // Take note of the error text, if any
+        gs_decoder_context->context.error = e.what();
+    }
+    catch (...)
+    {
+        // Nothing to do
+    }
+
+    return result;
+}
+
+/*
+ *  GSDecoderResetBuffer
+ *
+ *  Description:
+ *      This function will reset the underlying DataBuffer such that the
+ *      length of the buffer is the given value and ready to decode from
+ *      the start of the buffer.
+ *
+ *  Parameters:
+ *      gs_decoder_context [in]
+ *          A pointer to the encoder context created during initialization.
+ *
+ *      data_length [in]
+ *          The number of octets in the data buffer to deserialize.
+ *
+ *  Returns:
+ *      0 if successful, -1 if there is an error.
+ *
+ *  Comments:
+ *      None.
+ */
+int CALL GSDecoderResetBuffer(GS_Decoder_Context *gs_decoder_context,
+                              size_t data_length)
+{
+    int result = -1;
+
+    // If a null pointer is provided, return an error
+    if (!gs_decoder_context) return result;
+
+    try
+    {
+        // Clear the error string
+        gs_decoder_context->context.error.clear();
+
+        // Get a pointer to the underlying buffer
+        auto buffer =
+            gs_decoder_context->context.data_buffer.GetMutableBufferPointer();
+
+        // Assign the "new" buffer given the specified data_length
+        result = GSDecoderSetBuffer(gs_decoder_context, buffer, data_length);
+    }
+    catch (const std::exception &e)
+    {
+        // Take note of the error text, if any
+        gs_decoder_context->context.error = e.what();
+    }
+    catch (...)
+    {
+        // Nothing to do
+    }
 
     return result;
 }
@@ -431,13 +667,12 @@ int CALL GSDecodeObject(GS_Decoder_Context *gs_decoder_context,
     }
     catch (const std::exception &e)
     {
-        // Is the context available?
+        // Take note of the error text, if any
         gs_decoder_context->context.error = e.what();
     }
     catch (...)
     {
-        // Nothing we can really do, but clear the error string
-        gs_decoder_context->context.error.clear();
+        // Nothing to do
     }
 
     return result;
@@ -475,12 +710,12 @@ const char * CALL GetDecoderError(GS_Decoder_Context *gs_decoder_context)
     }
     catch (const std::exception &e)
     {
-        // Is the context available?
+        // Take note of the error text, if any
         gs_decoder_context->context.error = e.what();
     }
     catch (...)
     {
-        // Nothing we can really do, but clear the error string
+        // Clear the error string
         gs_decoder_context->context.error.clear();
     }
 

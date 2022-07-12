@@ -262,19 +262,28 @@ typedef struct GS_Decoder_Context GS_Decoder_Context;
 // Function prototypes for the public API
 EXPORT int CALL GSEncoderInit(GS_Encoder_Context **gs_encoder_context,
                               unsigned char *buffer,
-                              uint64_t buffer_length);
+                              size_t buffer_length);
+EXPORT int CALL GSEncoderSetBuffer(GS_Encoder_Context *gs_encoder_context,
+                                   unsigned char *buffer,
+                                   size_t buffer_length);
+EXPORT int CALL GSEncoderResetBuffer(GS_Encoder_Context *gs_encoder_context);
 EXPORT int CALL GSEncodeObject(GS_Encoder_Context *gs_encoder_context,
                                GS_Object *object);
 EXPORT size_t CALL GSEncoderDataLength(GS_Encoder_Context *gs_encoder_context);
-EXPORT const char *CALL GetEncoderError(GS_Encoder_Context *gs_encoder_context);
+EXPORT const char * CALL GetEncoderError(GS_Encoder_Context *gs_encoder_context);
 EXPORT int CALL GSEncoderDestroy(GS_Encoder_Context *gs_encoder_context);
 
 EXPORT int CALL GSDecoderInit(GS_Decoder_Context **gs_decoder_context,
                               unsigned char *buffer,
-                              uint64_t data_length);
+                              size_t data_length);
+EXPORT int CALL GSDecoderSetBuffer(GS_Decoder_Context *gs_decoder_context,
+                                   unsigned char *buffer,
+                                   size_t data_length);
+EXPORT int CALL GSDecoderResetBuffer(GS_Decoder_Context *gs_decoder_context,
+                                     size_t data_length);
 EXPORT int CALL GSDecodeObject(GS_Decoder_Context *gs_decoder_context,
                                GS_Object *object);
-EXPORT const char *CALL GetDecoderError(GS_Decoder_Context *gs_decoder_context);
+EXPORT const char * CALL GetDecoderError(GS_Decoder_Context *gs_decoder_context);
 EXPORT int CALL GSDecoderDestroy(GS_Decoder_Context *gs_decoder_context);
 
 #ifdef __cplusplus
