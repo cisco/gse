@@ -27,7 +27,7 @@ include(FetchContent)
 FetchContent_Declare(
     gse
     GIT_REPOSITORY  https://github.com/cisco/gse.git
-    GIT_TAG         origin/main
+    GIT_TAG         main
 )
 
 # Make the library available
@@ -94,13 +94,19 @@ C Interface
 The C interface has the following encoder (serialization) functions:
 
   * GSEncoderInit()
+  * GSEncoderSetBuffer()
+  * GSEncoderResetBuffer()
   * GSEncoderDataLength()
   * GSEncodeObject()
   * GetEncoderError()
   * GSEncoderDestroy()
 
-One would call `GSEncoderInit()` with a pointer to the raw buffer and a buffer
-length.  That will create a context that is used with other calls.
+One would call `GSEncoderInit()` with, optionally, a pointer to the raw buffer
+and a buffer length.  That will create a context that is used with other calls.
+A buffer may also be passed in via `GSEncoderSetBuffer()`, allowing re-use of
+the context created via `GSEncoderInit()`.  It's also possible to reset the
+existing buffer with a call to `GSEncoderResetBuffer()`, which effectively
+clears whatever is in the buffer previously assigned to the context.
 
 A `GS_Object` is populated and passed into `GSEncodeObject()`, which will
 return 1 on success, 0 if the buffer cannot hold more data, or -1 on error.
@@ -114,15 +120,22 @@ so be sure to call `GSEncoderDataLength()` before `GSEEncoderDestroy()`.
 The C interface has the following decoder (deserialization) functions:
 
   * GSDecoderInit()
+  * GSDecoderSetBuffer()
+  * GSDecoderResetBuffer()
   * GSDecodeObject()
   * GetDecoderError()
   * GSDecoderDestroy()
 
-One would call `GSDecoderInit()` with a pointer to the buffer holding the
-object(s) to deserialize and a buffer length.  That will create a context that
-is used with other calls.
+One would call `GSDecoderInit()` with, optionally, a pointer to the buffer
+holding the object(s) to deserialize and a buffer length.  That will create a
+context that is used with other calls.  A buffer may also be passed in via
+`GSDeccoderSetBuffer()`, allowing re-use of the context created via
+`GSEncoderInit()`.  It's also possible to reset the existing buffer with a call
+to `GSDecoderResetBuffer()`, which effectively sets the reading position back
+to the start of the buffer that was previously provided and assigns a new
+buffer length value.
 
-One then calls `GSDecodeObject()` with a pointer to a `GS_Object` type.  The
+One then calls `GSDecodeObject()` with, a pointer to a `GS_Object` type.  The
 structured will be zero-initialized by this API call, so the caller need not
 initialize it.  The result result will be 1 if successful, 0 if there are no
 more objects to deserialize from the buffer, or -1 if there is an error.
