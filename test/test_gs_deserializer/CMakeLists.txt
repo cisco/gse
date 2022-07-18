@@ -1,5 +1,11 @@
 add_executable(test_gs_deserializer test_gs_deserializer.cpp)
 
+set_target_properties(test_gs_deserializer
+    PROPERTIES
+        CXX_STANDARD 17
+        CXX_STANDARD_REQUIRED YES
+        CXX_EXTENSIONS NO)
+
 target_include_directories(test_gs_deserializer PRIVATE ${CMAKE_SOURCE_DIR}/src/gse/src)
 
 include(GoogleTest)
