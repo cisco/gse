@@ -2,10 +2,8 @@ cmake_minimum_required(VERSION 3.17)
 
 # Building tests by default depends on whether this is a subproject
 if (DEFINED PROJECT_NAME)
-    # Option to control building tests
     option(gse_BUILD_TESTS "Build Tests for the Game State Encoder Library" OFF)
 else()
-    # Option to control building tests
     option(gse_BUILD_TESTS "Build Tests for the Game State Encoder Library" ON)
 endif()
 
