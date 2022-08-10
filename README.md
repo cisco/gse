@@ -26,8 +26,7 @@ include(FetchContent)
 # Fetch the Game State Encoder Library
 FetchContent_Declare(gse
     GIT_REPOSITORY  https://github.com/cisco/gse.git
-    GIT_TAG         main
-)
+    GIT_TAG         main)
 
 # Make the library available
 FetchContent_MakeAvailable(gse)
