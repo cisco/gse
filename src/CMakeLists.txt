@@ -28,8 +28,7 @@ target_include_directories(gse
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
     PUBLIC
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-        $<INSTALL_INTERFACE:include>
-)
+        $<INSTALL_INTERFACE:include>)
 
 # Install target and associated include files
 if (gse_INSTALL)
