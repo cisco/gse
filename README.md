@@ -24,8 +24,7 @@ this library in other software package builds.
 include(FetchContent)
 
 # Fetch the Game State Encoder Library
-FetchContent_Declare(
-    gse
+FetchContent_Declare(gse
     GIT_REPOSITORY  https://github.com/cisco/gse.git
     GIT_TAG         main
 )
