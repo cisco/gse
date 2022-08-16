@@ -10,8 +10,10 @@
  *      data into a given data buffer.
  *
  *      The Encode functions will cause an EncoderException exception to
- *      be thrown if an attempt is made to serialize into a buffer
- *      where there is insufficent space.
+ *      be thrown if an attempt is made to serialize into a buffer where there
+ *      is insufficent space, if the object tag for an object to be serialized
+ *      is invalid, or if there is some unexpected error trying to serialize
+ *      an object.
  *
  *  Portability Issues:
  *      The C++ float and double types are assumed to be implemented following
@@ -97,10 +99,15 @@ class Encoder
         EncodeResult Encode(DataBuffer &data_buffer, const Object1 &value);
         EncodeResult Encode(DataBuffer &data_buffer, const Head1 &value);
         EncodeResult Encode(DataBuffer &data_buffer, const Hand1 &value);
-        EncodeResult Encode(DataBuffer &data_buffer, const Hand2 &value);
         EncodeResult Encode(DataBuffer &data_buffer, const Mesh1 &value);
+        EncodeResult Encode(DataBuffer &data_buffer, const Hand2 &value);
+        EncodeResult Encode(DataBuffer &data_buffer, const HeadIPD1 &value);
         EncodeResult Encode(DataBuffer &data_buffer,
                             const UnknownObject &value);
+
+        // Ensure no implicit conversions calling Encode
+        template <typename T>
+        EncodeResult Encode(DataBuffer &data_buffer, const T &value) = delete;
 
     protected:
         // Serialization functions for more complex types

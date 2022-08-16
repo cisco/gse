@@ -222,6 +222,52 @@ namespace {
         ASSERT_EQ(std::get<gs::Head1>(decoded_objects.front()).ipd.value().ipd.value, head.ipd.value().ipd.value);
     };
 
+    TEST_F(GSDecoderTest, Test_HeadIPD1)
+    {
+        std::vector<std::uint8_t> expected =
+        {
+            // Tag
+            0xc0, 0x80, 0x02,
+
+            // Length
+            0x02,
+
+            // Value
+            0x42, 0x48
+        };
+
+        gs::HeadIPD1 ipd{};
+
+        ipd = gs::HeadIPD1{3.140625};
+
+        // Check the expected encoded length
+        ASSERT_EQ(encoder.Encode(data_buffer, ipd),
+                  std::make_pair(std::size_t(1), expected.size()));
+
+        // Verify the buffer contents
+        for (std::size_t i = 0; i < expected.size(); i++)
+        {
+            ASSERT_EQ(data_buffer[i], expected[i]);
+        }
+
+        // PORTION TO TEST THE GAME STATE DECODER
+
+        // Ensure we are at the start of the buffer
+        ASSERT_EQ(data_buffer.GetReadLength(), 0);
+
+        // Decode the data buffer
+        ASSERT_EQ(decoder.Decode(data_buffer, decoded_objects), data_buffer.GetDataLength());
+
+        // We should have found a single object
+        ASSERT_EQ(decoded_objects.size(), 1);
+
+        // Verify that what we got is a HeadIPD1 object
+        ASSERT_TRUE(std::holds_alternative<gs::HeadIPD1>(decoded_objects.front()));
+
+        // Verify the decoded value is the same as the encoded value
+        ASSERT_EQ(std::get<gs::HeadIPD1>(decoded_objects.front()).ipd.value, ipd.ipd.value);
+    };
+
     // Test vector B.1, encoding as UnknownObject type
     TEST_F(GSDecoderTest, Test_Vector_B1_Unknown)
     {

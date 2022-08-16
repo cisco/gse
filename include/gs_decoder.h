@@ -95,6 +95,10 @@ class Decoder
         std::size_t Decode(DataBuffer &data_buffer, HeadIPD1 &value);
         std::size_t Decode(DataBuffer &data_buffer, UnknownObject &value);
 
+        // Ensure no implicit conversions calling Decode
+        template <typename T>
+        std::size_t Decode(DataBuffer &data_buffer, T &value) = delete;
+
         // Serialization functions for more complex types
         std::size_t Deserialize(DataBuffer &data_buffer,
                                 Tag &value,
