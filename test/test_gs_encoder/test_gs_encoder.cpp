@@ -671,4 +671,33 @@ namespace {
         }
     }
 
+    TEST_F(GSEncoderTest, Test_HeadIPD1)
+    {
+        std::vector<std::uint8_t> expected =
+        {
+            // Tag
+            0xc0, 0x80, 0x02,
+
+            // Length
+            0x02,
+
+            // Value
+            0x42, 0x48
+        };
+
+        gs::HeadIPD1 ipd{};
+
+        ipd = gs::HeadIPD1{3.140625};
+
+        // Check the expected encoded length
+        ASSERT_EQ(encoder.Encode(data_buffer, ipd),
+                  std::make_pair(std::size_t(1), expected.size()));
+
+        // Verify the buffer contents
+        for (std::size_t i = 0; i < expected.size(); i++)
+        {
+            ASSERT_EQ(data_buffer[i], expected[i]);
+        }
+    };
+
 } // namespace

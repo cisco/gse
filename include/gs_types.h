@@ -47,14 +47,14 @@
  *      OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef GS_TYPES_H
+#define GS_TYPES_H
+
 #include <cstdint>
 #include <vector>
 #include <variant>
 #include <string>
 #include <optional>
-
-#ifndef GS_TYPES_H
-#define GS_TYPES_H
 
 namespace gs
 {

@@ -5,6 +5,8 @@ Game State Encoder Library
 
 This library will encode and decode data as per the specification
 documented here: https://github.com/fluffy/draft-jennings-game-state-over-rtp.
+(This code is against commit 1955e14ab4557045608efd7564ea08c3984ca86a,
+dated 2021-12-23.)
 
 Building
 -------

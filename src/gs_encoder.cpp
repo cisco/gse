@@ -10,8 +10,10 @@
  *      data into a given data buffer.
  *
  *      The Encode functions will cause an EncoderException exception to
- *      be thrown if an attempt is made to serialize into a buffer
- *      where there is insufficent space.
+ *      be thrown if an attempt is made to serialize into a buffer where there
+ *      is insufficent space, if the object tag for an object to be serialized
+ *      is invalid, or if there is some unexpected error trying to serialize
+ *      an object.
  *
  *  Portability Issues:
  *      The C++ float and double types are assumed to be implemented following
@@ -47,7 +49,6 @@
  *      OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <variant>
 #include "gs_encoder.h"
 
 namespace gs
@@ -129,8 +130,8 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer, const GSObject &value)
  *  Encoder::Encode
  *
  *  Description:
- *      This function will write an Object1 object to the given buffer, appending
- *      the data to the end.
+ *      This function will write an Object1 object to the given buffer,
+ *      appending the data to the end.
  *
  *  Parameters:
  *      data_buffer [in]
@@ -173,7 +174,7 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer, const Object1 &value)
         return { 0, 0 };
     }
 
-    // Serialize the object (evalation order matters)
+    // Serialize the object (evaluation order matters)
     total_length = Serialize(data_buffer, Tag::Object1);
     total_length += Serialize(data_buffer, data_length);
     total_length += Serialize(data_buffer, value.id);
@@ -237,7 +238,7 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer, const Head1 &value)
         return {0, 0};
     }
 
-    // Serialize the object (evalation order matters)
+    // Serialize the object (evaluation order matters)
     total_length = Serialize(data_buffer, Tag::Head1);
     total_length += Serialize(data_buffer, data_length);
     total_length += Serialize(data_buffer, value.id);
@@ -296,7 +297,7 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer, const Hand1 &value)
         return {0, 0};
     }
 
-    // Serialize the object (evalation order matters)
+    // Serialize the object (evaluation order matters)
     total_length = Serialize(data_buffer, Tag::Hand1);
     total_length += Serialize(data_buffer, data_length);
     total_length += Serialize(data_buffer, value.id);
@@ -304,6 +305,61 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer, const Hand1 &value)
     total_length += Serialize(data_buffer, value.left);
     total_length += Serialize(data_buffer, value.location);
     total_length += Serialize(data_buffer, value.rotation);
+
+    return {1, total_length};
+}
+
+/*
+ *  Encoder::Encode
+ *
+ *  Description:
+ *      This function will write a Mesh1 object to the given buffer, appending
+ *      the data to the end.
+ *
+ *  Parameters:
+ *      data_buffer [in]
+ *          The data buffer into which the value shall be written.
+ *
+ *      value [in]
+ *          The object to serialize to the end of the DataBuffer.
+ *
+ *  Returns:
+ *      A pair representing the number of objects and number of octets
+ *      serialized onto the data buffer.  A value less than expected number of
+ *      objects would indicate there was no more room for additional objects
+ *      in the data buffer.
+ *
+ *  Comments:
+ *      None.
+ */
+EncodeResult Encoder::Encode(DataBuffer &data_buffer, const Mesh1 &value)
+{
+    std::size_t total_length{};
+    Length data_length{};
+
+    // Determine space required for this object
+    data_length.value = Serialize(null_buffer, value.id) +
+                        Serialize(null_buffer, value.vertices) +
+                        Serialize(null_buffer, value.normals) +
+                        Serialize(null_buffer, value.textures) +
+                        Serialize(null_buffer, value.triangles);
+
+    // Ensure the data buffer has sufficient space
+    if ((data_buffer.GetDataLength() + Serialize(null_buffer, Tag::Mesh1) +
+         Serialize(null_buffer, data_length) + data_length.value) >
+        data_buffer.GetBufferSize())
+    {
+        return {0, 0};
+    }
+
+    // Serialize the object (evaluation order matters)
+    total_length = Serialize(data_buffer, Tag::Mesh1);
+    total_length += Serialize(data_buffer, data_length);
+    total_length += Serialize(data_buffer, value.id);
+    total_length += Serialize(data_buffer, value.vertices);
+    total_length += Serialize(data_buffer, value.normals);
+    total_length += Serialize(data_buffer, value.textures);
+    total_length += Serialize(data_buffer, value.triangles);
 
     return {1, total_length};
 }
@@ -357,7 +413,7 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer, const Hand2 &value)
         return {0, 0};
     }
 
-    // Serialize the object (evalation order matters)
+    // Serialize the object (evaluation order matters)
     total_length = Serialize(data_buffer, Tag::Hand2);
     total_length += Serialize(data_buffer, data_length);
     total_length += Serialize(data_buffer, value.id);
@@ -379,8 +435,8 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer, const Hand2 &value)
  *  Encoder::Encode
  *
  *  Description:
- *      This function will write a Mesh1 object to the given buffer, appending
- *      the data to the end.
+ *      This function will write a HeadIPD1 object to the given buffer,
+ *      appending the data to the end.
  *
  *  Parameters:
  *      data_buffer [in]
@@ -396,36 +452,23 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer, const Hand2 &value)
  *      in the data buffer.
  *
  *  Comments:
- *      None.
+ *      HeadIPD1 is an object that only exists within a Head1 object.  As such,
+ *      it probably should not exist as a stand-alone encoded object
+ *      and a member of the variant GSObject.
  */
-EncodeResult Encoder::Encode(DataBuffer &data_buffer, const Mesh1 &value)
+EncodeResult Encoder::Encode(DataBuffer &data_buffer, const HeadIPD1 &value)
 {
     std::size_t total_length{};
-    Length data_length{};
-
-    // Determine space required for this object
-    data_length.value = Serialize(null_buffer, value.id) +
-                        Serialize(null_buffer, value.vertices) +
-                        Serialize(null_buffer, value.normals) +
-                        Serialize(null_buffer, value.textures) +
-                        Serialize(null_buffer, value.triangles);
 
     // Ensure the data buffer has sufficient space
-    if ((data_buffer.GetDataLength() + Serialize(null_buffer, Tag::Mesh1) +
-         Serialize(null_buffer, data_length) + data_length.value) >
+    if ((data_buffer.GetDataLength() + Serialize(null_buffer, value)) >
         data_buffer.GetBufferSize())
     {
         return {0, 0};
     }
 
-    // Serialize the object (evalation order matters)
-    total_length = Serialize(data_buffer, Tag::Mesh1);
-    total_length += Serialize(data_buffer, data_length);
-    total_length += Serialize(data_buffer, value.id);
-    total_length += Serialize(data_buffer, value.vertices);
-    total_length += Serialize(data_buffer, value.normals);
-    total_length += Serialize(data_buffer, value.textures);
-    total_length += Serialize(data_buffer, value.triangles);
+    // Serialize the object
+    total_length = Serialize(data_buffer, value);
 
     return {1, total_length};
 }
@@ -567,7 +610,7 @@ inline std::size_t Encoder::Serialize(DataBuffer &data_buffer,
     // Determine space required for this object
     data_length.value = Serialize(null_buffer, value.ipd);
 
-    // Serialize the object (evalation order matters)
+    // Serialize the object (evaluation order matters)
     total_length = Serialize(data_buffer, Tag::HeadIPD1);
     total_length += Serialize(data_buffer, data_length);
     total_length += Serialize(data_buffer, value.ipd);
