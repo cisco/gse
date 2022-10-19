@@ -626,7 +626,7 @@ namespace {
             0x03,
 
             // Length
-            0x21,
+            0x22,
 
             // id
             0x0c,
@@ -644,6 +644,9 @@ namespace {
             // scale
             0x40, 0xE0, 0x00, 0x00, 0x41, 0x00,
             0x00, 0x00, 0x41, 0x10, 0x00, 0x00,
+
+            // active
+            0x01,
         };
 
         gs::Object1 object1{};
@@ -659,6 +662,7 @@ namespace {
         object1.scale.x = 7.0f;
         object1.scale.y = 8.0f;
         object1.scale.z = 9.0f;
+        object1.active = true;
 
         // Check the expected encoded length
         ASSERT_EQ(encoder.Encode(data_buffer, object1),

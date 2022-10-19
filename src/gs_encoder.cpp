@@ -159,7 +159,8 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer, const Object1 &value)
                         Serialize(null_buffer, value.time) +
                         Serialize(null_buffer, value.position) +
                         Serialize(null_buffer, value.rotation) +
-                        Serialize(null_buffer, value.scale);
+                        Serialize(null_buffer, value.scale) +
+                        Serialize(null_buffer, value.active);
 
     if (value.parent.has_value())
     {
@@ -182,6 +183,7 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer, const Object1 &value)
     total_length += Serialize(data_buffer, value.position);
     total_length += Serialize(data_buffer, value.rotation);
     total_length += Serialize(data_buffer, value.scale);
+    total_length += Serialize(data_buffer, value.active);
 
     if (value.parent.has_value())
     {

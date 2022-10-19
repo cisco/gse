@@ -160,6 +160,7 @@ typedef struct {
     GS_Loc1 position;
     GS_Rot1 rotation;
     GS_Loc1 scale;
+    GS_Boolean active;
     GS_Boolean parent_present;
     GS_ObjectID parent;
 } GS_Object1;
