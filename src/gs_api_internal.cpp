@@ -409,6 +409,7 @@ int GSSerializeObject(GS_Encoder_Context_Internal &context,
     SerializeCopy(object.position, object1.position);
     SerializeCopy(object.rotation, object1.rotation);
     SerializeCopy(object.scale, object1.scale);
+    object1.active = object.active;
     if (object.parent_present) object1.parent = gs::ObjectID{object.parent};
 
     // Serialize the object
@@ -1338,6 +1339,7 @@ int GSDeserializeObject([[maybe_unused]] GS_Decoder_Context_Internal &context,
     DeserializeCopy(encoded.position, object.u.object1.position);
     DeserializeCopy(encoded.rotation, object.u.object1.rotation);
     DeserializeCopy(encoded.scale, object.u.object1.scale);
+    object.u.object1.active = encoded.active;
     if (encoded.parent.has_value())
     {
         object.u.object1.parent_present = true;

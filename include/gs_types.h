@@ -160,6 +160,7 @@ namespace gs
         Loc1 position;
         Rot1 rotation;
         Loc1 scale;
+        Boolean active;
         std::optional<ObjectID> parent;
     };
 

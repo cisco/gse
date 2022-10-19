@@ -564,6 +564,7 @@ std::size_t Decoder::Decode(DataBuffer &data_buffer, Object1 &value)
     read_length += Deserialize(data_buffer, value.position);
     read_length += Deserialize(data_buffer, value.rotation);
     read_length += Deserialize(data_buffer, value.scale);
+    read_length += Deserialize(data_buffer, value.active);
 
     // Are optional elements present?
     if ((read_length - length_field) < length.value)
