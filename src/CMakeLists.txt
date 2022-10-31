@@ -18,7 +18,7 @@ target_compile_options(gse PRIVATE
      $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>: -Wpedantic -Wextra -Wall>
      $<$<CXX_COMPILER_ID:MSVC>: >)
 
-if (WIN32)
+if(WIN32)
     target_link_libraries(gse PRIVATE ws2_32)
 endif()
 
@@ -31,7 +31,7 @@ target_include_directories(gse
         $<INSTALL_INTERFACE:include>)
 
 # Install target and associated include files
-if (gse_INSTALL)
+if(gse_INSTALL)
     install(TARGETS gse EXPORT gseTargets ARCHIVE)
     install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/ TYPE INCLUDE)
     install(EXPORT gseTargets
