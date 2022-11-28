@@ -241,7 +241,7 @@ std::size_t Decoder::Decode(DataBuffer &data_buffer, Head1 &value)
         // Ensure this is actually an HeadIPD1 object
         if (!std::holds_alternative<HeadIPD1>(object))
         {
-            throw "Unexpected optional object type found decoding Head1";
+            throw DecoderException("Unexpected optional object type found decoding Head1");
         }
 
         // Assign the decoded object
