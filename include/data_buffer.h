@@ -11,8 +11,6 @@
  *      to the buffer are stored in network byte order.  Likewise, numeric
  *      values read from the buffer are converted back to host byte order.
  *
- *      This file also defines the OctetString type.
- *
  *  Portability Issues:
  *      None.
  *
