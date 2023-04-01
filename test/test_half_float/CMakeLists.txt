@@ -8,8 +8,6 @@ set_target_properties(test_half_float
 
 target_include_directories(test_half_float PRIVATE ${libgse_SOURCE_DIR}/src)
 
-include(GoogleTest)
-
 target_link_libraries(test_half_float PRIVATE gse GTest::GTest GTest::Main)
 
 add_test(NAME test_half_float
