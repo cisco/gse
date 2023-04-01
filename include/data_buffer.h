@@ -66,16 +66,7 @@ namespace gs
  */
 class DataBufferException : public std::runtime_error
 {
-    public:
-        explicit DataBufferException(const std::string &what_arg) :
-            std::runtime_error(what_arg)
-        {
-        }
-
-        explicit DataBufferException(const char *what_arg) :
-            std::runtime_error(what_arg)
-        {
-        }
+    using std::runtime_error::runtime_error;
 };
 
 // DataBuffer object declaration

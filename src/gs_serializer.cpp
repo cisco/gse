@@ -287,7 +287,7 @@ std::size_t Serializer::Write(DataBuffer &data_buffer, Int64 value) const
 }
 
 /*
- *  Serializer::WriteVarUint
+ *  Serializer::Write
  *
  *  Description:
  *      This function will write the unsigned integer as a variable-length
@@ -374,7 +374,7 @@ std::size_t Serializer::Write(DataBuffer &data_buffer,
 }
 
 /*
- *  Serializer::WriteVarInt
+ *  Serializer::Write
  *
  *  Description:
  *      This function will write the signed integer as a variable-length

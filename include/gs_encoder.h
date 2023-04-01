@@ -66,16 +66,7 @@ namespace gs
 // EncoderException exception definition
 class EncoderException : public std::runtime_error
 {
-    public:
-        explicit EncoderException(const std::string &what_arg) :
-            std::runtime_error(what_arg)
-        {
-        }
-
-        explicit EncoderException(const char *what_arg) :
-            std::runtime_error(what_arg)
-        {
-        }
+    using std::runtime_error::runtime_error;
 };
 
 // Return result from Encode() calls, which is a count of objects and
