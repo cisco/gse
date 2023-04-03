@@ -99,8 +99,7 @@ namespace {
         head.rotation.ek.value = 0.0f;
 
         // Check that the encoding length matches the expected length
-        gs::DataBuffer null_buffer;
-        ASSERT_EQ(expected.size(), encoder.Encode(null_buffer, head).second);
+        ASSERT_EQ(expected.size(), encoder.GetEncodeLength(head).second);
 
         // Check the expected encoded length
         ASSERT_EQ(encoder.Encode(data_buffer, head),
@@ -181,8 +180,7 @@ namespace {
         }
 
         // Check that the encoding length matches the expected length
-        gs::DataBuffer null_buffer;
-        ASSERT_EQ(expected.size(), encoder.Encode(null_buffer, unknown).second);
+        ASSERT_EQ(expected.size(), encoder.GetEncodeLength(unknown).second);
 
         // Check the expected encoded length
         ASSERT_EQ(encoder.Encode(data_buffer, unknown),
@@ -228,8 +226,7 @@ namespace {
         gs::GSObject object = head;
 
         // Check that the encoding length matches the expected length
-        gs::DataBuffer null_buffer;
-        ASSERT_EQ(expected.size(), encoder.Encode(null_buffer, object).second);
+        ASSERT_EQ(expected.size(), encoder.GetEncodeLength(object).second);
 
         // Check the expected encoded length
         ASSERT_EQ(encoder.Encode(data_buffer, object),
@@ -312,8 +309,7 @@ namespace {
         mesh.textures.push_back({{1}, {129}});
 
         // Check that the encoding length matches the expected length
-        gs::DataBuffer null_buffer;
-        ASSERT_EQ(expected.size(), encoder.Encode(null_buffer, mesh).second);
+        ASSERT_EQ(expected.size(), encoder.GetEncodeLength(mesh).second);
 
         // Check the expected encoded length
         ASSERT_EQ(encoder.Encode(data_buffer, mesh),
@@ -393,9 +389,8 @@ namespace {
         objects.push_back(head);
 
         // Check that the encoding length matches the expected length
-        gs::DataBuffer null_buffer;
-        ASSERT_EQ(objects.size(), encoder.Encode(null_buffer, objects).first);
-        ASSERT_EQ(expected.size(), encoder.Encode(null_buffer, objects).second);
+        ASSERT_EQ(objects.size(), encoder.GetEncodeLength(objects).first);
+        ASSERT_EQ(expected.size(), encoder.GetEncodeLength(objects).second);
 
         // Check the expected encoded length
         ASSERT_EQ(encoder.Encode(data_buffer, objects),
@@ -475,9 +470,8 @@ namespace {
         objects.push_back(head);
 
         // Check that the encoding length matches the expected length
-        gs::DataBuffer null_buffer;
-        ASSERT_EQ(objects.size(), encoder.Encode(null_buffer, objects).first);
-        ASSERT_EQ(expected.size(), encoder.Encode(null_buffer, objects).second);
+        ASSERT_EQ(objects.size(), encoder.GetEncodeLength(objects).first);
+        ASSERT_EQ(expected.size(), encoder.GetEncodeLength(objects).second);
 
         // Define a short data buffer
         gs::DataBuffer db(100);
@@ -525,8 +519,7 @@ namespace {
         hand1.rotation.ek.value = 3.140625f;
 
         // Check that the encoding length matches the expected length
-        gs::DataBuffer null_buffer;
-        ASSERT_EQ(expected.size(), encoder.Encode(null_buffer, hand1).second);
+        ASSERT_EQ(expected.size(), encoder.GetEncodeLength(hand1).second);
 
         // Check the expected encoded length
         ASSERT_EQ(encoder.Encode(data_buffer, hand1),
@@ -637,8 +630,7 @@ namespace {
         hand2.pinky.tip.tx.value = 3.140625f;
 
         // Check that the encoding length matches the expected length
-        gs::DataBuffer null_buffer;
-        ASSERT_EQ(expected.size(), encoder.Encode(null_buffer, hand2).second);
+        ASSERT_EQ(expected.size(), encoder.GetEncodeLength(hand2).second);
 
         // Check the expected encoded length
         ASSERT_EQ(encoder.Encode(data_buffer, hand2),
@@ -699,8 +691,7 @@ namespace {
         object1.active = true;
 
         // Check that the encoding length matches the expected length
-        gs::DataBuffer null_buffer;
-        ASSERT_EQ(expected.size(), encoder.Encode(null_buffer, object1).second);
+        ASSERT_EQ(expected.size(), encoder.GetEncodeLength(object1).second);
 
         // Check the expected encoded length
         ASSERT_EQ(encoder.Encode(data_buffer, object1),
@@ -732,8 +723,7 @@ namespace {
         ipd = gs::HeadIPD1{3.140625};
 
         // Check that the encoding length matches the expected length
-        gs::DataBuffer null_buffer;
-        ASSERT_EQ(expected.size(), encoder.Encode(null_buffer, ipd).second);
+        ASSERT_EQ(expected.size(), encoder.GetEncodeLength(ipd).second);
 
         // Check the expected encoded length
         ASSERT_EQ(encoder.Encode(data_buffer, ipd),

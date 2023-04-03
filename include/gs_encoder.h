@@ -96,6 +96,13 @@ class Encoder
         EncodeResult Encode(DataBuffer &data_buffer,
                             const UnknownObject &value);
 
+        // Determine the required buffer length to encode objects
+        template <typename T>
+        EncodeResult GetEncodeLength(const T &value)
+        {
+            return Encode(null_buffer, value);
+        }
+
         // Ensure no implicit conversions calling Encode
         template <typename T>
         EncodeResult Encode(DataBuffer &data_buffer, const T &value) = delete;
