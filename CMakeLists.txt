@@ -15,6 +15,7 @@ project(libgse
         DESCRIPTION "Game State Encoder Library"
         LANGUAGES CXX)
 
+add_subdirectory(dependencies)
 add_subdirectory(src)
 
 include(CTest)

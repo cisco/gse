@@ -6,8 +6,6 @@ set_target_properties(test_databuffer
         CXX_STANDARD_REQUIRED YES
         CXX_EXTENSIONS NO)
 
-include(GoogleTest)
-
 target_link_libraries(test_databuffer PRIVATE gse GTest::GTest GTest::Main)
 
 add_test(NAME test_databuffer
