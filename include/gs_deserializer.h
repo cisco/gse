@@ -67,16 +67,7 @@ namespace gs
 // DeserializerException exception definition
 class DeserializerException : public std::runtime_error
 {
-    public:
-        explicit DeserializerException(const std::string &what_arg) :
-            std::runtime_error(what_arg)
-        {
-        }
-
-        explicit DeserializerException(const char *what_arg) :
-            std::runtime_error(what_arg)
-        {
-        }
+    using std::runtime_error::runtime_error;
 };
 
 // Game State Deserializer object

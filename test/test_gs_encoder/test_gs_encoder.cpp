@@ -98,6 +98,9 @@ namespace {
         head.rotation.ej.value = 0.0f;
         head.rotation.ek.value = 0.0f;
 
+        // Check that the encoding length matches the expected length
+        ASSERT_EQ(expected.size(), encoder.GetEncodeLength(head).second);
+
         // Check the expected encoded length
         ASSERT_EQ(encoder.Encode(data_buffer, head),
                   std::make_pair(std::size_t(1), expected.size()));
@@ -176,6 +179,9 @@ namespace {
             unknown.data.push_back(expected[i]);
         }
 
+        // Check that the encoding length matches the expected length
+        ASSERT_EQ(expected.size(), encoder.GetEncodeLength(unknown).second);
+
         // Check the expected encoded length
         ASSERT_EQ(encoder.Encode(data_buffer, unknown),
                   std::make_pair(std::size_t(1), expected.size()));
@@ -218,6 +224,9 @@ namespace {
 
         // Store the object as a variant
         gs::GSObject object = head;
+
+        // Check that the encoding length matches the expected length
+        ASSERT_EQ(expected.size(), encoder.GetEncodeLength(object).second);
 
         // Check the expected encoded length
         ASSERT_EQ(encoder.Encode(data_buffer, object),
@@ -299,6 +308,9 @@ namespace {
 
         mesh.textures.push_back({{1}, {129}});
 
+        // Check that the encoding length matches the expected length
+        ASSERT_EQ(expected.size(), encoder.GetEncodeLength(mesh).second);
+
         // Check the expected encoded length
         ASSERT_EQ(encoder.Encode(data_buffer, mesh),
                   std::make_pair(std::size_t(1), expected.size()));
@@ -375,6 +387,10 @@ namespace {
         objects.push_back(head);
         objects.push_back(mesh);
         objects.push_back(head);
+
+        // Check that the encoding length matches the expected length
+        ASSERT_EQ(objects.size(), encoder.GetEncodeLength(objects).first);
+        ASSERT_EQ(expected.size(), encoder.GetEncodeLength(objects).second);
 
         // Check the expected encoded length
         ASSERT_EQ(encoder.Encode(data_buffer, objects),
@@ -453,6 +469,10 @@ namespace {
         objects.push_back(mesh);
         objects.push_back(head);
 
+        // Check that the encoding length matches the expected length
+        ASSERT_EQ(objects.size(), encoder.GetEncodeLength(objects).first);
+        ASSERT_EQ(expected.size(), encoder.GetEncodeLength(objects).second);
+
         // Define a short data buffer
         gs::DataBuffer db(100);
 
@@ -497,6 +517,9 @@ namespace {
         hand1.rotation.ei.value = 0.0f;
         hand1.rotation.ej.value = 0.0f;
         hand1.rotation.ek.value = 3.140625f;
+
+        // Check that the encoding length matches the expected length
+        ASSERT_EQ(expected.size(), encoder.GetEncodeLength(hand1).second);
 
         // Check the expected encoded length
         ASSERT_EQ(encoder.Encode(data_buffer, hand1),
@@ -606,6 +629,9 @@ namespace {
 
         hand2.pinky.tip.tx.value = 3.140625f;
 
+        // Check that the encoding length matches the expected length
+        ASSERT_EQ(expected.size(), encoder.GetEncodeLength(hand2).second);
+
         // Check the expected encoded length
         ASSERT_EQ(encoder.Encode(data_buffer, hand2),
                   std::make_pair(std::size_t(1), expected.size()));
@@ -664,6 +690,9 @@ namespace {
         object1.scale.z = 9.0f;
         object1.active = true;
 
+        // Check that the encoding length matches the expected length
+        ASSERT_EQ(expected.size(), encoder.GetEncodeLength(object1).second);
+
         // Check the expected encoded length
         ASSERT_EQ(encoder.Encode(data_buffer, object1),
             std::make_pair(std::size_t(1), expected.size()));
@@ -692,6 +721,9 @@ namespace {
         gs::HeadIPD1 ipd{};
 
         ipd = gs::HeadIPD1{3.140625};
+
+        // Check that the encoding length matches the expected length
+        ASSERT_EQ(expected.size(), encoder.GetEncodeLength(ipd).second);
 
         // Check the expected encoded length
         ASSERT_EQ(encoder.Encode(data_buffer, ipd),

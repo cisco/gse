@@ -63,7 +63,9 @@ namespace gs
  *
  *  Parameters:
  *      data_buffer [in]
- *          The data buffer into which the value shall be written.
+ *          The data buffer into which the value shall be written.  If given
+ *          a buffer of zero-length, this call will just return the octets
+ *          required to perform the encoding and not actually encode.
  *
  *      value [in]
  *          The objects to serialize to the end of the DataBuffer.
@@ -72,7 +74,9 @@ namespace gs
  *      A pair representing the number of objects and number of octets
  *      serialized onto the data buffer.  A value less than expected number of
  *      objects would indicate there was no more room for additional objects
- *      in the data buffer.
+ *      in the data buffer.  If the given data buffer is of zero-length,
+ *      this function will just return a count of objects and octets without
+ *      actually encoding to allow one to predetermine the space requirements.
  *
  *  Comments:
  *      None.
@@ -103,7 +107,9 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer, const GSObjects &value)
  *
  *  Parameters:
  *      data_buffer [in]
- *          The data buffer into which the value shall be written.
+ *          The data buffer into which the value shall be written.  If given
+ *          a buffer of zero-length, this call will just return the octets
+ *          required to perform the encoding and not actually encode.
  *
  *      value [in]
  *          The object to serialize to the end of the DataBuffer.
@@ -112,7 +118,9 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer, const GSObjects &value)
  *      A pair representing the number of objects and number of octets
  *      serialized onto the data buffer.  A value less than expected number of
  *      objects would indicate there was no more room for additional objects
- *      in the data buffer.
+ *      in the data buffer.  If the given data buffer is of zero-length,
+ *      this function will just return a count of objects and octets without
+ *      actually encoding to allow one to predetermine the space requirements.
  *
  *  Comments:
  *      None.
@@ -135,7 +143,9 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer, const GSObject &value)
  *
  *  Parameters:
  *      data_buffer [in]
- *          The data buffer into which the value shall be written.
+ *          The data buffer into which the value shall be written.  If given
+ *          a buffer of zero-length, this call will just return the octets
+ *          required to perform the encoding and not actually encode.
  *
  *      value [in]
  *          The object to serialize to the end of the DataBuffer.
@@ -144,7 +154,9 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer, const GSObject &value)
  *      A pair representing the number of objects and number of octets
  *      serialized onto the data buffer.  A value less than expected number of
  *      objects would indicate there was no more room for additional objects
- *      in the data buffer.
+ *      in the data buffer.  If the given data buffer is of zero-length,
+ *      this function will just return a count of objects and octets without
+ *      actually encoding to allow one to predetermine the space requirements.
  *
  *  Comments:
  *      None.
@@ -167,12 +179,19 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer, const Object1 &value)
         data_length.value += Serialize(null_buffer, value.parent.value());
     }
 
+    // Compute the total space required
+    total_length = Serialize(null_buffer, Tag::Object1) +
+                   Serialize(null_buffer, data_length) + data_length.value;
+
     // Ensure the data buffer has sufficient space
-    if ((data_buffer.GetDataLength() + Serialize(null_buffer, Tag::Object1) +
-        Serialize(null_buffer, data_length) + data_length.value) >
+    if ((data_buffer.GetDataLength() + total_length) >
         data_buffer.GetBufferSize())
     {
-        return { 0, 0 };
+        // If the buffer is zero-length, just return sizing data
+        if (data_buffer.GetBufferSize() == 0) return {1, total_length};
+
+        // Indicate an encoding error
+        return {0, 0};
     }
 
     // Serialize the object (evaluation order matters)
@@ -190,7 +209,7 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer, const Object1 &value)
         total_length += Serialize(data_buffer, value.parent.value());
     }
 
-    return { 1, total_length };
+    return {1, total_length};
 }
 
 /*
@@ -202,7 +221,9 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer, const Object1 &value)
  *
  *  Parameters:
  *      data_buffer [in]
- *          The data buffer into which the value shall be written.
+ *          The data buffer into which the value shall be written.  If given
+ *          a buffer of zero-length, this call will just return the octets
+ *          required to perform the encoding and not actually encode.
  *
  *      value [in]
  *          The object to serialize to the end of the DataBuffer.
@@ -211,7 +232,9 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer, const Object1 &value)
  *      A pair representing the number of objects and number of octets
  *      serialized onto the data buffer.  A value less than expected number of
  *      objects would indicate there was no more room for additional objects
- *      in the data buffer.
+ *      in the data buffer.  If the given data buffer is of zero-length,
+ *      this function will just return a count of objects and octets without
+ *      actually encoding to allow one to predetermine the space requirements.
  *
  *  Comments:
  *      None.
@@ -232,11 +255,18 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer, const Head1 &value)
         data_length.value += Serialize(null_buffer, value.ipd.value());
     }
 
+    // Compute the total space required
+    total_length = Serialize(null_buffer, Tag::Head1) +
+                   Serialize(null_buffer, data_length) + data_length.value;
+
     // Ensure the data buffer has sufficient space
-    if ((data_buffer.GetDataLength() + Serialize(null_buffer, Tag::Head1) +
-         Serialize(null_buffer, data_length) + data_length.value) >
+    if ((data_buffer.GetDataLength() + total_length) >
         data_buffer.GetBufferSize())
     {
+        // If the buffer is zero-length, just return sizing data
+        if (data_buffer.GetBufferSize() == 0) return {1, total_length};
+
+        // Indicate an encoding error
         return {0, 0};
     }
 
@@ -265,7 +295,9 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer, const Head1 &value)
  *
  *  Parameters:
  *      data_buffer [in]
- *          The data buffer into which the value shall be written.
+ *          The data buffer into which the value shall be written.  If given
+ *          a buffer of zero-length, this call will just return the octets
+ *          required to perform the encoding and not actually encode.
  *
  *      value [in]
  *          The object to serialize to the end of the DataBuffer.
@@ -274,7 +306,9 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer, const Head1 &value)
  *      A pair representing the number of objects and number of octets
  *      serialized onto the data buffer.  A value less than expected number of
  *      objects would indicate there was no more room for additional objects
- *      in the data buffer.
+ *      in the data buffer.  If the given data buffer is of zero-length,
+ *      this function will just return a count of objects and octets without
+ *      actually encoding to allow one to predetermine the space requirements.
  *
  *  Comments:
  *      None.
@@ -291,11 +325,18 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer, const Hand1 &value)
                         Serialize(null_buffer, value.location) +
                         Serialize(null_buffer, value.rotation);
 
+    // Compute the total space required
+    total_length = Serialize(null_buffer, Tag::Hand1) +
+                   Serialize(null_buffer, data_length) + data_length.value;
+
     // Ensure the data buffer has sufficient space
-    if ((data_buffer.GetDataLength() + Serialize(null_buffer, Tag::Hand1) +
-         Serialize(null_buffer, data_length) + data_length.value) >
+    if ((data_buffer.GetDataLength() + total_length) >
         data_buffer.GetBufferSize())
     {
+        // If the buffer is zero-length, just return sizing data
+        if (data_buffer.GetBufferSize() == 0) return {1, total_length};
+
+        // Indicate an encoding error
         return {0, 0};
     }
 
@@ -320,7 +361,9 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer, const Hand1 &value)
  *
  *  Parameters:
  *      data_buffer [in]
- *          The data buffer into which the value shall be written.
+ *          The data buffer into which the value shall be written.  If given
+ *          a buffer of zero-length, this call will just return the octets
+ *          required to perform the encoding and not actually encode.
  *
  *      value [in]
  *          The object to serialize to the end of the DataBuffer.
@@ -329,7 +372,9 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer, const Hand1 &value)
  *      A pair representing the number of objects and number of octets
  *      serialized onto the data buffer.  A value less than expected number of
  *      objects would indicate there was no more room for additional objects
- *      in the data buffer.
+ *      in the data buffer.  If the given data buffer is of zero-length,
+ *      this function will just return a count of objects and octets without
+ *      actually encoding to allow one to predetermine the space requirements.
  *
  *  Comments:
  *      None.
@@ -346,11 +391,18 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer, const Mesh1 &value)
                         Serialize(null_buffer, value.textures) +
                         Serialize(null_buffer, value.triangles);
 
+    // Compute the total space required
+    total_length = Serialize(null_buffer, Tag::Mesh1) +
+                   Serialize(null_buffer, data_length) + data_length.value;
+
     // Ensure the data buffer has sufficient space
-    if ((data_buffer.GetDataLength() + Serialize(null_buffer, Tag::Mesh1) +
-         Serialize(null_buffer, data_length) + data_length.value) >
+    if ((data_buffer.GetDataLength() + total_length) >
         data_buffer.GetBufferSize())
     {
+        // If the buffer is zero-length, just return sizing data
+        if (data_buffer.GetBufferSize() == 0) return {1, total_length};
+
+        // Indicate an encoding error
         return {0, 0};
     }
 
@@ -375,7 +427,9 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer, const Mesh1 &value)
  *
  *  Parameters:
  *      data_buffer [in]
- *          The data buffer into which the value shall be written.
+ *          The data buffer into which the value shall be written.  If given
+ *          a buffer of zero-length, this call will just return the octets
+ *          required to perform the encoding and not actually encode.
  *
  *      value [in]
  *          The object to serialize to the end of the DataBuffer.
@@ -384,7 +438,9 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer, const Mesh1 &value)
  *      A pair representing the number of objects and number of octets
  *      serialized onto the data buffer.  A value less than expected number of
  *      objects would indicate there was no more room for additional objects
- *      in the data buffer.
+ *      in the data buffer.  If the given data buffer is of zero-length,
+ *      this function will just return a count of objects and octets without
+ *      actually encoding to allow one to predetermine the space requirements.
  *
  *  Comments:
  *      None.
@@ -407,11 +463,18 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer, const Hand2 &value)
                         Serialize(null_buffer, value.ring) +
                         Serialize(null_buffer, value.pinky);
 
+    // Compute the total space required
+    total_length = Serialize(null_buffer, Tag::Hand2) +
+                   Serialize(null_buffer, data_length) + data_length.value;
+
     // Ensure the data buffer has sufficient space
-    if ((data_buffer.GetDataLength() + Serialize(null_buffer, Tag::Hand2) +
-         Serialize(null_buffer, data_length) + data_length.value) >
+    if ((data_buffer.GetDataLength() + total_length) >
         data_buffer.GetBufferSize())
     {
+        // If the buffer is zero-length, just return sizing data
+        if (data_buffer.GetBufferSize() == 0) return {1, total_length};
+
+        // Indicate an encoding error
         return {0, 0};
     }
 
@@ -442,7 +505,9 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer, const Hand2 &value)
  *
  *  Parameters:
  *      data_buffer [in]
- *          The data buffer into which the value shall be written.
+ *          The data buffer into which the value shall be written.  If given
+ *          a buffer of zero-length, this call will just return the octets
+ *          required to perform the encoding and not actually encode.
  *
  *      value [in]
  *          The object to serialize to the end of the DataBuffer.
@@ -451,7 +516,9 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer, const Hand2 &value)
  *      A pair representing the number of objects and number of octets
  *      serialized onto the data buffer.  A value less than expected number of
  *      objects would indicate there was no more room for additional objects
- *      in the data buffer.
+ *      in the data buffer.  If the given data buffer is of zero-length,
+ *      this function will just return a count of objects and octets without
+ *      actually encoding to allow one to predetermine the space requirements.
  *
  *  Comments:
  *      HeadIPD1 is an object that only exists within a Head1 object.  As such,
@@ -462,10 +529,17 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer, const HeadIPD1 &value)
 {
     std::size_t total_length{};
 
+    // Compute the total space required
+    total_length = Serialize(null_buffer, value);
+
     // Ensure the data buffer has sufficient space
-    if ((data_buffer.GetDataLength() + Serialize(null_buffer, value)) >
+    if ((data_buffer.GetDataLength() + total_length) >
         data_buffer.GetBufferSize())
     {
+        // If the buffer is zero-length, just return sizing data
+        if (data_buffer.GetBufferSize() == 0) return {1, total_length};
+
+        // Indicate an encoding error
         return {0, 0};
     }
 
@@ -484,7 +558,9 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer, const HeadIPD1 &value)
  *
  *  Parameters:
  *      data_buffer [in]
- *          The data buffer into which the value shall be written.
+ *          The data buffer into which the value shall be written.  If given
+ *          a buffer of zero-length, this call will just return the octets
+ *          required to perform the encoding and not actually encode.
  *
  *      value [in]
  *          The object to serialize to the end of the DataBuffer.
@@ -493,7 +569,9 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer, const HeadIPD1 &value)
  *      A pair representing the number of objects and number of octets
  *      serialized onto the data buffer.  A value less than expected number of
  *      objects would indicate there was no more room for additional objects
- *      in the data buffer.
+ *      in the data buffer.  If the given data buffer is of zero-length,
+ *      this function will just return a count of objects and octets without
+ *      actually encoding to allow one to predetermine the space requirements.
  *
  *  Comments:
  *      None.
@@ -503,10 +581,18 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer,
 {
     std::size_t total_length{};
 
+    // Compute the total space required
+    total_length = Serialize(null_buffer, value.tag) +
+                   Serialize(null_buffer, value.data);
+
     // Ensure the data buffer has sufficient space
-    if ((data_buffer.GetDataLength() + Serialize(null_buffer, value.tag) +
-         Serialize(null_buffer, value.data)) > data_buffer.GetBufferSize())
+    if ((data_buffer.GetDataLength() + total_length) >
+        data_buffer.GetBufferSize())
     {
+        // If the buffer is zero-length, just return sizing data
+        if (data_buffer.GetBufferSize() == 0) return {1, total_length};
+
+        // Indicate an encoding error
         return {0, 0};
     }
 

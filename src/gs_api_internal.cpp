@@ -413,8 +413,8 @@ int GSSerializeObject(GS_Encoder_Context_Internal &context,
     if (object.parent_present) object1.parent = gs::ObjectID{object.parent};
 
     // Serialize the object
-    auto [object_count,
-          octet_count] = context.encoder.Encode(context.data_buffer, object1);
+    auto [object_count, octet_count] =
+        context.encoder.Encode(context.data_buffer, object1);
 
     return static_cast<int>(object_count);
 }
@@ -453,8 +453,8 @@ int GSSerializeObject(GS_Encoder_Context_Internal &context,
     if (object.ipd_present) head1.ipd = gs::HeadIPD1{object.ipd.ipd};
 
     // Serialize the object
-    auto [object_count,
-          octet_count] = context.encoder.Encode(context.data_buffer, head1);
+    auto [object_count, octet_count] =
+        context.encoder.Encode(context.data_buffer, head1);
 
     return static_cast<int>(object_count);
 }
@@ -493,8 +493,8 @@ int GSSerializeObject(GS_Encoder_Context_Internal &context,
     SerializeCopy(object.rotation, hand1.rotation);
 
     // Serialize the object
-    auto [object_count,
-          octet_count] = context.encoder.Encode(context.data_buffer, hand1);
+    auto [object_count, octet_count] =
+        context.encoder.Encode(context.data_buffer, hand1);
 
     return static_cast<int>(object_count);
 }
@@ -555,8 +555,8 @@ int GSSerializeObject(GS_Encoder_Context_Internal &context,
     }
 
     // Serialize the object
-    auto [object_count,
-          octet_count] = context.encoder.Encode(context.data_buffer, mesh1);
+    auto [object_count, octet_count] =
+        context.encoder.Encode(context.data_buffer, mesh1);
 
     return static_cast<int>(object_count);
 }
@@ -601,8 +601,8 @@ int GSSerializeObject(GS_Encoder_Context_Internal &context,
     SerializeCopy(object.pinky, hand2.pinky);
 
     // Serialize the object
-    auto [object_count,
-          octet_count] = context.encoder.Encode(context.data_buffer, hand2);
+    auto [object_count, octet_count] =
+        context.encoder.Encode(context.data_buffer, hand2);
 
     return static_cast<int>(object_count);
 }
@@ -640,8 +640,8 @@ int GSSerializeObject(GS_Encoder_Context_Internal &context,
                         object.data + object.data_length);
 
     // Serialize the object
-    auto [object_count,
-          octet_count] = context.encoder.Encode(context.data_buffer, unknown);
+    auto [object_count, octet_count] =
+        context.encoder.Encode(context.data_buffer, unknown);
 
     return static_cast<int>(object_count);
 }
@@ -676,8 +676,8 @@ int GSSerializeObject(GS_Encoder_Context_Internal &context,
     head_ipd1.ipd.value = object.ipd;
 
     // Serialize the object
-    auto [object_count,
-          octet_count] = context.encoder.Encode(context.data_buffer, head_ipd1);
+    auto [object_count, octet_count] =
+        context.encoder.Encode(context.data_buffer, head_ipd1);
 
     return static_cast<int>(object_count);
 }

@@ -71,16 +71,7 @@ namespace gs
 // SerializerException exception definition
 class SerializerException : public std::runtime_error
 {
-    public:
-        explicit SerializerException(const std::string &what_arg) :
-            std::runtime_error(what_arg)
-        {
-        }
-
-        explicit SerializerException(const char *what_arg) :
-            std::runtime_error(what_arg)
-        {
-        }
+    using std::runtime_error::runtime_error;
 };
 
 // Game State Serializer object

@@ -60,16 +60,7 @@ namespace gs
 // DecoderException exception definition
 class DecoderException : public std::runtime_error
 {
-    public:
-        explicit DecoderException(const std::string &what_arg) :
-            std::runtime_error(what_arg)
-        {
-        }
-
-        explicit DecoderException(const char *what_arg) :
-            std::runtime_error(what_arg)
-        {
-        }
+    using std::runtime_error::runtime_error;
 };
 
 // Game State Decoder object
