@@ -48,7 +48,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#if defined(__linux__) || defined(__APPLE__)
+#if defined(__unix__) || defined(__APPLE__)
 #define EXPORT
 #define CALL
 #elif _WIN32
