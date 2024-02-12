@@ -50,6 +50,7 @@
 #ifndef GS_TYPES_H
 #define GS_TYPES_H
 
+#include <compare>
 #include <cstdint>
 #include <vector>
 #include <variant>
@@ -59,9 +60,27 @@
 namespace gs
 {
     // Primitive types
-    struct VarUint { std::uint64_t value; };
-    struct VarInt { std::int64_t value; };
-    struct Float16 { float value; };
+    struct VarUint
+    {
+        std::uint64_t value;
+
+        auto operator<=>(const VarUint &other) const = default;
+    };
+
+    struct VarInt
+    {
+        std::int64_t value;
+
+        auto operator<=>(const VarInt &other) const = default;
+    };
+
+    struct Float16
+    {
+        float value;
+
+        auto operator<=>(const Float16 &other) const = default;
+    };
+
     typedef float Float32;
     typedef double Float64;
     typedef std::uint8_t Uint8;
@@ -104,6 +123,8 @@ namespace gs
         Float32 x;
         Float32 y;
         Float32 z;
+
+        auto operator<=>(const Loc1 &other) const = default;
     };
 
     struct Loc2
@@ -114,6 +135,8 @@ namespace gs
         Float16 vy;
         Float16 vx;
         Float16 vz;
+
+        auto operator<=>(const Loc2 &other) const = default;
     };
 
     struct Norm1
@@ -121,12 +144,16 @@ namespace gs
         Float16 x;
         Float16 y;
         Float16 z;
+
+        auto operator<=>(const Norm1 &other) const = default;
     };
 
     struct TextureUV1
     {
         VarUint u;
         VarUint v;
+
+        auto operator<=>(const TextureUV1 &other) const = default;
     };
 
     struct Rot1
@@ -134,6 +161,8 @@ namespace gs
         Float16 i;
         Float16 j;
         Float16 k;
+
+        auto operator<=>(const Rot1 &other) const = default;
     };
 
     struct Rot2
@@ -144,6 +173,8 @@ namespace gs
         Float16 ei;
         Float16 ej;
         Float16 ek;
+
+        auto operator<=>(const Rot2 &other) const = default;
     };
 
     struct Transform1
@@ -151,6 +182,8 @@ namespace gs
         Float16 tx;
         Float16 ty;
         Float16 tz;
+
+        auto operator<=>(const Transform1 &other) const = default;
     };
 
     struct Object1
@@ -162,11 +195,15 @@ namespace gs
         Loc1 scale;
         Boolean active;
         std::optional<ObjectID> parent;
+
+        bool operator==(const Object1 &other) const = default;
     };
 
     struct HeadIPD1
     {
         Float16 ipd;
+
+        auto operator<=>(const HeadIPD1 &other) const = default;
     };
 
     struct Head1
@@ -176,6 +213,8 @@ namespace gs
         Loc2 location;
         Rot2 rotation;
         std::optional<HeadIPD1> ipd;
+
+        bool operator==(const Head1 &other) const = default;
     };
 
     struct Mesh1
@@ -185,6 +224,8 @@ namespace gs
         std::vector<Norm1> normals;
         std::vector<TextureUV1> textures;
         std::vector<VarUint> triangles;
+
+        bool operator==(const Mesh1 &other) const = default;
     };
 
     struct Hand1
@@ -194,6 +235,8 @@ namespace gs
         Boolean left;
         Loc2 location;
         Rot2 rotation;
+
+        auto operator<=>(const Hand1 &other) const = default;
     };
 
     struct Thumb
@@ -202,6 +245,8 @@ namespace gs
         Transform1 ip;
         Transform1 mcp;
         Transform1 cmc;
+
+        auto operator<=>(const Thumb &other) const = default;
     };
 
     struct Finger
@@ -211,6 +256,8 @@ namespace gs
         Transform1 pip;
         Transform1 mcp;
         Transform1 cmc;
+
+        auto operator<=>(const Finger &other) const = default;
     };
 
     struct Hand2
@@ -226,12 +273,16 @@ namespace gs
         Finger middle;
         Finger ring;
         Finger pinky;
+
+        auto operator<=>(const Hand2 &other) const = default;
     };
 
     struct UnknownObject
     {
         VarUint tag;
         Blob data;
+
+        bool operator==(const UnknownObject &other) const = default;
     };
 
     // Variant type that can contain any object type

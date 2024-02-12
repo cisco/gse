@@ -2,7 +2,7 @@ add_executable(test_databuffer test_databuffer.cpp)
 
 set_target_properties(test_databuffer
     PROPERTIES
-        CXX_STANDARD 17
+        CXX_STANDARD 20
         CXX_STANDARD_REQUIRED YES
         CXX_EXTENSIONS NO)
 
