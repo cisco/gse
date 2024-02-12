@@ -50,6 +50,7 @@
 #ifndef GS_TYPES_H
 #define GS_TYPES_H
 
+#include <compare>
 #include <cstdint>
 #include <vector>
 #include <variant>
