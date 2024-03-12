@@ -596,13 +596,15 @@ std::size_t Deserializer::Read(DataBuffer &data_buffer, Boolean &value) const
 std::size_t Deserializer::Read(DataBuffer &data_buffer, String &value) const
 {
     std::size_t read_length;
-    VarUint length;
+    VarUint extracted_length;
 
     // Read the length of the String
-    read_length = Read(data_buffer, length);
+    read_length = Read(data_buffer, extracted_length);
+    if (extracted_length.value > std::numeric_limits<std::size_t>::max()) throw DeserializerException("Object is too large");
+    const std::size_t length = static_cast<std::size_t>(extracted_length.value);
 
     // Read the actual String
-    data_buffer.ReadValue(value, length.value);
+    data_buffer.ReadValue(value, length);
 
     // Update the read length
     read_length += value.length();
@@ -632,13 +634,15 @@ std::size_t Deserializer::Read(DataBuffer &data_buffer, String &value) const
 std::size_t Deserializer::Read(DataBuffer &data_buffer, Blob &value) const
 {
     std::size_t read_length;
-    VarUint length;
+    VarUint extracted_length;
 
     // Read the length of the Blob
-    read_length = Read(data_buffer, length);
+    read_length = Read(data_buffer, extracted_length);
+    if (extracted_length.value > std::numeric_limits<std::size_t>::max()) throw DeserializerException("Object is too large");
+    const std::size_t length = static_cast<std::size_t>(extracted_length.value);
 
     // Read the actual Blob
-    data_buffer.ReadValue(value, length.value);
+    data_buffer.ReadValue(value, length);
 
     // Update the read length
     read_length += value.size();

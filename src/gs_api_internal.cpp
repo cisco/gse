@@ -45,6 +45,7 @@
 #include <algorithm>
 #include <cstddef>
 #include <cstring>
+#include <limits>
 #include "gs_types.h"
 #include "gs_api_internal.h"
 
@@ -1112,8 +1113,14 @@ int GSDeserializeObject(GS_Decoder_Context_Internal &context,
     if (object.u.mesh1.num_vertices > 0)
     {
         // Allocate storage, storing the pointer for later deletion
+        const GS_VarUint vertices = object.u.mesh1.num_vertices;
+        if (vertices > std::numeric_limits<std::size_t>::max() / sizeof(GS_Loc1))
+        {
+            context.error = "Too many vertices to deserialize";
+            return -1;
+        }
         std::uint8_t *p = new std::uint8_t[sizeof(GS_Loc1) *
-                                           object.u.mesh1.num_vertices];
+                                           static_cast<std::size_t>(vertices)];
         context.allocations.push_back(p);
 
         // Assign the pointer to the object
@@ -1130,8 +1137,14 @@ int GSDeserializeObject(GS_Decoder_Context_Internal &context,
     if (object.u.mesh1.num_normals > 0)
     {
         // Allocate storage, storing the pointer for later deletion
+        const GS_VarUint normals = object.u.mesh1.num_normals;
+        if (normals > std::numeric_limits<std::size_t>::max() / sizeof(GS_Norm1))
+        {
+            context.error = "Too many normals to deserialize";
+            return -1;
+        }
         std::uint8_t *p = new std::uint8_t[sizeof(GS_Norm1) *
-                                           object.u.mesh1.num_normals];
+                                           static_cast<std::size_t>(normals)];
         context.allocations.push_back(p);
 
         // Assign the pointer to the object
@@ -1148,8 +1161,14 @@ int GSDeserializeObject(GS_Decoder_Context_Internal &context,
     if (object.u.mesh1.num_textures > 0)
     {
         // Allocate storage, storing the pointer for later deletion
+        const GS_VarUint textures = object.u.mesh1.num_textures;
+        if (textures > std::numeric_limits<std::size_t>::max() / sizeof(GS_TextureUV1))
+        {
+            context.error = "Too many textures to deserialize";
+            return -1;
+        }
         std::uint8_t *p = new std::uint8_t[sizeof(GS_TextureUV1) *
-                                           object.u.mesh1.num_textures];
+                                           static_cast<std::size_t>(textures)];
         context.allocations.push_back(p);
 
         // Assign the pointer to the object
@@ -1166,8 +1185,14 @@ int GSDeserializeObject(GS_Decoder_Context_Internal &context,
     if (object.u.mesh1.num_triangles > 0)
     {
         // Allocate storage, storing the pointer for later deletion
+        const GS_VarUint triangles = object.u.mesh1.num_triangles;
+        if (triangles > std::numeric_limits<std::size_t>::max() / sizeof(GS_VarUint))
+        {
+            context.error = "Too many triangles to deserialize";
+            return -1;
+        }
         std::uint8_t *p = new std::uint8_t[sizeof(GS_VarUint) *
-                                           object.u.mesh1.num_triangles];
+                                           static_cast<std::size_t>(triangles)];
         context.allocations.push_back(p);
 
         // Assign the pointer to the object
