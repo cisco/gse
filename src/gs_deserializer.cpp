@@ -44,6 +44,7 @@
  */
 
 #include "gs_deserializer.h"
+#include <limits>
 #include "half_float.h"
 
 namespace gs
