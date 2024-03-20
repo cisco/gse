@@ -44,7 +44,6 @@
  */
 
 #include "gs_deserializer.h"
-#include <limits>
 #include "half_float.h"
 
 namespace gs
@@ -601,8 +600,7 @@ std::size_t Deserializer::Read(DataBuffer &data_buffer, String &value) const
 
     // Read the length of the String
     read_length = Read(data_buffer, extracted_length);
-    if (extracted_length.value > std::numeric_limits<std::size_t>::max()) throw DeserializerException("Object is too large");
-    const std::size_t length = static_cast<std::size_t>(extracted_length.value);
+    const std::size_t length = extracted_length;
 
     // Read the actual String
     data_buffer.ReadValue(value, length);
@@ -639,8 +637,7 @@ std::size_t Deserializer::Read(DataBuffer &data_buffer, Blob &value) const
 
     // Read the length of the Blob
     read_length = Read(data_buffer, extracted_length);
-    if (extracted_length.value > std::numeric_limits<std::size_t>::max()) throw DeserializerException("Object is too large");
-    const std::size_t length = static_cast<std::size_t>(extracted_length.value);
+    const std::size_t length = extracted_length;
 
     // Read the actual Blob
     data_buffer.ReadValue(value, length);

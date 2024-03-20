@@ -44,7 +44,6 @@
  */
 
 #include "gs_decoder.h"
-#include <limits>
 
 namespace gs
 {
@@ -225,8 +224,7 @@ std::size_t Decoder::Decode(DataBuffer &data_buffer, Head1 &value)
     length_field = read_length = Deserialize(data_buffer, extracted_length);
 
     if (!extracted_length.value) throw DecoderException("Invalid object length");
-    if (extracted_length.value > std::numeric_limits<std::size_t>::max()) throw DecoderException("Object too large");
-    const std::size_t length = static_cast<std::size_t>(extracted_length.value);
+    const std::size_t length = extracted_length;
 
     // Read all of the required fields (evaluation order matters)
     read_length += Deserialize(data_buffer, value.id);
@@ -300,8 +298,7 @@ std::size_t Decoder::Decode(DataBuffer &data_buffer, Hand1 &value)
     length_field = read_length = Deserialize(data_buffer, extracted_length);
 
     if (!extracted_length.value) throw DecoderException("Invalid object length");
-    if (extracted_length.value > std::numeric_limits<std::size_t>::max()) throw DecoderException("Object too large");
-    const std::size_t length = static_cast<std::size_t>(extracted_length.value);
+    const std::size_t length = extracted_length;
 
     // Read all of the required fields (evaluation order matters)
     read_length += Deserialize(data_buffer, value.id);
@@ -359,8 +356,7 @@ std::size_t Decoder::Decode(DataBuffer &data_buffer, Hand2 &value)
     length_field = read_length = Deserialize(data_buffer, extracted_length);
 
     if (!extracted_length.value) throw DecoderException("Invalid object length");
-    if (extracted_length.value > std::numeric_limits<std::size_t>::max()) throw DecoderException("Object too large");
-    const std::size_t length = static_cast<std::size_t>(extracted_length.value);
+    const std::size_t length = extracted_length;
 
     // Read all of the required fields (evaluation order matters)
     read_length += Deserialize(data_buffer, value.id);
@@ -422,10 +418,8 @@ std::size_t Decoder::Decode(DataBuffer &data_buffer, Mesh1 &value)
 
     // Read the object length
     length_field = read_length = Deserialize(data_buffer, extracted_length);
-
     if (!extracted_length.value) throw DecoderException("Invalid object length");
-    if (extracted_length.value > std::numeric_limits<std::size_t>::max()) throw DecoderException("Object too large");
-    const std::size_t length = static_cast<std::size_t>(extracted_length.value);
+    const std::size_t length = extracted_length;
 
     // Read all of the required fields (evaluation order matters)
     read_length += Deserialize(data_buffer, value.id);
@@ -483,8 +477,7 @@ std::size_t Decoder::Decode(DataBuffer &data_buffer, HeadIPD1 &value)
     length_field = read_length = Deserialize(data_buffer, extracted_length);
 
     if (!extracted_length.value) throw DecoderException("Invalid object length");
-    if (extracted_length.value > std::numeric_limits<std::size_t>::max()) throw DecoderException("Object too large");
-    const std::size_t length = static_cast<std::size_t>(extracted_length.value);
+    const std::size_t length = extracted_length;
 
     // Read all of the required fields (evaluation order matters)
     read_length += Deserialize(data_buffer, value.ipd);
@@ -564,8 +557,7 @@ std::size_t Decoder::Decode(DataBuffer &data_buffer, Object1 &value)
     length_field = read_length = Deserialize(data_buffer, extracted_length);
 
     if (!extracted_length.value) throw DecoderException("Invalid object length");
-    if (extracted_length.value > std::numeric_limits<std::size_t>::max()) throw DecoderException("Object too large");
-    const std::size_t length = static_cast<std::size_t>(extracted_length.value);
+    const std::size_t length = extracted_length;
 
     // Read all of the required fields (evaluation order matters)
     read_length += Deserialize(data_buffer, value.id);

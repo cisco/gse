@@ -51,15 +51,29 @@
 #define GS_TYPES_H
 
 #include <cstdint>
+#include <limits>
 #include <vector>
 #include <variant>
+#include <stdexcept>
 #include <string>
 #include <optional>
 
 namespace gs
 {
     // Primitive types
-    struct VarUint { std::uint64_t value; };
+    struct VarUint
+    {
+        std::uint64_t value;
+        operator std::size_t() const
+        {
+            if (value > std::numeric_limits<std::size_t>::max())
+            {
+                throw std::overflow_error("VarUInt too large to convert to std::size_t");
+            }
+            return static_cast<std::size_t>(value);
+        }
+    };
+
     struct VarInt { std::int64_t value; };
     struct Float16 { float value; };
     typedef float Float32;
