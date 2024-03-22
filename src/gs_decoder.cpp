@@ -216,14 +216,15 @@ std::size_t Decoder::Decode(DataBuffer &data_buffer, GSObject &value)
  */
 std::size_t Decoder::Decode(DataBuffer &data_buffer, Head1 &value)
 {
-    VarUint length;
+    VarUint extracted_length;
     std::size_t read_length;
     std::size_t length_field;
 
     // Read the object length
-    length_field = read_length = Deserialize(data_buffer, length);
+    length_field = read_length = Deserialize(data_buffer, extracted_length);
 
-    if (!length.value) throw DecoderException("Invalid object length");
+    if (!extracted_length.value) throw DecoderException("Invalid object length");
+    const std::size_t length = extracted_length;
 
     // Read all of the required fields (evaluation order matters)
     read_length += Deserialize(data_buffer, value.id);
@@ -232,7 +233,7 @@ std::size_t Decoder::Decode(DataBuffer &data_buffer, Head1 &value)
     read_length += Deserialize(data_buffer, value.rotation);
 
     // Are optional elements present?
-    if ((read_length - length_field) < length.value)
+    if ((read_length - length_field) < length)
     {
         // Attempt to decode the HeadIPD1 object
         GSObject object;
@@ -248,17 +249,17 @@ std::size_t Decoder::Decode(DataBuffer &data_buffer, Head1 &value)
         value.ipd = std::get<HeadIPD1>(object);
 
         // Discard any octets not understood
-        if ((read_length - length_field) < length.value)
+        if ((read_length - length_field) < length)
         {
-            data_buffer.AdvanceReadLength(length.value - read_length);
+            data_buffer.AdvanceReadLength(length - read_length);
 
             // Update the read_length
-            read_length += length.value - (read_length - length_field);
+            read_length += length - (read_length - length_field);
         }
     }
 
     // Did we read more octets than we should have?
-    if ((read_length - length_field) > length.value)
+    if ((read_length - length_field) > length)
     {
         throw DecoderException("Encoded object length error");
     }
@@ -289,14 +290,15 @@ std::size_t Decoder::Decode(DataBuffer &data_buffer, Head1 &value)
  */
 std::size_t Decoder::Decode(DataBuffer &data_buffer, Hand1 &value)
 {
-    VarUint length;
+    VarUint extracted_length;
     std::size_t read_length;
     std::size_t length_field;
 
     // Read the object length
-    length_field = read_length = Deserialize(data_buffer, length);
+    length_field = read_length = Deserialize(data_buffer, extracted_length);
 
-    if (!length.value) throw DecoderException("Invalid object length");
+    if (!extracted_length.value) throw DecoderException("Invalid object length");
+    const std::size_t length = extracted_length;
 
     // Read all of the required fields (evaluation order matters)
     read_length += Deserialize(data_buffer, value.id);
@@ -306,17 +308,16 @@ std::size_t Decoder::Decode(DataBuffer &data_buffer, Hand1 &value)
     read_length += Deserialize(data_buffer, value.rotation);
 
     // Discard any octets not understood
-    if ((read_length - length_field) < length.value)
+    if ((read_length - length_field) < length)
     {
-        data_buffer.AdvanceReadLength(length.value -
-                                      (read_length - length_field));
+        data_buffer.AdvanceReadLength(length - (read_length - length_field));
 
         // Update the read_length
-        read_length += length.value - (read_length - length_field);
+        read_length += length - (read_length - length_field);
     }
 
     // Did we read more octets than we should have?
-    if ((read_length - length_field) > length.value)
+    if ((read_length - length_field) > length)
     {
         throw DecoderException("Encoded object length error");
     }
@@ -347,14 +348,15 @@ std::size_t Decoder::Decode(DataBuffer &data_buffer, Hand1 &value)
  */
 std::size_t Decoder::Decode(DataBuffer &data_buffer, Hand2 &value)
 {
-    VarUint length;
+    VarUint extracted_length;
     std::size_t read_length;
     std::size_t length_field;
 
     // Read the object length
-    length_field = read_length = Deserialize(data_buffer, length);
+    length_field = read_length = Deserialize(data_buffer, extracted_length);
 
-    if (!length.value) throw DecoderException("Invalid object length");
+    if (!extracted_length.value) throw DecoderException("Invalid object length");
+    const std::size_t length = extracted_length;
 
     // Read all of the required fields (evaluation order matters)
     read_length += Deserialize(data_buffer, value.id);
@@ -370,17 +372,16 @@ std::size_t Decoder::Decode(DataBuffer &data_buffer, Hand2 &value)
     read_length += Deserialize(data_buffer, value.pinky);
 
     // Discard any octets not understood
-    if ((read_length - length_field) < length.value)
+    if ((read_length - length_field) < length)
     {
-        data_buffer.AdvanceReadLength(length.value -
-                                      (read_length - length_field));
+        data_buffer.AdvanceReadLength(length - (read_length - length_field));
 
         // Update the read_length
-        read_length += length.value - (read_length - length_field);
+        read_length += length - (read_length - length_field);
     }
 
     // Did we read more octets than we should have?
-    if ((read_length - length_field) > length.value)
+    if ((read_length - length_field) > length)
     {
         throw DecoderException("Encoded object length error");
     }
@@ -411,14 +412,14 @@ std::size_t Decoder::Decode(DataBuffer &data_buffer, Hand2 &value)
  */
 std::size_t Decoder::Decode(DataBuffer &data_buffer, Mesh1 &value)
 {
-    VarUint length;
+    VarUint extracted_length;
     std::size_t read_length;
     std::size_t length_field;
 
     // Read the object length
-    length_field = read_length = Deserialize(data_buffer, length);
-
-    if (!length.value) throw DecoderException("Invalid object length");
+    length_field = read_length = Deserialize(data_buffer, extracted_length);
+    if (!extracted_length.value) throw DecoderException("Invalid object length");
+    const std::size_t length = extracted_length;
 
     // Read all of the required fields (evaluation order matters)
     read_length += Deserialize(data_buffer, value.id);
@@ -428,17 +429,16 @@ std::size_t Decoder::Decode(DataBuffer &data_buffer, Mesh1 &value)
     read_length += Deserialize(data_buffer, value.triangles);
 
     // Discard any octets not understood
-    if ((read_length - length_field) < length.value)
+    if ((read_length - length_field) < length)
     {
-        data_buffer.AdvanceReadLength(length.value -
-                                      (read_length - length_field));
+        data_buffer.AdvanceReadLength(length - (read_length - length_field));
 
         // Update the read_length
-        read_length += length.value - (read_length - length_field);
+        read_length += length - (read_length - length_field);
     }
 
     // Did we read more octets than we should have?
-    if ((read_length - length_field) > length.value)
+    if ((read_length - length_field) > length)
     {
         throw DecoderException("Encoded object length error");
     }
@@ -469,30 +469,30 @@ std::size_t Decoder::Decode(DataBuffer &data_buffer, Mesh1 &value)
  */
 std::size_t Decoder::Decode(DataBuffer &data_buffer, HeadIPD1 &value)
 {
-    VarUint length;
+    VarUint extracted_length;
     std::size_t read_length;
     std::size_t length_field;
 
     // Read the object length
-    length_field = read_length = Deserialize(data_buffer, length);
+    length_field = read_length = Deserialize(data_buffer, extracted_length);
 
-    if (!length.value) throw DecoderException("Invalid object length");
+    if (!extracted_length.value) throw DecoderException("Invalid object length");
+    const std::size_t length = extracted_length;
 
     // Read all of the required fields (evaluation order matters)
     read_length += Deserialize(data_buffer, value.ipd);
 
     // Discard any octets not understood
-    if ((read_length - length_field) < length.value)
+    if ((read_length - length_field) < length)
     {
-        data_buffer.AdvanceReadLength(length.value -
-                                      (read_length - length_field));
+        data_buffer.AdvanceReadLength(length - (read_length - length_field));
 
         // Update the read_length
-        read_length += length.value - (read_length - length_field);
+        read_length += length - (read_length - length_field);
     }
 
     // Did we read more octets than we should have?
-    if ((read_length - length_field) > length.value)
+    if ((read_length - length_field) > length)
     {
         throw DecoderException("Encoded object length error");
     }
@@ -549,14 +549,15 @@ std::size_t Decoder::Decode(DataBuffer &data_buffer, UnknownObject &value)
  */
 std::size_t Decoder::Decode(DataBuffer &data_buffer, Object1 &value)
 {
-    VarUint length;
+    VarUint extracted_length;
     std::size_t read_length;
     std::size_t length_field;
 
     // Read the object length
-    length_field = read_length = Deserialize(data_buffer, length);
+    length_field = read_length = Deserialize(data_buffer, extracted_length);
 
-    if (!length.value) throw DecoderException("Invalid object length");
+    if (!extracted_length.value) throw DecoderException("Invalid object length");
+    const std::size_t length = extracted_length;
 
     // Read all of the required fields (evaluation order matters)
     read_length += Deserialize(data_buffer, value.id);
@@ -567,7 +568,7 @@ std::size_t Decoder::Decode(DataBuffer &data_buffer, Object1 &value)
     read_length += Deserialize(data_buffer, value.active);
 
     // Are optional elements present?
-    if ((read_length - length_field) < length.value)
+    if ((read_length - length_field) < length)
     {
         // Attempt to decode the Parent object
         ObjectID parent;
@@ -577,17 +578,17 @@ std::size_t Decoder::Decode(DataBuffer &data_buffer, Object1 &value)
         value.parent = parent;
 
         // Discard any octets not understood
-        if ((read_length - length_field) < length.value)
+        if ((read_length - length_field) < length)
         {
-            data_buffer.AdvanceReadLength(length.value - read_length);
+            data_buffer.AdvanceReadLength(length - read_length);
 
             // Update the read_length
-            read_length += length.value - (read_length - length_field);
+            read_length += length - (read_length - length_field);
         }
     }
 
     // Did we read more octets than we should have?
-    if ((read_length - length_field) > length.value)
+    if ((read_length - length_field) > length)
     {
         throw DecoderException("Encoded object length error");
     }

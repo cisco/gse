@@ -16,7 +16,7 @@ set_target_properties(gse
         CXX_EXTENSIONS NO)
 target_compile_options(gse PRIVATE
      $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>: -Wpedantic -Wextra -Wall>
-     $<$<CXX_COMPILER_ID:MSVC>: >)
+     $<$<CXX_COMPILER_ID:MSVC>: /W4 /WX>)
 
 if(WIN32)
     target_link_libraries(gse PRIVATE ws2_32)

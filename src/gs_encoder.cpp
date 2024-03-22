@@ -50,6 +50,7 @@
  */
 
 #include "gs_encoder.h"
+#include <limits>
 
 namespace gs
 {
@@ -180,8 +181,14 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer, const Object1 &value)
     }
 
     // Compute the total space required
-    total_length = Serialize(null_buffer, Tag::Object1) +
-                   Serialize(null_buffer, data_length) + data_length.value;
+    const std::uint64_t size_check = Serialize(null_buffer, Tag::Object1) +
+                                     Serialize(null_buffer, data_length) +
+                                     data_length.value;
+    if (size_check > std::numeric_limits<std::size_t>::max())
+    {
+        throw EncoderException("Object exceeds max size");
+    }
+    total_length = static_cast<std::size_t>(size_check);
 
     // Ensure the data buffer has sufficient space
     if ((data_buffer.GetDataLength() + total_length) >
@@ -255,9 +262,14 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer, const Head1 &value)
         data_length.value += Serialize(null_buffer, value.ipd.value());
     }
 
-    // Compute the total space required
-    total_length = Serialize(null_buffer, Tag::Head1) +
-                   Serialize(null_buffer, data_length) + data_length.value;
+    const std::uint64_t size_check = Serialize(null_buffer, Tag::Head1) +
+                                     Serialize(null_buffer, data_length) +
+                                     data_length.value;
+    if (size_check > std::numeric_limits<std::size_t>::max())
+    {
+        throw EncoderException("Object exceeds max size");
+    }
+    total_length = static_cast<std::size_t>(size_check);
 
     // Ensure the data buffer has sufficient space
     if ((data_buffer.GetDataLength() + total_length) >
@@ -326,8 +338,14 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer, const Hand1 &value)
                         Serialize(null_buffer, value.rotation);
 
     // Compute the total space required
-    total_length = Serialize(null_buffer, Tag::Hand1) +
-                   Serialize(null_buffer, data_length) + data_length.value;
+    const std::uint64_t size_check = Serialize(null_buffer, Tag::Hand1) +
+                                     Serialize(null_buffer, data_length) +
+                                     data_length.value;
+    if (size_check > std::numeric_limits<std::size_t>::max())
+    {
+        throw EncoderException("Object exceeds max size");
+    }
+    total_length = static_cast<std::size_t>(size_check);
 
     // Ensure the data buffer has sufficient space
     if ((data_buffer.GetDataLength() + total_length) >
@@ -392,8 +410,14 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer, const Mesh1 &value)
                         Serialize(null_buffer, value.triangles);
 
     // Compute the total space required
-    total_length = Serialize(null_buffer, Tag::Mesh1) +
-                   Serialize(null_buffer, data_length) + data_length.value;
+    const std::uint64_t size_check = Serialize(null_buffer, Tag::Mesh1) +
+                                     Serialize(null_buffer, data_length) +
+                                     data_length.value;
+    if (size_check > std::numeric_limits<std::size_t>::max())
+    {
+        throw EncoderException("Object exceeds max size");
+    }
+    total_length = static_cast<std::size_t>(size_check);
 
     // Ensure the data buffer has sufficient space
     if ((data_buffer.GetDataLength() + total_length) >
@@ -464,8 +488,14 @@ EncodeResult Encoder::Encode(DataBuffer &data_buffer, const Hand2 &value)
                         Serialize(null_buffer, value.pinky);
 
     // Compute the total space required
-    total_length = Serialize(null_buffer, Tag::Hand2) +
-                   Serialize(null_buffer, data_length) + data_length.value;
+    const std::uint64_t size_check = Serialize(null_buffer, Tag::Hand2) +
+                                     Serialize(null_buffer, data_length) +
+                                     data_length.value;
+    if (size_check > std::numeric_limits<std::size_t>::max())
+    {
+        throw EncoderException("Object exceeds max size");
+    }
+    total_length = static_cast<std::size_t>(size_check);
 
     // Ensure the data buffer has sufficient space
     if ((data_buffer.GetDataLength() + total_length) >
